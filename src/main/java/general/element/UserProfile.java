@@ -24,7 +24,7 @@ public class UserProfile implements Serializable {
         this.id = id;
     }
 
-    private static String checkLogin(String login) throws IllegalArgumentException {
+    public static String checkLogin(String login) throws IllegalArgumentException {
         if (login.length() < 3) {
             throw new IllegalArgumentException("Login must have at least 3 characters");
         }
@@ -36,7 +36,7 @@ public class UserProfile implements Serializable {
         }
         return login;
     }
-    private static String checkPassword(String password) throws IllegalArgumentException {
+    public static String checkPassword(String password) throws IllegalArgumentException {
         if (password.length() < 3) {
             throw new IllegalArgumentException("Password must have at least 3 characters");
         }

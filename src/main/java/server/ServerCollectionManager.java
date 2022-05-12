@@ -30,8 +30,8 @@ public class ServerCollectionManager {
     private String dbUser;
     private String dbPassword;
 
-    private final String usersTable = "users_335155";
-    private final String movieTable = "movie_335155";
+    private final String usersTable = "users";
+    private final String movieTable = "movie";
 
     void initialize() throws ClassNotFoundException, SQLException, FieldException {
         Class.forName("org.postgresql.Driver");

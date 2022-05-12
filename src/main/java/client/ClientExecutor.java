@@ -30,10 +30,25 @@ public class ClientExecutor {
         fillCommandMap();
     }
 
-    private void fillCommandMap() throws IOException, CommandException {
+    private void fillCommandMap() {
+        //CommandFiller.fillCommandMap(commandMap);
 
-        CommandFiller.fillCommandMap(commandMap);
-
+        commandMap.put("help", new HelpCommand("help"));
+        commandMap.put("info", new InfoCommand("info"));
+        commandMap.put("show", new ShowCommand("show"));
+        commandMap.put("insert", new InsertCommand("insert"));
+        commandMap.put("update", new UpdateCommand("update"));
+        commandMap.put("remove_key", new RemoveKeyCommand("remove_key"));
+        commandMap.put("clear", new ClearCommand("clear"));
+        //save --- FORBIDDEN!
+        commandMap.put("execute_script", new ExecuteScriptCommand("execute_script"));
+        commandMap.put("exit", new ExitCommand("exit"));
+        commandMap.put("history", new HistoryCommand("history"));
+        commandMap.put("replace_if_greater", new ReplaceIfGreaterCommand("replace_if_greater"));
+        commandMap.put("remove_lower_key", new RemoveLowerKeyCommand("remove_key_command"));
+        commandMap.put("group_counting_by_length", new GroupCountingByLengthCommand("group_counting_by_length"));
+        commandMap.put("count_less_than_length", new CountLessThenLengthCommand("count_less_than_length"));
+        commandMap.put("filter_by_mpaa_rating", new FilterByMpaaRatingCommand("filter_by_mpaa_rating"));
     }
 
     void parseCommand(String inputLine) throws CommandException {

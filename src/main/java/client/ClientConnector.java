@@ -23,7 +23,7 @@ public class ClientConnector {
 
     private ClientConnector() {}
 
-    static ClientConnector getInstance() {
+    public static ClientConnector getInstance() {
         return instance;
     }
 
@@ -93,7 +93,7 @@ public class ClientConnector {
         }
     }
 
-    void sendRequest(Request request) throws IOException {
+    public void sendRequest(Request request) throws IOException {
         sendPacket(ConnectorHelper.objectToBuffer(request));
     }
 

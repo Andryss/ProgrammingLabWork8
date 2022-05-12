@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane minHeight="200.0" minWidth="300.0" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #cccccc;" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.RegistrationController">
+   <children>
+      <Label alignment="CENTER" layoutX="135.0" layoutY="90.0" prefHeight="140.0" prefWidth="630.0" text="Registration page" textFill="#b00000">
+         <font>
+            <Font name="Chiller" size="96.0" />
+         </font>
+      </Label>
+      <Label fx:id="loginLabel" layoutX="354.0" layoutY="247.0" prefHeight="40.0" prefWidth="190.0" text="Login:">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <TextField fx:id="loginTextField" layoutX="353.0" layoutY="287.0" prefHeight="40.0" prefWidth="190.0" promptText="New user login">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </TextField>
+      <Label fx:id="passwordLabel" layoutX="355.0" layoutY="326.0" prefHeight="40.0" prefWidth="190.0" text="Password:">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <PasswordField fx:id="passwordField" layoutX="354.0" layoutY="366.0" prefHeight="40.0" prefWidth="190.0" promptText="New user pass">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </PasswordField>
+      <Button fx:id="logUpButton" alignment="CENTER" layoutX="408.0" layoutY="421.0" mnemonicParsing="false" prefWidth="80.0" text="Log up">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <Label alignment="CENTER" layoutX="354.0" layoutY="493.0" prefHeight="25.0" prefWidth="190.0" text="Already have an account?">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Hyperlink fx:id="goToAuthPageLink" alignment="CENTER" layoutX="356.0" layoutY="518.0" onMouseClicked="#goToAuthPage" prefHeight="25.0" prefWidth="190.0" text="Go to the authorization page" />
+   </children>
+</AnchorPane>
