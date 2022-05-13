@@ -177,12 +177,10 @@ public class ServerExecutor {
                     .addMessage("User is already registered")
                     .build();
         } else {
-            authorizedUsers.add(request.getUserProfile());
             response = ResponseBuilder.createNewResponse()
                     .setResponseType(Response.ResponseType.REGISTER_SUCCESSFUL)
                     .addMessage("New user successfully registered")
                     .build();
-            ServerHistoryManager.getInstance().updateUser(request.getUserProfile());
         }
         new Thread(() -> ServerConnector.getInstance().sendToClient(client, response), "SendingRUThread").start();
     }
