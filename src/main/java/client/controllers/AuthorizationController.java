@@ -6,9 +6,13 @@ import client.RequestBuilder;
 import general.Request;
 import general.Response;
 import general.element.UserProfile;
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Duration;
 
 import java.io.IOException;
 
@@ -27,16 +31,33 @@ public class AuthorizationController {
     @FXML private Label passwordErrLabel;
     @FXML private Button signInButton;
     @FXML private Label signInErrLabel;
+    @FXML private Label successfulLabel;
     @FXML private Label goToRegLabel;
     @FXML private Hyperlink goToRegLink;
 
     @FXML
-    private void goToRegPage(MouseEvent mouseEvent) {
+    private void goToRegPageMouseClicked(MouseEvent mouseEvent) {
+        goToRegPage();
+    }
+
+    private void goToRegPage() {
+        clear();
         application.setScene(Application.AppScene.REGISTRATION_SCENE);
     }
 
     @FXML
-    private void loginUser(MouseEvent mouseEvent) {
+    private void signInUserKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            signInUser();
+        }
+    }
+
+    @FXML
+    private void signInUserMouseClicked(MouseEvent mouseEvent) {
+        signInUser();
+    }
+
+    private void signInUser() {
         try {
             UserProfile.checkLogin(loginTextField.getText());
             loginErrLabel.setText("");
@@ -65,22 +86,31 @@ public class AuthorizationController {
                 signInErrLabel.setText(response.getMessage());
             } else if (response.getResponseType() == Response.ResponseType.LOGIN_SUCCESSFUL) {
                 addLogoutHook();
-                loginTextField.clear();
-                passwordField.clear();
-                signInErrLabel.setText("");
-                application.setScene(Application.AppScene.MAIN_SCENE);
+                // TODO: change redirection
+                successfulLabel.setText(response.getMessage() + " (you will be redirected to the main page in 5 seconds)");
+                PauseTransition pause = new PauseTransition(Duration.seconds(5));
+                pause.setOnFinished(e -> {
+                    application.setScene(Application.AppScene.MAIN_SCENE);
+                    clear();
+                });
+                pause.play();
             } else {
-                throw new IOException("Server has wrong logic: expected \"" +
-                        Response.ResponseType.LOGIN_FAILED +
-                        "\" or \"" +
-                        Response.ResponseType.LOGIN_SUCCESSFUL +
-                        "\", but not \"" +
+                throw new IOException("Server has wrong logic: unexpected \"" +
                         response.getResponseType() +
                         "\"");
             }
         } catch (IOException | ClassNotFoundException e) {
             signInErrLabel.setText(e.getMessage());
         }
+    }
+
+    private void clear() {
+        loginTextField.clear();
+        loginErrLabel.setText("");
+        passwordField.clear();
+        passwordErrLabel.setText("");
+        signInErrLabel.setText("");
+        successfulLabel.setText("");
     }
 
     private void addLogoutHook() {

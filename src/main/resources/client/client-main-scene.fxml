@@ -3,33 +3,16 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<BorderPane xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.MainController">
-   <center>
-      <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="600.0" prefWidth="900.0">
-        <items>
-            <SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0">
-              <items>
-                  <BorderPane prefHeight="200.0" prefWidth="200.0">
-                     <center>
-                        <TreeTableView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                          <columns>
-                            <TreeTableColumn prefWidth="36.0" text="Id" />
-                            <TreeTableColumn prefWidth="62.0" text="Name" />
-                          </columns>
-                        </TreeTableView>
-                     </center>
-                  </BorderPane>
-                  <BorderPane>
-                     <center>
-                        <Label text="3D collection will be here soon" BorderPane.alignment="CENTER" />
-                     </center>
-                  </BorderPane>
-              </items>
-            </SplitPane>
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.MainController">
+  <tabs>
+    <Tab closable="false" text="Console">
+      <content>
             <BorderPane>
+               <center>
+                  <TextArea editable="false" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+               </center>
                <bottom>
-                  <BorderPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                  <BorderPane BorderPane.alignment="CENTER">
                      <right>
                         <Button mnemonicParsing="false" text="Send" BorderPane.alignment="CENTER" />
                      </right>
@@ -38,11 +21,52 @@
                      </center>
                   </BorderPane>
                </bottom>
-               <center>
-                  <TextArea editable="false" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
-               </center>
             </BorderPane>
-        </items>
-      </SplitPane>
-   </center>
-</BorderPane>
+      </content>
+    </Tab>
+    <Tab closable="false" text="Table">
+      <content>
+          <BorderPane prefHeight="200.0" prefWidth="200.0">
+              <center>
+                  <TreeTableView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                      <columns>
+                          <TreeTableColumn prefWidth="54.0" text="Owner" />
+                          <TreeTableColumn prefWidth="36.0" text="Id" />
+                          <TreeTableColumn prefWidth="62.0" text="Name" />
+                          <TreeTableColumn prefWidth="62.0" text="Coordinates">
+                              <columns>
+                                  <TreeTableColumn prefWidth="49.0" text="X" />
+                                  <TreeTableColumn prefWidth="47.0" text="Y" />
+                              </columns>
+                          </TreeTableColumn>
+                          <TreeTableColumn prefWidth="88.0" text="Creation Date" />
+                          <TreeTableColumn prefWidth="81.0" text="Oscars Count" />
+                          <TreeTableColumn prefWidth="53.0" text="Length" />
+                          <TreeTableColumn prefWidth="45.0" text="Genre" />
+                          <TreeTableColumn prefWidth="83.0" text="Mpaa Rating" />
+                          <TreeTableColumn prefWidth="150.0" text="Screenwriter">
+                              <columns>
+                                  <TreeTableColumn prefWidth="75.0" text="Name" />
+                                  <TreeTableColumn prefWidth="75.0" text="Birthday" />
+                                  <TreeTableColumn prefWidth="75.0" text="Haircolor" />
+                              </columns>
+                          </TreeTableColumn>
+                      </columns>
+                      <columnResizePolicy>
+                          <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                      </columnResizePolicy>
+                  </TreeTableView>
+              </center>
+          </BorderPane>
+      </content>
+    </Tab>
+    <Tab closable="false" text="Plot">
+        <content>
+            <BorderPane>
+               <center>
+                  <Label text="Plot will be soon..." BorderPane.alignment="CENTER" />
+               </center></BorderPane>
+        </content>
+    </Tab>
+  </tabs>
+</TabPane>

@@ -21,11 +21,7 @@
             <Font size="18.0" />
          </font>
       </TextField>
-      <Label fx:id="loginErrLabel" layoutX="546.0" layoutY="287.0" prefHeight="40.0" prefWidth="190.0" textFill="#cd0000">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
+      <Label fx:id="loginErrLabel" layoutX="546.0" layoutY="287.0" prefHeight="40.0" prefWidth="190.0" textFill="#cd0000" />
       <Label fx:id="passwordLabel" layoutX="355.0" layoutY="326.0" prefHeight="40.0" prefWidth="190.0" text="Password:">
          <font>
             <Font size="18.0" />
@@ -36,26 +32,26 @@
             <Font size="18.0" />
          </font>
       </PasswordField>
-      <Label fx:id="passwordErrLabel" layoutX="546.0" layoutY="366.0" prefHeight="40.0" prefWidth="190.0" textFill="#cd0000">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-      <Button fx:id="signInButton" alignment="CENTER" layoutX="408.0" layoutY="421.0" mnemonicParsing="false" onMouseClicked="#loginUser" prefWidth="80.0" text="Sign in">
+      <Label fx:id="passwordErrLabel" layoutX="546.0" layoutY="366.0" prefHeight="40.0" prefWidth="190.0" textFill="#cd0000" />
+      <Button fx:id="signInButton" alignment="CENTER" layoutX="408.0" layoutY="421.0" mnemonicParsing="false" onKeyReleased="#signInUserKeyReleased" onMouseClicked="#signInUserMouseClicked" prefWidth="80.0" text="Sign in">
          <font>
             <Font size="14.0" />
          </font>
       </Button>
+      <Label fx:id="signInErrLabel" layoutX="494.0" layoutY="421.0" prefHeight="30.0" prefWidth="190.0" textFill="#cd0000">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Label>
+      <Label fx:id="successfulLabel" alignment="CENTER" layoutX="63.0" layoutY="453.0" prefHeight="40.0" prefWidth="770.0" textFill="#00a138">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
       <Label fx:id="goToRegLabel" alignment="CENTER" layoutX="354.0" layoutY="493.0" prefHeight="25.0" prefWidth="190.0" text="Don't have an account yet?">
          <font>
             <Font size="14.0" />
          </font>
       </Label>
-      <Hyperlink fx:id="goToRegLink" alignment="CENTER" layoutX="356.0" layoutY="518.0" onMouseClicked="#goToRegPage" prefHeight="25.0" prefWidth="190.0" text="Go to the registration page" />
-      <Label fx:id="signInErrLabel" layoutX="494.0" layoutY="421.0" prefHeight="30.0" prefWidth="190.0" textFill="#cd0000">
-         <font>
-            <Font size="14.0" />
-         </font>
-      </Label>
+      <Hyperlink fx:id="goToRegLink" alignment="CENTER" layoutX="356.0" layoutY="518.0" onMouseClicked="#goToRegPageMouseClicked" prefHeight="25.0" prefWidth="190.0" text="Go to the registration page" />
    </children>
 </AnchorPane>

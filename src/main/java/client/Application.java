@@ -47,6 +47,9 @@ public class Application extends javafx.application.Application {
             setScene(AppScene.AUTHORIZATION_SCENE);
             stage.show();
         } catch (Throwable e) {
+            // TODO: delete trash below
+            e.printStackTrace();
+            // TODO: delete trash above
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Something went wrong");
             alert.setHeaderText(null);
