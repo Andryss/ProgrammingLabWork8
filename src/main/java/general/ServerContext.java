@@ -9,7 +9,7 @@ import java.util.LinkedList;
  * <p>Represents all methods which cat be used by commands while executing</p>
  * <p>Follow "smth like Proxy" pattern</p>
  */
-public interface ServerINFO {
+public interface ServerContext {
 
     Movie getMovie(Integer key);
 
@@ -23,7 +23,7 @@ public interface ServerINFO {
 
     Hashtable<Integer,Movie> getMovieCollection();
 
-    ServerINFO validationClone();
+    ServerContext validationClone();
 
     Response getResponse();
 

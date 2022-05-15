@@ -3,22 +3,21 @@ package server;
 import general.element.Movie;
 import general.element.UserProfile;
 import general.Response;
-import general.ServerINFO;
+import general.ServerContext;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * @see ServerINFO
+ * @see ServerContext
  */
-public class ServerINFOImpl implements ServerINFO {
+public class ServerContextImpl implements ServerContext {
     protected final UserProfile userProfile;
     private final Response response;
 
 
-    public ServerINFOImpl(UserProfile userProfile, Response response) {
+    public ServerContextImpl(UserProfile userProfile, Response response) {
         this.userProfile = userProfile;
         this.response = response;
     }
@@ -64,12 +63,12 @@ public class ServerINFOImpl implements ServerINFO {
     }
 
     @Override
-    public ServerINFO validationClone() {
+    public ServerContext validationClone() {
         return new ServerINFOClone(userProfile);
     }
 
 
-    private static class ServerINFOClone extends ServerINFOImpl {
+    private static class ServerINFOClone extends ServerContextImpl {
         private final Hashtable<Integer, Movie> movieCollection = ServerCollectionManager.getInstance().getMovieCollection();
 
         public ServerINFOClone(UserProfile userProfile) {
@@ -116,11 +115,11 @@ public class ServerINFOImpl implements ServerINFO {
         }
         @Override
         public void removeAllMovies() {
-            ArrayList<Integer> movieToDelete = new ArrayList<>(movieCollection.size());
-            movieCollection.entrySet().stream()
+            //noinspection unchecked
+            ((Hashtable<Integer,Movie>) movieCollection.clone()).entrySet().stream()
                     .filter(e -> e.getValue().getOwner().equals(userProfile.getName()))
-                    .forEach(e -> movieToDelete.add(e.getKey()));
-            movieToDelete.forEach(movieCollection::remove);
+                    .map(Map.Entry::getKey)
+                    .forEach(movieCollection::remove);
         }
         @Override
         public Hashtable<Integer, Movie> getMovieCollection() {

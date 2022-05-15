@@ -1,6 +1,9 @@
 package server;
 
 import general.Response;
+import general.element.Movie;
+
+import java.util.Hashtable;
 
 /**
  * <p>Global class, which build response to client</p>
@@ -22,6 +25,11 @@ public class ResponseBuilder {
 
     public ResponseBuilder addMessage(String line) {
         response.addMessage(line);
+        return this;
+    }
+
+    public ResponseBuilder setHashtable(Hashtable<Integer, Movie> hashtable) {
+        response.setHashtable(hashtable);
         return this;
     }
 

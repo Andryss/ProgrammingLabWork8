@@ -1,9 +1,10 @@
 package general.commands;
 
-import general.ClientINFO;
+import general.ClientContext;
+import general.ScriptContext;
 import general.Request;
 import general.element.Movie;
-import general.ServerINFO;
+import general.ServerContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,13 +18,13 @@ import java.util.stream.Collectors;
 public class FilterByMpaaRatingCommand extends NameableCommand {
     private Movie.MpaaRating mpaaRating;
 
-    @ParseCommand(name = "filter_by_mpaa_rating", example = "filter_by_mpaa_rating G")
+    @ParseCommand(name = "filter_by_mpaa_rating", type = CommandType.ONE_PARAM, paramName = "mpaa rating", example = "filter_by_mpaa_rating G")
     public FilterByMpaaRatingCommand(String commandName) {
         super(commandName);
     }
 
     @Override
-    public void execute(ServerINFO server) throws CommandException {
+    public void execute(ServerContext server) throws CommandException {
         server.getResponse().addMessage("Found movies with \"" + mpaaRating + "\" mpaa rating:");
         List<Map.Entry<Integer,Movie>> found = server.getMovieCollection().entrySet().stream()
                 .filter(entry -> entry.getValue().getMpaaRating() == mpaaRating)
@@ -36,12 +37,21 @@ public class FilterByMpaaRatingCommand extends NameableCommand {
     }
 
     @Override
-    public void setArgs(ClientINFO client, String... args) throws BadArgumentsException {
+    public void setScriptArgs(ScriptContext script, String... args) throws BadArgumentsException {
         if (args.length != 1) {
             throw new BadArgumentsCountException(getCommandName(), 1);
         }
         try {
             mpaaRating = Movie.MpaaRating.valueOf(args[0]);
+        } catch (IllegalArgumentException e) {
+            throw new BadArgumentsFormatException(getCommandName(), "one of: " + Arrays.toString(Movie.MpaaRating.values()));
+        }
+    }
+
+    @Override
+    public void setGUIArgs(ClientContext client) throws BadArgumentsException {
+        try {
+            mpaaRating = Movie.MpaaRating.valueOf(client.getParam());
         } catch (IllegalArgumentException e) {
             throw new BadArgumentsFormatException(getCommandName(), "one of: " + Arrays.toString(Movie.MpaaRating.values()));
         }

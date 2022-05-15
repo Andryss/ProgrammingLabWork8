@@ -1,10 +1,11 @@
 package general.commands;
 
-import general.ClientINFO;
+import general.ClientContext;
+import general.ScriptContext;
 import client.file.FileExecutor;
 import client.file.FileManager;
 import general.Request;
-import general.ServerINFO;
+import general.ServerContext;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,18 +19,18 @@ public class ExecuteScriptCommand extends NameableCommand {
     private File file;
     private FileExecutor caller;
 
-    @ParseCommand(name = "execute_script", example = "execute_script someScript")
+    @ParseCommand(name = "execute_script", type = CommandType.ONE_PARAM, paramName = "script filename", example = "execute_script someScript")
     public ExecuteScriptCommand(String commandName) {
         super(commandName);
     }
 
     @Override
-    public void execute(ServerINFO server) throws CommandException {
+    public void execute(ServerContext server) throws CommandException {
         throw new CommandException(getCommandName(), "\"" + getCommandName() + "\" can't be executed");
     }
 
     @Override
-    public void setArgs(ClientINFO client, String... args) throws BadArgumentsException {
+    public void setScriptArgs(ScriptContext script, String... args) throws BadArgumentsException {
         if (args.length != 1) {
             throw new BadArgumentsCountException(getCommandName(), 1);
         }
@@ -37,11 +38,19 @@ public class ExecuteScriptCommand extends NameableCommand {
         if (!file.exists() || !file.isFile()) {
             throw new BadArgumentsException(getCommandName(), "script with name \"" + args[0] + "\" doesn't exists");
         }
-        caller = client.getCaller();
+        caller = script.getCaller();
         for (FileExecutor curCaller = caller; curCaller != null; curCaller = curCaller.getCaller()) {
             if (curCaller.getFileName().equals(args[0])) {
                 throw new BadArgumentsException(getCommandName(), "recursion is not supported");
             }
+        }
+    }
+
+    @Override
+    public void setGUIArgs(ClientContext client) throws BadArgumentsException {
+        file = new File(client.getParam());
+        if (!file.exists() || !file.isFile()) {
+            throw new BadArgumentsException(getCommandName(), "script with name \"" + file.getName() + "\" doesn't exists");
         }
     }
 

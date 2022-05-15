@@ -1,8 +1,8 @@
 package general.commands;
 
-import general.ClientINFO;
+import general.ScriptContext;
 import general.element.Movie;
-import general.ServerINFO;
+import general.ServerContext;
 
 import java.util.Hashtable;
 
@@ -12,13 +12,13 @@ import java.util.Hashtable;
  */
 public class ShowCommand extends NameableCommand {
 
-    @ParseCommand(name = "show", example = "show")
+    @ParseCommand(name = "show", type = CommandType.NO_PARAMS, paramName = "", example = "show")
     public ShowCommand(String commandName) {
         super(commandName);
     }
 
     @Override
-    public void execute(ServerINFO server) {
+    public void execute(ServerContext server) {
         server.getResponse().addMessage("Collection contains:");
         Hashtable<Integer,Movie> collection = server.getMovieCollection();
         if (collection.size() == 0) {
@@ -33,7 +33,7 @@ public class ShowCommand extends NameableCommand {
     }
 
     @Override
-    public void setArgs(ClientINFO client, String... args) throws BadArgumentsException {
+    public void setScriptArgs(ScriptContext script, String... args) throws BadArgumentsException {
         if (args.length > 0) {
             throw new BadArgumentsCountException(getCommandName());
         }

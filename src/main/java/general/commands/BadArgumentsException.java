@@ -1,5 +1,7 @@
 package general.commands;
 
+import client.ClientExecutor;
+
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -8,10 +10,6 @@ import java.util.Map;
  * Exception, when command arguments are incorrect
  */
 public class BadArgumentsException extends CommandException {
-    /**
-     * Map with examples of commands (if user always print "help me please!!!" instead of "help")
-     */
-    private static final Map<String, String> examples = new HashMap<>();
 
     /**
      * Constructor without reason
@@ -31,8 +29,8 @@ public class BadArgumentsException extends CommandException {
         super(command, reason);
     }
 
-    static Map<String, String> getExamples() {
-        return examples;
+    public static String getExample(String command) {
+        return ClientExecutor.getInstance().getCommandMap().get(command).getExample();
     }
 
     @Override
@@ -40,9 +38,9 @@ public class BadArgumentsException extends CommandException {
         if (getReason() != null) {
             return "ERROR: bad arguments command \"" + getCommand() + "\" (" + getReason() + ")";
         }
-        String example = examples.get(getCommand());
+        String example = getExample(getCommand());
         if (example != null) {
-            return "ERROR: bad arguments command \"" + getCommand() + "\" (example: \"" + examples.get(getCommand()) + "\")";
+            return "ERROR: bad arguments command \"" + getCommand() + "\" (example: \"" + example + "\")";
         } else {
             return "ERROR: bad arguments command \"" + getCommand() + "\" (try another variations)";
         }

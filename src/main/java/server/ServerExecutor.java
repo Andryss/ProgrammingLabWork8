@@ -6,7 +6,7 @@ import general.commands.CommandException;
 import general.element.Movie;
 import general.element.UserProfile;
 import general.Response;
-import general.ServerINFO;
+import general.ServerContext;
 
 import java.net.SocketAddress;
 import java.util.*;
@@ -26,7 +26,7 @@ public class ServerExecutor {
 
     private final SocketAddress client;
     private final Request request;
-    private ServerINFO serverINFO;
+    private ServerContext serverINFO;
 
     ServerExecutor(SocketAddress client, Request request) {
         this.client = client;
@@ -104,6 +104,7 @@ public class ServerExecutor {
                 response = ResponseBuilder.createNewResponse()
                         .setResponseType(Response.ResponseType.LOGIN_SUCCESSFUL)
                         .addMessage("User successfully logged in")
+                        .setHashtable(ServerCollectionManager.getInstance().getMovieCollection())
                         .build();
                 ServerHistoryManager.getInstance().updateUser(request.getUserProfile());
             }
@@ -163,6 +164,7 @@ public class ServerExecutor {
                             .build();
                 }
             }
+            response.setHashtable(ServerCollectionManager.getInstance().getMovieCollection());
             ServerHistoryManager.getInstance().updateUser(request.getUserProfile());
         }
         new Thread(() -> ServerConnector.getInstance().sendToClient(client, response), "SendingCEThread").start();
@@ -197,18 +199,18 @@ public class ServerExecutor {
                     .setResponseType(Response.ResponseType.EXECUTION_SUCCESSFUL)
                     .build();
             ServerHistoryManager.getInstance().updateUser(request.getUserProfile());
-            serverINFO = new ServerINFOImpl(request.getUserProfile(), response);
+            serverINFO = new ServerContextImpl(request.getUserProfile(), response);
 
             Queue<Command> commandQueue = request.getCommandQueue();
             try {
-                response.addMessage("\u001B[34m" + "START: command \"" + request.getCommandName() + "\" start executing" + "\u001B[0m");
+                response.addMessage("START: command \"" + request.getCommandName() + "\" start executing");
                 if (commandQueue.size() > 1) {
                     validateCommands();
                 }
                 for (Command command : commandQueue) {
                     command.execute(serverINFO);
                 }
-                response.addMessage("\u001B[32m" + "SUCCESS: command \"" + request.getCommandName() + "\" successfully completed" + "\u001B[0m");
+                response.addMessage("SUCCESS: command \"" + request.getCommandName() + "\" successfully completed");
                 ServerHistoryManager.getInstance().addUserHistory(request.getUserProfile(), request.getCommandName());
             } catch (CommandException e) {
                 response = ResponseBuilder.createNewResponse()
@@ -216,13 +218,14 @@ public class ServerExecutor {
                         .addMessage(e.getMessage())
                         .build();
             }
+            response.setHashtable(ServerCollectionManager.getInstance().getMovieCollection());
         }
         Response finalResponse = response;
         new Thread(() -> ServerConnector.getInstance().sendToClient(client, finalResponse), "SendingECThread").start();
     }
 
     private void validateCommands() throws CommandException {
-        ServerINFO copiedServerINFO = serverINFO.validationClone();
+        ServerContext copiedServerINFO = serverINFO.validationClone();
 
         for (Command command : request.getCommandQueue()) {
             try {

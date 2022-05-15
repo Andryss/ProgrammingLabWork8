@@ -1,6 +1,9 @@
 package general;
 
+import general.element.Movie;
+
 import java.io.Serializable;
+import java.util.Hashtable;
 
 /**
  * Interface of server response to the client
@@ -12,6 +15,10 @@ public interface Response extends Serializable {
     ResponseType getResponseType();
 
     String getMessage();
+
+    Hashtable<Integer, Movie> getHashtable();
+
+    void setHashtable(Hashtable<Integer, Movie> hashtable);
 
     /**
      * Represent type of possible server responses

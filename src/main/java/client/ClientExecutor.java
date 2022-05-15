@@ -1,6 +1,6 @@
 package client;
 
-import general.ClientINFO;
+import general.ScriptContext;
 import general.commands.*;
 import general.Request;
 
@@ -16,8 +16,8 @@ import java.util.*;
  */
 public class ClientExecutor {
     private static final ClientExecutor instance = new ClientExecutor();
-    private final HashMap<String, Command> commandMap = new HashMap<>();
-    private final ClientINFO clientINFO = new ClientINFOImpl();
+    private final HashMap<String, CommandContainer> commandMap = new HashMap<>();
+    private final ScriptContext clientINFO = new ScriptContextImpl();
     private Request request;
 
     private ClientExecutor() {}
@@ -30,28 +30,15 @@ public class ClientExecutor {
         fillCommandMap();
     }
 
-    private void fillCommandMap() {
-        //CommandFiller.fillCommandMap(commandMap);
+    private void fillCommandMap() throws IOException, CommandException {
 
-        commandMap.put("help", new HelpCommand("help"));
-        commandMap.put("info", new InfoCommand("info"));
-        commandMap.put("show", new ShowCommand("show"));
-        commandMap.put("insert", new InsertCommand("insert"));
-        commandMap.put("update", new UpdateCommand("update"));
-        commandMap.put("remove_key", new RemoveKeyCommand("remove_key"));
-        commandMap.put("clear", new ClearCommand("clear"));
-        //save --- FORBIDDEN!
-        commandMap.put("execute_script", new ExecuteScriptCommand("execute_script"));
-        commandMap.put("exit", new ExitCommand("exit"));
-        commandMap.put("history", new HistoryCommand("history"));
-        commandMap.put("replace_if_greater", new ReplaceIfGreaterCommand("replace_if_greater"));
-        commandMap.put("remove_lower_key", new RemoveLowerKeyCommand("remove_key_command"));
-        commandMap.put("group_counting_by_length", new GroupCountingByLengthCommand("group_counting_by_length"));
-        commandMap.put("count_less_than_length", new CountLessThenLengthCommand("count_less_than_length"));
-        commandMap.put("filter_by_mpaa_rating", new FilterByMpaaRatingCommand("filter_by_mpaa_rating"));
+
+        CommandFiller.fillCommandMap();
+
+
     }
 
-    void parseCommand(String inputLine) throws CommandException {
+    public void parseCommand(String inputLine) throws CommandException {
         String[] operands = inputLine.trim().split("\\s+", 2);
         if (operands.length == 0) {
             throw new UndefinedCommandException("");
@@ -63,12 +50,12 @@ public class ClientExecutor {
         }
     }
 
-    private void executeCommand(String commandName, String[] args) throws CommandException {
-        Command command = commandMap.get(commandName);
+    public void executeCommand(String commandName, String[] args) throws CommandException {
+        Command command = commandMap.get(commandName).getCommand();
         if (command == null) {
             throw new UndefinedCommandException(commandName);
         }
-        command.setArgs(clientINFO, args);
+        command.setScriptArgs(clientINFO, args);
         request = RequestBuilder.createNewRequest()
                 .setRequestType(Request.RequestType.EXECUTE_COMMAND)
                 .setCommandName(commandName)
@@ -76,10 +63,38 @@ public class ClientExecutor {
         command.buildRequest(request);
     }
 
-    public HashMap<String,Command> getCommandMap() {
+    public HashMap<String,CommandContainer> getCommandMap() {
         return commandMap;
     }
     public Request getRequest() {
         return request;
+    }
+
+
+    public static class CommandContainer {
+        private final Command command;
+        private final Command.CommandType commandType;
+        private final String paramName;
+        private final String example;
+
+        public CommandContainer(Command command, Command.CommandType commandType, String paramName, String example) {
+            this.command = command;
+            this.commandType = commandType;
+            this.paramName = paramName;
+            this.example = example;
+        }
+
+        public Command getCommand() {
+            return command;
+        }
+        public Command.CommandType getCommandType() {
+            return commandType;
+        }
+        public String getParamName() {
+            return paramName;
+        }
+        public String getExample() {
+            return example;
+        }
     }
 }

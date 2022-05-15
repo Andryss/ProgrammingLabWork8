@@ -18,7 +18,7 @@ public class Movie implements Comparable<Movie>, Serializable, Cloneable {
     /**
      * Identical number (must be more than 0 and unique, generates automatically)
      */
-    private final long id;
+    private long id;
     /**
      * Name of movie (can't be null, String can't be empty)
      */
@@ -68,6 +68,10 @@ public class Movie implements Comparable<Movie>, Serializable, Cloneable {
 
     public void setOwner(String owner) {
         this.owner = owner;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     /**

@@ -2,7 +2,7 @@ package general.commands;
 
 import general.Request;
 import general.Response;
-import general.ServerINFO;
+import general.ServerContext;
 
 /**
  * Command, which adds new element with given key
@@ -10,13 +10,13 @@ import general.ServerINFO;
  */
 public class InsertCommand extends ElementCommand {
 
-    @ParseCommand(name = "insert", example = "insert 5555")
+    @ParseCommand(name = "insert", type = CommandType.MOVIE_KEY_PARAM, paramName = "key to insert", example = "insert 5555")
     public InsertCommand(String commandName) {
         super(commandName);
     }
 
     @Override
-    public void execute(ServerINFO server) throws CommandException {
+    public void execute(ServerContext server) throws CommandException {
         try {
             server.putMovie(key, readMovie);
         } catch (IllegalAccessException e) {
@@ -26,7 +26,7 @@ public class InsertCommand extends ElementCommand {
     }
 
     @Override
-    protected void checkElement(Response response) throws BadArgumentsException {
+    public void checkElement(Response response) throws BadArgumentsException {
         if (response.getResponseType() == Response.ResponseType.CHECKING_FAILED ||
                 response.getResponseType() == Response.ResponseType.USER_LIMIT_EXCEEDED) {
             throw new BadArgumentsException(getCommandName(), response.getMessage());

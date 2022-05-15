@@ -1,8 +1,8 @@
 package general.commands;
 
-import general.ClientINFO;
+import general.ScriptContext;
 import general.element.Movie;
-import general.ServerINFO;
+import general.ServerContext;
 
 import java.util.Hashtable;
 
@@ -12,13 +12,13 @@ import java.util.Hashtable;
  */
 public class InfoCommand extends NameableCommand {
 
-    @ParseCommand(name = "info", example = "info")
+    @ParseCommand(name = "info", type = CommandType.NO_PARAMS, paramName = "", example = "info")
     public InfoCommand(String commandName) {
         super(commandName);
     }
 
     @Override
-    public void execute(ServerINFO server) throws CommandException {
+    public void execute(ServerContext server) throws CommandException {
         Hashtable<Integer, Movie> collection = server.getMovieCollection();
         server.getResponse()
                 .addMessage("Collection type: " + collection.getClass().getName())
@@ -26,7 +26,7 @@ public class InfoCommand extends NameableCommand {
     }
 
     @Override
-    public void setArgs(ClientINFO client, String... args) throws BadArgumentsException {
+    public void setScriptArgs(ScriptContext script, String... args) throws BadArgumentsException {
         if (args.length > 0) {
             throw new BadArgumentsCountException(getCommandName());
         }

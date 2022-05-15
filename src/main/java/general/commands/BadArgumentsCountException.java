@@ -30,6 +30,6 @@ public class BadArgumentsCountException extends BadArgumentsException {
     @Override
     public String getMessage() {
         return "ERROR: amount of arguments for command \"" + getCommand() + "\" must equals " + requiredCount +
-                " (example: \"" + getExamples().get(getCommand()) + "\")";
+                " (example: \"" + getExample(getCommand()) + "\")";
     }
 }

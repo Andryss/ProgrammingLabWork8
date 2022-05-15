@@ -1,5 +1,11 @@
 package client;
 
+import client.controllers.MainController;
+import javafx.scene.control.TextArea;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+
 import java.io.PrintStream;
 import java.util.Scanner;
 
@@ -9,8 +15,9 @@ import java.util.Scanner;
  */
 public class ClientController {
     private static final ClientController instance = new ClientController();
-    private static final Scanner reader = new Scanner(System.in);
-    private static final PrintStream writer = System.out;
+    private final Scanner reader = new Scanner(System.in);
+    private TextFlow textFlow;
+    void setTextFlow(TextFlow textFlow) {this.textFlow = textFlow;}
 
     private ClientController() {}
 
@@ -19,10 +26,10 @@ public class ClientController {
     }
 
     void initialize() {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> System.out.println("\u001B[36m" + "THANK YOU for choosing our app to work with collections.\n" +
-                "Developers are searching for the best realizations. Have a nice day :)" + "\u001B[0m")));
-        println("\u001B[36m" + "Hi! This is a simple client-server program for working with collection.");
-        println("I'm waiting for your commands (type \"help\" for list of available commands)." + "\u001B[0m");
+        Text text = new Text("Hi! This is a simple client-server program for working with collection.\n" +
+                "I'm waiting for your commands (type \"help\" for list of available commands).\n");
+        text.setStyle("-fx-fill: CYAN");
+        print0(text);
     }
 
     public String readLine() {
@@ -33,17 +40,24 @@ public class ClientController {
         return String.valueOf(System.console().readPassword());
     }
 
+    private void print0(Text text) {
+        textFlow.getChildren().add(text);
+    }
     public void println(String line) {
-        writer.println(line);
+        print0(new Text(line + "\n"));
     }
     public void print(String line) {
-        writer.print(line);
+        print0(new Text(line));
     }
     public void printlnGood(String line) {
-        writer.println("\u001B[32m" + line + "\u001B[0m");
+        Text text = new Text(line + "\n");
+        text.setStyle("-fx-fill: GREEN");
+        print0(text);
     }
     public void printlnErr(String line) {
-        writer.println("\u001B[31m" + line + "\u001B[0m");
+        Text text = new Text(line + "\n");
+        text.setStyle("-fx-fill: RED");
+        print0(text);
     }
 
     String readLogin() {

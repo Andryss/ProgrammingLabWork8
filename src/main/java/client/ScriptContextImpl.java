@@ -2,16 +2,16 @@ package client;
 
 import client.file.FileController;
 import client.file.FileExecutor;
-import general.ClientINFO;
+import general.ScriptContext;
 import general.Request;
 import general.Response;
 
 import java.io.IOException;
 
 /**
- * @see ClientINFO
+ * @see ScriptContext
  */
-public class ClientINFOImpl implements ClientINFO {
+public class ScriptContextImpl implements ScriptContext {
     protected FileExecutor caller;
 
     @Override
@@ -33,20 +33,12 @@ public class ClientINFOImpl implements ClientINFO {
     }
 
     @Override
-    public void println(String line) {
-        ClientController.getInstance().println(line);
-    }
-    @Override
-    public void print(String line) {
-        ClientController.getInstance().print(line);
-    }
-    @Override
     public String nextLine() {
         return ClientController.getInstance().readLine();
     }
 
 
-    public static class ClientINFOFromFileImpl extends ClientINFOImpl {
+    public static class ClientINFOFromFileImpl extends ScriptContextImpl {
         private final FileController controller;
 
         public ClientINFOFromFileImpl(FileController controller, FileExecutor caller) {
@@ -54,14 +46,6 @@ public class ClientINFOImpl implements ClientINFO {
             this.caller = caller;
         }
 
-        @Override
-        public void println(String line) {
-            // not today
-        }
-        @Override
-        public void print(String line) {
-            // not today
-        }
         @Override
         public String nextLine() {
             return controller.readLine();

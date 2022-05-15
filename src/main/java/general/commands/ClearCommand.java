@@ -1,7 +1,7 @@
 package general.commands;
 
-import general.ClientINFO;
-import general.ServerINFO;
+import general.ScriptContext;
+import general.ServerContext;
 
 /**
  * Command, which clears the collection
@@ -9,13 +9,13 @@ import general.ServerINFO;
  */
 public class ClearCommand extends NameableCommand {
 
-    @ParseCommand(name = "clear", example = "clear")
+    @ParseCommand(name = "clear", type = CommandType.NO_PARAMS, paramName = "", example = "clear")
     public ClearCommand(String commandName) {
         super(commandName);
     }
 
     @Override
-    public void execute(ServerINFO server) throws CommandException {
+    public void execute(ServerContext server) throws CommandException {
         try {
             server.removeAllMovies();
         } catch (IllegalAccessException e) {
@@ -25,7 +25,7 @@ public class ClearCommand extends NameableCommand {
     }
 
     @Override
-    public void setArgs(ClientINFO client, String... args) throws BadArgumentsException {
+    public void setScriptArgs(ScriptContext script, String... args) throws BadArgumentsException {
         if (args.length > 0) {
             throw new BadArgumentsCountException(getCommandName());
         }

@@ -1,11 +1,11 @@
 package client.file;
 
 import client.ClientExecutor;
-import client.ClientINFOImpl;
-import general.ClientINFO;
+import client.ScriptContextImpl;
+import general.ScriptContext;
 import general.Request;
 import general.commands.*;
-import general.ServerINFO;
+import general.ServerContext;
 
 import java.util.HashMap;
 import java.util.NoSuchElementException;
@@ -18,7 +18,7 @@ public class FileExecutor {
     @SuppressWarnings("unchecked")
     private final HashMap<String, Command> commandMap = (HashMap<String, Command>) ClientExecutor.getInstance().getCommandMap().clone();
     private final FileController controller;
-    private final ClientINFO clientINFO;
+    private final ScriptContext clientINFO;
     private final FileExecutor caller;
     private final Request request;
     private int commandNumber = 1;
@@ -27,19 +27,19 @@ public class FileExecutor {
         fillCommandMap();
         this.caller = caller;
         this.controller = fileController;
-        this.clientINFO = new ClientINFOImpl.ClientINFOFromFileImpl(this.controller, caller);
+        this.clientINFO = new ScriptContextImpl.ClientINFOFromFileImpl(this.controller, caller);
         this.request = request;
     }
 
     private void fillCommandMap() {
         commandMap.put("exit", new NameableCommand("exit") {
             @Override
-            public void execute(ServerINFO server) throws CommandException {
+            public void execute(ServerContext server) throws CommandException {
                 throw new BadArgumentsException(getCommandName(), "do you really want \"exit\" in script? Sorry, not today");
             }
 
             @Override
-            public void setArgs(ClientINFO client, String... args) throws BadArgumentsException {
+            public void setScriptArgs(ScriptContext script, String... args) throws BadArgumentsException {
                 if (args.length > 0) {
                     throw new BadArgumentsCountException(getCommandName());
                 }
@@ -67,7 +67,7 @@ public class FileExecutor {
             throw new UndefinedCommandException(commandName);
         }
         try {
-            command.setArgs(clientINFO, args);
+            command.setScriptArgs(clientINFO, args);
         } catch (NoSuchElementException e) {
             throw new CommandException(commandName, "File ended before command \"" + commandName + "\" completed");
         }

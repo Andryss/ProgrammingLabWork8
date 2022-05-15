@@ -19,6 +19,7 @@ import java.util.Properties;
 public class Application extends javafx.application.Application {
     private Stage stage;
     private final EnumMap<AppScene,Scene> sceneMap = new EnumMap<>(AppScene.class);
+    private MainController mainController;
 
     public static void main(String[] args) {
         launch();
@@ -27,7 +28,6 @@ public class Application extends javafx.application.Application {
     @Override
     public void start(Stage stage) {
         try {
-            initializations();
 
             this.stage = stage;
             stage.setTitle("Cum");
@@ -42,7 +42,12 @@ public class Application extends javafx.application.Application {
 
             loader = new FXMLLoader(Application.class.getResource("client-main-scene.fxml"));
             sceneMap.put(AppScene.MAIN_SCENE, new Scene(loader.load()));
-            ((MainController) loader.getController()).setLogic(this);
+            mainController = loader.getController();
+            mainController.setLogic(this);
+
+            initializations();
+
+            mainController.initialize();
 
             setScene(AppScene.AUTHORIZATION_SCENE);
             stage.show();
@@ -61,11 +66,14 @@ public class Application extends javafx.application.Application {
 
     private void initializations() throws IOException, CommandException, ClassNotFoundException {
         Properties properties = readProperties();
+        ClientController.getInstance().setTextFlow(mainController.getConsoleTextArea());
 
         ClientConnector.getInstance().setProperties(properties);
         ClientExecutor.getInstance().initialize();
 
         ClientConnector.getInstance().initialize();
+
+        ClientController.getInstance().initialize();
     }
 
     private Properties readProperties() throws IOException {
@@ -86,6 +94,10 @@ public class Application extends javafx.application.Application {
 
     public void setScene(AppScene appScene) {
         stage.setScene(sceneMap.get(appScene));
+    }
+
+    public MainController getMainController() {
+        return mainController;
     }
 
     public enum AppScene {

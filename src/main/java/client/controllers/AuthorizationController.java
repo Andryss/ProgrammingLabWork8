@@ -90,6 +90,7 @@ public class AuthorizationController {
                 successfulLabel.setText(response.getMessage() + " (you will be redirected to the main page in 5 seconds)");
                 PauseTransition pause = new PauseTransition(Duration.seconds(5));
                 pause.setOnFinished(e -> {
+                    application.getMainController().updateMovieTable(response.getHashtable());
                     application.setScene(Application.AppScene.MAIN_SCENE);
                     clear();
                 });

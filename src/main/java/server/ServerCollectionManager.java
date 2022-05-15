@@ -79,6 +79,7 @@ public class ServerCollectionManager {
     private PreparedStatement getUserStatement;
     private PreparedStatement insertUserStatement;
     private PreparedStatement removeUserStatement;
+    private PreparedStatement getMovieStatement;
     private PreparedStatement insertMovieStatement;
     private PreparedStatement updateMovieStatement;
     private PreparedStatement removeMovieStatement;
@@ -92,6 +93,7 @@ public class ServerCollectionManager {
                 "user_password" +
                 ") VALUES (?,?)", usersTable));
         removeUserStatement = connection.prepareStatement(String.format("DELETE FROM %s WHERE user_login=?", usersTable));
+        getMovieStatement = connection.prepareStatement(String.format("SELECT * FROM %s WHERE movie_key=?", movieTable));
         insertMovieStatement = connection.prepareStatement(String.format("INSERT INTO %s (" +
                 "user_id," +
                 "movie_key," +
@@ -252,6 +254,22 @@ public class ServerCollectionManager {
                 .count();
     }
 
+    // TODO: check method working
+    private long getMovieId(Integer key) {
+        readWriteLock.lock();
+        try {
+            getMovieStatement.setInt(1, key);
+            try (ResultSet resultSet = getMovieStatement.executeQuery()) {
+                return resultSet.getLong("movie_id");
+            }
+        } catch (SQLException e) {
+            ServerController.getInstance().error(e.getMessage());
+            return -1;
+        } finally {
+            readWriteLock.unlock();
+        }
+    }
+
     public Movie putMovie(Integer key, Movie movie, UserProfile userProfile) throws IllegalAccessException {
         readWriteLock.lock();
         try {
@@ -286,6 +304,7 @@ public class ServerCollectionManager {
             insertMovieStatement.executeUpdate();
 
             movie.setOwner(userProfile.getName());
+            movie.setId(getMovieId(key));
             return movieCollection.put(key, movie);
         } catch (SQLException e) {
             ServerController.getInstance().error(e.getMessage());
@@ -330,6 +349,7 @@ public class ServerCollectionManager {
             updateMovieStatement.executeUpdate();
 
             movie.setOwner(movieCollection.get(key).getOwner());
+            movie.setId(movieCollection.get(key).getId());
             return movieCollection.put(key, movie);
         } catch (SQLException e) {
             ServerController.getInstance().error(e.getMessage());
@@ -378,9 +398,9 @@ public class ServerCollectionManager {
 
             removeAllMoviesStatement.setLong(1, id);
             removeAllMoviesStatement.executeUpdate();
-            @SuppressWarnings("unchecked")
-            Hashtable<Integer,Movie> hashtable = (Hashtable<Integer,Movie>) movieCollection.clone();
-            hashtable.entrySet().stream()
+
+            //noinspection unchecked
+            ((Hashtable<Integer,Movie>) movieCollection.clone()).entrySet().stream()
                     .filter(e -> e.getValue().getOwner().equals(userProfile.getName()))
                     .map(Map.Entry::getKey)
                     .forEach(movieCollection::remove);

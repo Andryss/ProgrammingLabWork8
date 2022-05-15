@@ -1,8 +1,8 @@
 package general.commands;
 
-import general.ClientINFO;
+import general.ScriptContext;
 import general.element.Movie;
-import general.ServerINFO;
+import general.ServerContext;
 
 import java.util.stream.Collectors;
 
@@ -12,13 +12,13 @@ import java.util.stream.Collectors;
  */
 public class GroupCountingByLengthCommand extends NameableCommand {
 
-    @ParseCommand(name = "group_counting_by_length", example = "group_counting_by_length")
+    @ParseCommand(name = "group_counting_by_length", type = CommandType.NO_PARAMS, paramName = "", example = "group_counting_by_length")
     public GroupCountingByLengthCommand(String commandName) {
         super(commandName);
     }
 
     @Override
-    public void execute(ServerINFO server) throws CommandException {
+    public void execute(ServerContext server) throws CommandException {
         server.getResponse().addMessage("*groups by length*");
         server.getMovieCollection().values().stream()
                 .collect(Collectors.groupingBy(Movie::getLength, Collectors.counting()))
@@ -26,7 +26,7 @@ public class GroupCountingByLengthCommand extends NameableCommand {
     }
 
     @Override
-    public void setArgs(ClientINFO client, String... args) throws BadArgumentsException {
+    public void setScriptArgs(ScriptContext script, String... args) throws BadArgumentsException {
         if (args.length > 0) {
             throw new BadArgumentsCountException(getCommandName(), 0);
         }

@@ -1,7 +1,7 @@
 package general.commands;
 
-import general.ClientINFO;
-import general.ServerINFO;
+import general.ScriptContext;
+import general.ServerContext;
 
 /**
  * Command, which prints a list of available commands
@@ -10,13 +10,13 @@ import general.ServerINFO;
  */
 public class HelpCommand extends NameableCommand {
 
-    @ParseCommand(name = "help", example = "help")
+    @ParseCommand(name = "help", type = CommandType.NO_PARAMS, paramName = "", example = "help")
     public HelpCommand(String commandName) {
         super(commandName);
     }
 
     @Override
-    public void execute(ServerINFO serverINFO) {
+    public void execute(ServerContext serverINFO) {
         serverINFO.getResponse()
                 .addMessage("*List of available commands*")
                 .addMessage("help : print a list of available commands")
@@ -37,7 +37,7 @@ public class HelpCommand extends NameableCommand {
     }
 
     @Override
-    public void setArgs(ClientINFO client, String... args) throws BadArgumentsException {
+    public void setScriptArgs(ScriptContext script, String... args) throws BadArgumentsException {
         if (args.length > 0) {
             throw new BadArgumentsCountException(getCommandName());
         }

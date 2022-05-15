@@ -2,7 +2,7 @@ package general.commands;
 
 import general.Request;
 import general.Response;
-import general.ServerINFO;
+import general.ServerContext;
 
 /**
  * Command, which updates an element with given id
@@ -10,13 +10,13 @@ import general.ServerINFO;
  */
 public class UpdateCommand extends ElementCommand {
 
-    @ParseCommand(name = "update", example = "update 30")
+    @ParseCommand(name = "update", type = CommandType.MOVIE_KEY_PARAM, paramName = "key to update", example = "update 30")
     public UpdateCommand(String commandName) {
         super(commandName);
     }
 
     @Override
-    public void execute(ServerINFO server) throws CommandException {
+    public void execute(ServerContext server) throws CommandException {
         try {
             server.updateMovie(key, readMovie);
         } catch (IllegalAccessException e) {
@@ -26,7 +26,7 @@ public class UpdateCommand extends ElementCommand {
     }
 
     @Override
-    protected void checkElement(Response response) throws BadArgumentsException {
+    public void checkElement(Response response) throws BadArgumentsException {
         if (response.getResponseType() != Response.ResponseType.CHECKING_SUCCESSFUL) {
             throw new BadArgumentsException(getCommandName(), response.getMessage());
         }

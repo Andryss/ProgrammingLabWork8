@@ -1,8 +1,10 @@
 package server;
 
 import general.Response;
+import general.element.Movie;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 /**
  * @see Response
@@ -10,6 +12,7 @@ import java.util.ArrayList;
 public class ResponseImpl implements Response {
     private ResponseType responseType;
     private ArrayList<String> message;
+    private Hashtable<Integer,Movie> hashtable;
     private static final Response emptyResponse = ResponseBuilder.createNewResponse()
             .setResponseType(ResponseType.CONNECTION_SUCCESSFUL)
             .addMessage("*empty response*")
@@ -19,6 +22,9 @@ public class ResponseImpl implements Response {
 
     public void setResponseType(ResponseType responseType) {
         this.responseType = responseType;
+    }
+    public void setHashtable(Hashtable<Integer, Movie> hashtable) {
+        this.hashtable = hashtable;
     }
 
     @Override
@@ -41,6 +47,10 @@ public class ResponseImpl implements Response {
         StringBuilder builder = new StringBuilder();
         message.forEach(builder::append);
         return builder.toString();
+    }
+    @Override
+    public Hashtable<Integer, Movie> getHashtable() {
+        return hashtable;
     }
 
     public static Response getEmptyResponse() {

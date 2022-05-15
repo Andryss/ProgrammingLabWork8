@@ -135,7 +135,7 @@ public class ClientManager {
     }
 
     private void executionStep() {
-        ClientController.getInstance().initialize();
+        //ClientController.getInstance().initialize();
 
         //noinspection InfiniteLoopStatement
         while (true) {

@@ -13,5 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ParseCommand {
     String name();
+    Command.CommandType type();
+    String paramName();
     String example();
 }
