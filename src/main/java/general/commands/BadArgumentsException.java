@@ -30,7 +30,7 @@ public class BadArgumentsException extends CommandException {
     }
 
     public static String getExample(String command) {
-        return ClientExecutor.getInstance().getCommandMap().get(command).getExample();
+        return ClientExecutor.getInstance().getExample(command);
     }
 
     @Override

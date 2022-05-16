@@ -23,13 +23,39 @@
       <content>
             <StackPane fx:id="consoleStackPane">
                <children>
-                  <ScrollPane fx:id="consoleMovieKeyParamPane" disable="true">
+                  <ScrollPane fx:id="consoleOneParamPane" prefHeight="200.0" prefWidth="200.0">
+                    <content>
+                        <BorderPane>
+                           <bottom>
+                              <HBox BorderPane.alignment="CENTER">
+                                 <children>
+                                    <Button mnemonicParsing="false" onMouseClicked="#returnToTheMainPaneMouseClicked" text="Return" />
+                                    <Button mnemonicParsing="false" text="Complete" />
+                                 </children>
+                              </HBox>
+                           </bottom>
+                           <center>
+                              <VBox BorderPane.alignment="CENTER">
+                                 <children>
+                                    <FlowPane hgap="20.0">
+                                       <children>
+                                          <Label minWidth="200.0" text="Key to smth:" />
+                                          <TextField fx:id="oneParamTextField" />
+                                       </children>
+                                    </FlowPane>
+                                 </children>
+                              </VBox>
+                           </center>
+                        </BorderPane>
+                    </content>
+                  </ScrollPane>
+                  <ScrollPane fx:id="consoleMovieKeyParamPane">
                      <content>
                         <BorderPane>
                            <bottom>
                               <HBox BorderPane.alignment="CENTER">
                                  <children>
-                                    <Button mnemonicParsing="false" text="Return" />
+                                    <Button mnemonicParsing="false" onMouseClicked="#returnToTheMainPaneMouseClicked" text="Return" />
                                     <Button mnemonicParsing="false" text="Complete" />
                                  </children>
                               </HBox>
@@ -38,7 +64,7 @@
                               <FlowPane hgap="20.0" BorderPane.alignment="CENTER">
                                  <children>
                                     <Label minWidth="200.0" text="Movie key:" />
-                                    <TextField />
+                                    <TextField fx:id="movieKeyTextField" />
                                  </children>
                               </FlowPane>
                            </top>
@@ -60,19 +86,19 @@
                                     <FlowPane hgap="20.0">
                                        <children>
                                           <Label minWidth="200.0" text="Movie name:" />
-                                          <TextField />
+                                          <TextField fx:id="movieNameTextField" />
                                        </children>
                                     </FlowPane>
                                     <FlowPane hgap="20.0">
                                        <children>
                                           <Label minWidth="200.0" text="Coordinates X:" />
-                                          <TextField />
+                                          <TextField fx:id="coordinatesXTextField" />
                                        </children>
                                     </FlowPane>
                                     <FlowPane hgap="20.0">
                                        <children>
                                           <Label minWidth="200.0" text="Coordinates Y:" />
-                                          <TextField />
+                                          <TextField fx:id="coordinatesYTextField" />
                                        </children>
                                     </FlowPane>
                                     <FlowPane hgap="20.0">
@@ -84,43 +110,43 @@
                                     <FlowPane hgap="20.0">
                                        <children>
                                           <Label minWidth="200.0" text="Movie oscars count:" />
-                                          <TextField />
+                                          <TextField fx:id="movieOscarsCountTextField" />
                                        </children>
                                     </FlowPane>
                                     <FlowPane hgap="20.0">
                                        <children>
                                           <Label minWidth="200.0" text="Movie length:" />
-                                          <TextField />
+                                          <TextField fx:id="movieLengthTextField" />
                                        </children>
                                     </FlowPane>
                                     <FlowPane hgap="20.0">
                                        <children>
                                           <Label minWidth="200.0" text="Movie genre:" />
-                                          <ChoiceBox prefWidth="150.0" />
+                                          <ChoiceBox fx:id="movieGenreChoiceBox" prefWidth="150.0" />
                                        </children>
                                     </FlowPane>
                                     <FlowPane hgap="20.0">
                                        <children>
                                           <Label minWidth="200.0" text="Movie mpaa rating:" />
-                                          <ChoiceBox prefWidth="150.0" />
+                                          <ChoiceBox fx:id="movieMpaaRatingChoiceBox" prefWidth="150.0" />
                                        </children>
                                     </FlowPane>
                                     <FlowPane hgap="20.0">
                                        <children>
                                           <Label minWidth="200.0" text="Screenwriter name:" />
-                                          <TextField />
+                                          <TextField fx:id="screenwriterNameTextField" />
                                        </children>
                                     </FlowPane>
                                     <FlowPane hgap="20.0">
                                        <children>
                                           <Label minWidth="200.0" text="Screenwriter birthday:" />
-                                          <TextField />
+                                          <TextField fx:id="screenwriterBirthdayTextField" />
                                        </children>
                                     </FlowPane>
                                     <FlowPane hgap="20.0">
                                        <children>
                                           <Label minWidth="200.0" text="Screenwriter hair color:" />
-                                          <ChoiceBox prefWidth="150.0" />
+                                          <ChoiceBox fx:id="screenwriterHairColorChoiceBox" prefWidth="150.0" />
                                        </children>
                                     </FlowPane>
                                  </children>
@@ -128,32 +154,6 @@
                            </center>
                         </BorderPane>
                      </content>
-                  </ScrollPane>
-                  <ScrollPane fx:id="consoleOneParamPane" disable="true" prefHeight="200.0" prefWidth="200.0">
-                    <content>
-                        <BorderPane>
-                           <bottom>
-                              <HBox BorderPane.alignment="CENTER">
-                                 <children>
-                                    <Button mnemonicParsing="false" text="Return" />
-                                    <Button mnemonicParsing="false" text="Complete" />
-                                 </children>
-                              </HBox>
-                           </bottom>
-                           <center>
-                              <VBox BorderPane.alignment="CENTER">
-                                 <children>
-                                    <FlowPane hgap="20.0">
-                                       <children>
-                                          <Label minWidth="200.0" text="Key to smth:" />
-                                          <TextField />
-                                       </children>
-                                    </FlowPane>
-                                 </children>
-                              </VBox>
-                           </center>
-                        </BorderPane>
-                    </content>
                   </ScrollPane>
                   <BorderPane fx:id="consoleMainPane">
                      <center>
@@ -169,7 +169,7 @@
                               <ComboBox fx:id="commandComboBox" maxWidth="1.7976931348623157E308" promptText="Choose the command you want to send" />
                            </center>
                            <right>
-                              <Button fx:id="sendCommandButton" mnemonicParsing="false" text="Send" BorderPane.alignment="CENTER" />
+                              <Button fx:id="sendCommandButton" mnemonicParsing="false" onMouseClicked="#sendCommandMouseClicked" text="Send" BorderPane.alignment="CENTER" />
                            </right>
                         </BorderPane>
                      </bottom>

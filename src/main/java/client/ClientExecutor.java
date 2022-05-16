@@ -17,6 +17,7 @@ import java.util.*;
 public class ClientExecutor {
     private static final ClientExecutor instance = new ClientExecutor();
     private final HashMap<String, CommandContainer> commandMap = new HashMap<>();
+    private final CommandContainer emptyContainer = new CommandContainer();
     private final ScriptContext clientINFO = new ScriptContextImpl();
     private Request request;
 
@@ -66,16 +67,27 @@ public class ClientExecutor {
     public HashMap<String,CommandContainer> getCommandMap() {
         return commandMap;
     }
+    public boolean hasCommand(String commandName) {
+        return commandMap.containsKey(commandName);
+    }
+    public Command.CommandType getCommandType(String commandName) {
+        return commandMap.getOrDefault(commandName, emptyContainer).getCommandType();
+    }
+    public String getExample(String commandName) {
+        return commandMap.getOrDefault(commandName, emptyContainer).getExample();
+    }
     public Request getRequest() {
         return request;
     }
 
 
     public static class CommandContainer {
-        private final Command command;
-        private final Command.CommandType commandType;
-        private final String paramName;
-        private final String example;
+        private Command command;
+        private Command.CommandType commandType;
+        private String paramName;
+        private String example;
+
+        private CommandContainer() {}
 
         public CommandContainer(Command command, Command.CommandType commandType, String paramName, String example) {
             this.command = command;
