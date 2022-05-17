@@ -31,7 +31,7 @@ public class InsertCommand extends ElementCommand {
                 response.getResponseType() == Response.ResponseType.USER_LIMIT_EXCEEDED) {
             throw new BadArgumentsException(getCommandName(), response.getMessage());
         } else if (response.getResponseType() != Response.ResponseType.ELEMENT_NOT_PRESENTED) {
-            throw new BadArgumentsException(getCommandName(), "Movie with key \"" + key + "\" already exists");
+            throw new BadArgumentsException(getCommandName(), "Movie with given key already exists");
         }
     }
 

@@ -80,7 +80,7 @@ public class Movie implements Comparable<Movie>, Serializable, Cloneable {
      */
     @FieldSetter(fieldName = "name", example = "for example \"Terminator\"", index = 0)
     public void setName(String name) throws FieldException {
-        if (name == null || name.equals("null")) {
+        if (name == null || name.equals("null") || name.length() == 0) {
             throw new FieldException(null, "Field can't be null, String can't be empty");
         }
         if (name.length() > 20) {
@@ -138,7 +138,7 @@ public class Movie implements Comparable<Movie>, Serializable, Cloneable {
      */
     @FieldSetter(fieldName = "genre", example = "it must be one of: [ACTION, WESTERN, DRAMA, COMEDY, HORROR]", index = 5)
     public void setGenre(String genre) throws FieldException {
-        if (genre == null) {
+        if (genre == null || genre.equals("null")) {
             this.genre = null;
             return;
         }

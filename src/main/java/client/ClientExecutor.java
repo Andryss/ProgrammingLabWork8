@@ -18,7 +18,6 @@ public class ClientExecutor {
     private static final ClientExecutor instance = new ClientExecutor();
     private final HashMap<String, CommandContainer> commandMap = new HashMap<>();
     private final CommandContainer emptyContainer = new CommandContainer();
-    private final ScriptContext clientINFO = new ScriptContextImpl();
     private Request request;
 
     private ClientExecutor() {}
@@ -39,24 +38,11 @@ public class ClientExecutor {
 
     }
 
-    public void parseCommand(String inputLine) throws CommandException {
-        String[] operands = inputLine.trim().split("\\s+", 2);
-        if (operands.length == 0) {
-            throw new UndefinedCommandException("");
-        } else if (operands.length == 1) {
-            executeCommand(operands[0], new String[0]);
-        } else {
-            String[] args = operands[1].split("\\s+");
-            executeCommand(operands[0], args);
-        }
-    }
-
-    public void executeCommand(String commandName, String[] args) throws CommandException {
+    public void executeCommand(String commandName) throws CommandException {
         Command command = commandMap.get(commandName).getCommand();
         if (command == null) {
             throw new UndefinedCommandException(commandName);
         }
-        command.setScriptArgs(clientINFO, args);
         request = RequestBuilder.createNewRequest()
                 .setRequestType(Request.RequestType.EXECUTE_COMMAND)
                 .setCommandName(commandName)
@@ -70,6 +56,9 @@ public class ClientExecutor {
     public boolean hasCommand(String commandName) {
         return commandMap.containsKey(commandName);
     }
+    public CommandContainer getCommandContainer(String commandName) {
+        return commandMap.getOrDefault(commandName, emptyContainer);
+    }
     public Command.CommandType getCommandType(String commandName) {
         return commandMap.getOrDefault(commandName, emptyContainer).getCommandType();
     }
@@ -82,6 +71,7 @@ public class ClientExecutor {
 
 
     public static class CommandContainer {
+        private String commandName;
         private Command command;
         private Command.CommandType commandType;
         private String paramName;
@@ -89,13 +79,17 @@ public class ClientExecutor {
 
         private CommandContainer() {}
 
-        public CommandContainer(Command command, Command.CommandType commandType, String paramName, String example) {
+        public CommandContainer(String commandName, Command command, Command.CommandType commandType, String paramName, String example) {
+            this.commandName = commandName;
             this.command = command;
             this.commandType = commandType;
             this.paramName = paramName;
             this.example = example;
         }
 
+        public String getCommandName() {
+            return commandName;
+        }
         public Command getCommand() {
             return command;
         }

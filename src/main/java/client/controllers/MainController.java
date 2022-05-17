@@ -1,12 +1,15 @@
 package client.controllers;
 
-import client.Application;
-import client.ClientConnector;
-import client.ClientController;
-import client.ClientExecutor;
+import client.*;
+import general.ClientContext;
+import general.Request;
 import general.Response;
+import general.commands.BadArgumentsException;
 import general.commands.Command;
 import general.commands.CommandException;
+import general.commands.ElementCommand;
+import general.element.Coordinates;
+import general.element.FieldException;
 import general.element.Movie;
 import general.element.Person;
 import javafx.beans.property.SimpleFloatProperty;
@@ -25,10 +28,7 @@ import javafx.scene.text.TextFlow;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.Optional;
+import java.util.*;
 
 public class MainController {
     private Application application;
@@ -45,6 +45,39 @@ public class MainController {
     @FXML private TextFlow consoleTextFlow;
     @FXML private ComboBox<String> commandComboBox;
 
+    @FXML private Label oneParamLabel;
+    @FXML private TextField oneParamTextField;
+    @FXML private Label oneParamErrLabel;
+    @FXML private Button oneParamConfirmButton;
+
+    @FXML private Label movieKeyLabel;
+    @FXML private TextField movieKeyTextField;
+    @FXML private Label movieKeyErrLabel;
+    @FXML private TextField movieOwnerTextField;
+    @FXML private TextField movieNameTextField;
+    @FXML private Label movieNameErrLabel;
+    @FXML private TextField coordinatesXTextField;
+    @FXML private Label coordinatesXErrLabel;
+    @FXML private TextField coordinatesYTextField;
+    @FXML private Label coordinatesYErrLabel;
+    @FXML private TextField movieCreationDateTextField;
+    @FXML private TextField movieOscarsCountTextField;
+    @FXML private Label movieOscarsCountErrLabel;
+    @FXML private TextField movieLengthTextField;
+    @FXML private Label movieLengthErrLabel;
+    @FXML private ChoiceBox<Movie.MovieGenre> movieGenreChoiceBox;
+    @FXML private Label movieGenreErrLabel;
+    @FXML private ChoiceBox<Movie.MpaaRating> movieMpaaRatingChoiceBox;
+    @FXML private Label movieMpaaRatingErrLabel;
+    @FXML private TextField screenwriterNameTextField;
+    @FXML private Label screenwriterNameErrLabel;
+    @FXML private TextField screenwriterBirthdayTextField;
+    @FXML private Label screenwriterBirthdayErrLabel;
+    @FXML private ChoiceBox<Person.Color> screenwriterHairColorChoiceBox;
+    @FXML private Label screenwriterHairColorErrLabel;
+    @FXML private Button movieKeyParamConfirmButton;
+    @FXML private Label movieKeyParamConfirmErrLabel;
+
     @FXML private TableView<Movie> tableMovieTable;
     @FXML private TableColumn<Movie,String> movieOwnerColumn;
     @FXML private TableColumn<Movie,String> movieNameColumn;
@@ -60,14 +93,27 @@ public class MainController {
     @FXML private TableColumn<Movie,Date> screenwriterBirthdayColumn;
     @FXML private TableColumn<Movie,Person.Color> screenwriterHairColorColumn;
 
-    private String currentCommand;
+    private String currentUserName;
+    private ClientExecutor.CommandContainer currentCommand;
+    private final ClientContextImpl clientContext = new ClientContextImpl();
+    private Integer currentKey;
+    private Movie currentMovie;
+
+    // TODO: add user name setting
+    void setCurrentUserName (String currentUserName) {
+        this.currentUserName = currentUserName;
+        movieOwnerTextField.setText(currentUserName);
+    }
 
     public void initialize() {
         consoleScrollPane.vvalueProperty().bind(consoleTextFlow.heightProperty());
-
         commandComboBox.setItems(FXCollections.observableList(
                 new ArrayList<>(ClientExecutor.getInstance().getCommandMap().keySet())
         ));
+
+        movieGenreChoiceBox.setItems(FXCollections.observableList(Arrays.asList(Movie.MovieGenre.values())));
+        movieMpaaRatingChoiceBox.setItems(FXCollections.observableList(Arrays.asList(Movie.MpaaRating.values())));
+        screenwriterHairColorChoiceBox.setItems(FXCollections.observableList(Arrays.asList(Person.Color.values())));
 
         // TODO: maybe connect it with @FieldSetter
         movieOwnerColumn.setCellValueFactory(new PropertyValueFactory<>("owner"));
@@ -97,45 +143,215 @@ public class MainController {
     }
 
     private void sendCommand() {
-        currentCommand = commandComboBox.getValue();
-        if (!ClientExecutor.getInstance().hasCommand(currentCommand)) {
+        String commandName = commandComboBox.getValue();
+        if (!ClientExecutor.getInstance().hasCommand(commandName)) {
             showWarningWindow("Choose command", "You should choose command to send!");
             return;
         }
-        Command.CommandType currentCommandType = ClientExecutor.getInstance().getCommandType(currentCommand);
+        currentCommand = ClientExecutor.getInstance().getCommandContainer(commandName);
+        Command.CommandType currentCommandType = currentCommand.getCommandType();
         if (currentCommandType == Command.CommandType.NO_PARAMS) {
             noParamCommand();
         } else if (currentCommandType == Command.CommandType.ONE_PARAM) {
-            selectOneParamPane();
+            oneParamCommand();
         } else if (currentCommandType == Command.CommandType.MOVIE_KEY_PARAM) {
-            selectMovieKeyPane();
+            movieKeyParamCommand();
         } else {
             showWarningWindow("Undefined command type", "Undefined type: " + currentCommandType);
         }
     }
 
     private void noParamCommand() {
-        Optional<ButtonType> buttonType = showConfirmWindow("Are you sure?", "Are you sure to send command \"" + currentCommand + "\"");
+        Optional<ButtonType> buttonType = showConfirmWindow("Are you sure?", "Are you sure to send command \"" + currentCommand.getCommandName() + "\"?");
 
         if (buttonType.isPresent() && buttonType.get() == ButtonType.OK) {
-            try {
-                ClientController.getInstance().println(currentCommand);
-                ClientExecutor.getInstance().executeCommand(currentCommand, new String[0]);
-                Response response = ClientConnector.getInstance().sendToServer(ClientExecutor.getInstance().getRequest());
-                if (response.getResponseType() == Response.ResponseType.EXECUTION_SUCCESSFUL) {
-                    ClientController.getInstance().println(response.getMessage());
-                } else if (response.getResponseType() == Response.ResponseType.EXECUTION_FAILED) {
-                    ClientController.getInstance().printlnErr(response.getMessage());
-                } else {
-                    ClientController.getInstance().printlnErr("Server has wrong logic: unexpected \"" +
-                            response.getResponseType() +
-                            "\"");
-                }
-            } catch (SocketTimeoutException e) {
-                ClientController.getInstance().printlnErr("Server isn't responding (try again later)");
-            } catch (IOException | ClassNotFoundException | CommandException e) {
-                ClientController.getInstance().printlnErr(e.getMessage());
+
+            createRequestAndReceiveResponse();
+
+        }
+    }
+
+    private void oneParamCommand() {
+        oneParamLabel.setText("Enter " + currentCommand.getParamName() + ":");
+        selectOneParamPane();
+    }
+
+    @FXML
+    private void oneParamConfirmMouseClicked(MouseEvent mouseEvent) {
+        oneParamConfirm();
+    }
+
+    private void oneParamConfirm() {
+        clientContext.setParam(oneParamTextField.getText());
+        clientContext.setMovie(null);
+        clientContext.setMovieKey(null);
+        try {
+            currentCommand.getCommand().setGUIArgs(clientContext);
+            Optional<ButtonType> buttonType = showConfirmWindow("Are you sure?", "Are you sure to send command \"" + currentCommand.getCommandName() + "\" with given argument?");
+            if (buttonType.isPresent() && buttonType.get() == ButtonType.OK) {
+                createRequestAndReceiveResponse();
+                returnToTheMainPane();
             }
+        } catch (BadArgumentsException e) {
+            oneParamErrLabel.setText(e.getMessage());
+        }
+    }
+
+    private void movieKeyParamCommand() {
+        currentMovie = new Movie();
+        currentMovie.setCoordinates(new Coordinates());
+        currentMovie.setScreenwriter(new Person());
+        movieKeyLabel.setText("Movie " + currentCommand.getParamName() + ":");
+        movieCreationDateTextField.setText(currentMovie.getCreationDate().toString());
+        selectMovieKeyPane();
+    }
+
+    @FXML
+    private void checkMovieKeyMouseClicked(MouseEvent mouseEvent) {
+        checkMovieKey();
+    }
+
+    private void checkMovieKey() {
+        if (checkMovieKeyByType()) {
+            if (currentCommand.getCommand() instanceof ElementCommand) {
+                try {
+                    Response response = ClientConnector.getInstance().sendToServer(RequestBuilder.createNewRequest()
+                            .setRequestType(Request.RequestType.CHECK_ELEMENT)
+                            .setCheckingIndex(currentKey)
+                            .build()
+                    );
+                    ElementCommand elementCommand = (ElementCommand) currentCommand.getCommand();
+                    elementCommand.checkElement(response);
+                    movieKeyErrLabel.setText("OK");
+                } catch (IOException | ClassNotFoundException | BadArgumentsException e) {
+                    movieKeyErrLabel.setText(e.getMessage());
+                }
+            } else {
+                movieKeyErrLabel.setText(currentCommand.getCommandName() + " not extends ElementCommand");
+            }
+        }
+    }
+
+    @FXML
+    private void movieKeyConfirmMouseClicked(MouseEvent mouseEvent) {
+        movieKeyConfirm();
+    }
+
+    private void movieKeyConfirm() {
+        if (checkMovie()) {
+            clientContext.setParam(null);
+            clientContext.setMovie(currentMovie);
+            clientContext.setMovieKey(currentKey);
+            try {
+                currentCommand.getCommand().setGUIArgs(clientContext);
+                Optional<ButtonType> buttonType = showConfirmWindow("Are you sure?", "Are you sure to send command \"" + currentCommand.getCommandName() + "\" with given arguments?");
+                if (buttonType.isPresent() && buttonType.get() == ButtonType.OK) {
+                    createRequestAndReceiveResponse();
+                    returnToTheMainPane();
+                }
+            } catch (BadArgumentsException e) {
+                movieKeyParamConfirmErrLabel.setText(e.getMessage());
+            }
+        }
+    }
+
+    private boolean checkMovieKeyByType() {
+        try {
+            currentKey = Integer.parseInt(movieKeyTextField.getText());
+            return true;
+        } catch (NumberFormatException e) {
+            movieKeyErrLabel.setText("Value must be integer");
+            return false;
+        }
+    }
+
+    private boolean checkMovie() {
+        boolean allOk = checkMovieKeyByType();
+        try {
+            currentMovie.setName(movieNameTextField.getText());
+            movieNameErrLabel.setText("");
+        } catch (FieldException e) {
+            movieNameErrLabel.setText(e.getMessage()); allOk = false;
+        }
+        try {
+            currentMovie.getCoordinates().setX(coordinatesXTextField.getText());
+            coordinatesXErrLabel.setText("");
+        } catch (FieldException e) {
+            coordinatesXErrLabel.setText(e.getMessage()); allOk = false;
+        }
+        try {
+            currentMovie.getCoordinates().setY(coordinatesYTextField.getText());
+            coordinatesYErrLabel.setText("");
+        } catch (FieldException e) {
+            coordinatesYErrLabel.setText(e.getMessage()); allOk = false;
+        }
+        try {
+            currentMovie.setOscarsCount(movieOscarsCountTextField.getText());
+            movieOscarsCountErrLabel.setText("");
+        } catch (FieldException e) {
+            movieOscarsCountErrLabel.setText(e.getMessage()); allOk = false;
+        }
+        try {
+            currentMovie.setLength(movieLengthTextField.getText());
+            movieLengthErrLabel.setText("");
+        } catch (FieldException e) {
+            movieLengthErrLabel.setText(e.getMessage()); allOk = false;
+        }
+        try {
+            currentMovie.setGenre((movieGenreChoiceBox.getValue() == null) ?
+                    null : movieGenreChoiceBox.getValue().toString());
+            movieGenreErrLabel.setText("");
+        } catch (FieldException e) {
+            movieGenreErrLabel.setText(e.getMessage()); allOk = false;
+        }
+        try {
+            currentMovie.setMpaaRating((movieMpaaRatingChoiceBox.getValue() == null) ?
+                    null : movieMpaaRatingChoiceBox.getValue().toString());
+            movieMpaaRatingErrLabel.setText("");
+        } catch (FieldException e) {
+            movieMpaaRatingErrLabel.setText(e.getMessage()); allOk = false;
+        }
+        try {
+            currentMovie.getScreenwriter().setName(screenwriterNameTextField.getText());
+            screenwriterNameErrLabel.setText("");
+        } catch (FieldException e) {
+            screenwriterNameErrLabel.setText(e.getMessage()); allOk = false;
+        }
+        try {
+            currentMovie.getScreenwriter().setBirthday(screenwriterBirthdayTextField.getText());
+            screenwriterBirthdayErrLabel.setText("");
+        } catch (FieldException e) {
+            screenwriterBirthdayErrLabel.setText(e.getMessage()); allOk = false;
+        }
+        try {
+            currentMovie.getScreenwriter().setHairColor((screenwriterHairColorChoiceBox.getValue() == null) ?
+                    null : screenwriterHairColorChoiceBox.getValue().toString());
+            screenwriterHairColorErrLabel.setText("");
+        } catch (FieldException e) {
+            screenwriterHairColorErrLabel.setText(e.getMessage()); allOk = false;
+        }
+        return allOk;
+    }
+
+    private void createRequestAndReceiveResponse() {
+        try {
+            ClientController.getInstance().println(currentCommand.getCommandName());
+            ClientExecutor.getInstance().executeCommand(currentCommand.getCommandName());
+            Response response = ClientConnector.getInstance().sendToServer(ClientExecutor.getInstance().getRequest());
+            updateMovieTable(response.getHashtable());
+            if (response.getResponseType() == Response.ResponseType.EXECUTION_SUCCESSFUL) {
+                ClientController.getInstance().println(response.getMessage());
+            } else if (response.getResponseType() == Response.ResponseType.EXECUTION_FAILED) {
+                ClientController.getInstance().printlnErr(response.getMessage());
+            } else {
+                ClientController.getInstance().printlnErr("Server has wrong logic: unexpected \"" +
+                        response.getResponseType() +
+                        "\"");
+            }
+        } catch (SocketTimeoutException e) {
+            ClientController.getInstance().printlnErr("Server isn't responding (try again later)");
+        } catch (IOException | ClassNotFoundException | CommandException e) {
+            ClientController.getInstance().printlnErr(e.getMessage());
         }
     }
 
@@ -150,22 +366,10 @@ public class MainController {
         selectMainPane();
     }
 
-    @FXML private TextField oneParamTextField;
     private void clearOneParamPane() {
         oneParamTextField.clear();
     }
 
-    @FXML private TextField movieKeyTextField;
-    @FXML private TextField movieNameTextField;
-    @FXML private TextField coordinatesXTextField;
-    @FXML private TextField coordinatesYTextField;
-    @FXML private TextField movieOscarsCountTextField;
-    @FXML private TextField movieLengthTextField;
-    @FXML private ChoiceBox<String> movieGenreChoiceBox;
-    @FXML private ChoiceBox<String> movieMpaaRatingChoiceBox;
-    @FXML private TextField screenwriterNameTextField;
-    @FXML private TextField screenwriterBirthdayTextField;
-    @FXML private ChoiceBox<String> screenwriterHairColorChoiceBox;
     private void clearMovieKeyParamPane() {
         movieKeyTextField.clear();
         movieNameTextField.clear();
@@ -173,11 +377,11 @@ public class MainController {
         coordinatesYTextField.clear();
         movieOscarsCountTextField.clear();
         movieLengthTextField.clear();
-        movieGenreChoiceBox.setValue("");
-        movieMpaaRatingChoiceBox.setValue("");
+        movieGenreChoiceBox.setValue(null);
+        movieMpaaRatingChoiceBox.setValue(Movie.MpaaRating.G);
         screenwriterNameTextField.clear();
         screenwriterBirthdayTextField.clear();
-        screenwriterHairColorChoiceBox.setValue("");
+        screenwriterHairColorChoiceBox.setValue(null);
     }
 
     private void selectMainPane() {
@@ -217,5 +421,36 @@ public class MainController {
 
     public TextFlow getConsoleTextArea() {
         return consoleTextFlow;
+    }
+
+    private static class ClientContextImpl implements ClientContext {
+        private String param;
+        private Integer movieKey;
+        private Movie movie;
+
+        public ClientContextImpl() {}
+
+        private void setParam(String param) {
+            this.param = param;
+        }
+        private void setMovieKey(Integer movieKey) {
+            this.movieKey = movieKey;
+        }
+        private void setMovie(Movie movie) {
+            this.movie = movie;
+        }
+
+        @Override
+        public String getParam() {
+            return param;
+        }
+        @Override
+        public Integer getMovieKey() {
+            return movieKey;
+        }
+        @Override
+        public Movie getMovie() {
+            return movie;
+        }
     }
 }

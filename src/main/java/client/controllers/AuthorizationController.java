@@ -86,6 +86,7 @@ public class AuthorizationController {
                 signInErrLabel.setText(response.getMessage());
             } else if (response.getResponseType() == Response.ResponseType.LOGIN_SUCCESSFUL) {
                 addLogoutHook();
+                application.getMainController().setCurrentUserName(userProfile.getName());
                 // TODO: change redirection
                 successfulLabel.setText(response.getMessage() + " (you will be redirected to the main page in 5 seconds)");
                 PauseTransition pause = new PauseTransition(Duration.seconds(5));

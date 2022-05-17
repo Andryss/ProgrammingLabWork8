@@ -31,8 +31,13 @@ public class ReplaceIfGreaterCommand extends ElementCommand {
 
     @Override
     public void checkElement(Response response) throws BadArgumentsException {
-        if (response.getResponseType() != Response.ResponseType.CHECKING_SUCCESSFUL) {
+        if (response.getResponseType() == Response.ResponseType.CHECKING_FAILED ||
+                response.getResponseType() == Response.ResponseType.ELEMENT_NOT_PRESENTED ||
+                response.getResponseType() == Response.ResponseType.PERMISSION_DENIED) {
             throw new BadArgumentsException(getCommandName(), response.getMessage());
+        }
+        if (response.getResponseType() != Response.ResponseType.CHECKING_SUCCESSFUL) {
+            throw new BadArgumentsException(getCommandName(), "You can't replace movie with given key");
         }
     }
 

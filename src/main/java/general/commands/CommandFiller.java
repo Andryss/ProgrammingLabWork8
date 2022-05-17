@@ -56,6 +56,7 @@ public abstract class CommandFiller {
                         throw new CommandException(command.name(), "found at least 2 commands in general/commands/ with the same name, what is forbidden");
                     }
                     ClientExecutor.CommandContainer container = new ClientExecutor.CommandContainer(
+                            command.name(),
                             (Command) constructor.newInstance(command.name()),
                             command.type(),
                             command.paramName(),

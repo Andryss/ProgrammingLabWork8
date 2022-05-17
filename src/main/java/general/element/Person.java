@@ -33,7 +33,7 @@ public class Person implements Serializable, Cloneable {
      */
     @FieldSetter(fieldName = "name", example = "for example \"James Francis Cameron\"", index = 7)
     public void setName(String name) throws FieldException {
-        if (name == null) {
+        if (name == null || name.equals("null") || name.length() == 0) {
             throw new FieldException(null, "Field can't be null, String can't be empty");
         }
         if (name.length() > 20) {
@@ -49,7 +49,7 @@ public class Person implements Serializable, Cloneable {
     @SuppressWarnings({"MagicConstant", "deprecation"})
     @FieldSetter(fieldName = "birthday", example = "for example \"16.08.1954\"", index = 8)
     public void setBirthday(String birthday) throws FieldException {
-        if (birthday == null) {
+        if (birthday == null || birthday.equals("null") || birthday.length() == 0) {
             this.birthday = null;
             return;
         }
@@ -71,7 +71,7 @@ public class Person implements Serializable, Cloneable {
      */
     @FieldSetter(fieldName = "hairColor", example = "it must be one of: [RED, BLACK, BLUE, WHITE, BROWN]", index = 9)
     public void setHairColor(String hairColor) throws FieldException {
-        if (hairColor == null) {
+        if (hairColor == null || hairColor.equals("null") || hairColor.length() == 0) {
             this.birthday = null;
             return;
         }

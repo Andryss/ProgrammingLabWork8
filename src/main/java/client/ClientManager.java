@@ -140,7 +140,7 @@ public class ClientManager {
         //noinspection InfiniteLoopStatement
         while (true) {
             try {
-                ClientExecutor.getInstance().parseCommand(ClientController.getInstance().readLine());
+                //ClientExecutor.getInstance().parseCommand(ClientController.getInstance().readLine());
                 Response response = ClientConnector.getInstance().sendToServer(ClientExecutor.getInstance().getRequest());
                 if (response.getResponseType() == Response.ResponseType.EXECUTION_SUCCESSFUL) {
                     ClientController.getInstance().println(response.getMessage());
@@ -157,7 +157,7 @@ public class ClientManager {
                 }
             } catch (SocketTimeoutException e) {
                 ClientController.getInstance().printlnErr("Server isn't responding (try again later)");
-            } catch (IOException | ClassNotFoundException | CommandException e) {
+            } catch (IOException | ClassNotFoundException e) {
                 ClientController.getInstance().printlnErr(e.getMessage());
             }
         }

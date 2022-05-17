@@ -152,12 +152,8 @@ public abstract class ElementCommand extends NameableCommand {
     public abstract void checkElement(Response response) throws BadArgumentsException;
 
     @Override
-    public void setGUIArgs(ClientContext client) throws BadArgumentsException {
-        try {
-            key = Integer.parseInt(client.getParam());
-        } catch (NumberFormatException e) {
-            throw new BadArgumentsFormatException(getCommandName(), "integer");
-        }
-        this.readMovie = client.getMovie();
+    public void setGUIArgs(ClientContext client) {
+        key = client.getMovieKey();
+        readMovie = client.getMovie();
     }
 }
