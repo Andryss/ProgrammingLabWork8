@@ -24,28 +24,10 @@ public class FileExecutor {
     private int commandNumber = 1;
 
     public FileExecutor(FileController fileController, FileExecutor caller, Request request) {
-        fillCommandMap();
         this.caller = caller;
         this.controller = fileController;
         this.clientINFO = new ScriptContextImpl.ClientINFOFromFileImpl(this.controller, caller);
         this.request = request;
-    }
-
-    private void fillCommandMap() {
-        commandMap.put("exit", new NameableCommand("exit") {
-            @Override
-            public void execute(ServerContext server) throws CommandException {
-                throw new BadArgumentsException(getCommandName(), "do you really want \"exit\" in script? Sorry, not today");
-            }
-
-            @Override
-            public void setScriptArgs(ScriptContext script, String... args) throws BadArgumentsException {
-                if (args.length > 0) {
-                    throw new BadArgumentsCountException(getCommandName());
-                }
-                throw new BadArgumentsException(getCommandName(), "do you really want \"exit\" in script? Sorry, not today");
-            }
-        });
     }
 
     void parseCommand(String inputLine) throws CommandException {

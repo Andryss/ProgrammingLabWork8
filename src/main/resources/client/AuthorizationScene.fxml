@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane minHeight="200.0" minWidth="300.0" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #cccccc;" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.AuthorizationController">
+<AnchorPane minHeight="200.0" minWidth="300.0" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #cccccc;" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.AuthorizationSceneController">
    <children>
       <Label fx:id="authLabel" alignment="CENTER" layoutX="135.0" layoutY="90.0" prefHeight="140.0" prefWidth="630.0" text="Authorization page" textFill="#b00000">
          <font>

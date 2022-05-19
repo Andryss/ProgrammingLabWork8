@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane fx:id="tableTab" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.TableTabController">
+    <center>
+        <TableView fx:id="tableMovieTable" BorderPane.alignment="CENTER">
+            <columns>
+                <TableColumn fx:id="movieOwnerColumn" prefWidth="42.0" text="Owner" />
+                <TableColumn fx:id="movieIdColumn" prefWidth="17.0" text="Id" />
+                <TableColumn fx:id="movieNameColumn" prefWidth="38.0" text="Name" />
+                <TableColumn fx:id="movieCoordinatesColumn" prefWidth="76.0" text="Coordinates">
+                    <columns>
+                        <TableColumn fx:id="coordinatesXColumn" prefWidth="36.0" text="X" />
+                        <TableColumn fx:id="coordinatesYColumn" prefWidth="36.0" text="Y" />
+                    </columns>
+                </TableColumn>
+                <TableColumn fx:id="movieCreationDateColumn" prefWidth="83.0" text="Creation Date" />
+                <TableColumn fx:id="movieOscarsCountColumn" prefWidth="78.0" text="Oscars Count" />
+                <TableColumn fx:id="movieLengthColumn" prefWidth="44.0" text="Length" />
+                <TableColumn fx:id="movieGenreColumn" prefWidth="40.0" text="Genre" />
+                <TableColumn fx:id="movieMpaaRatingColumn" prefWidth="78.0" text="Mpaa Rating" />
+                <TableColumn fx:id="movieScreenwriterColumn" prefWidth="172.0" text="Screenwriter">
+                    <columns>
+                        <TableColumn fx:id="screenwriterNameColumn" prefWidth="40.0" text="Name" />
+                        <TableColumn fx:id="screenwriterBirthdayColumn" prefWidth="55.0" text="Birthday" />
+                        <TableColumn fx:id="screenwriterHairColorColumn" prefWidth="65.0" text="Hair Color" />
+                    </columns>
+                </TableColumn>
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
+        </TableView>
+    </center>
+</BorderPane>

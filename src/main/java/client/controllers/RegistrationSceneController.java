@@ -9,55 +9,38 @@ import general.element.UserProfile;
 import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
 import java.io.IOException;
 
-public class AuthorizationController {
+public class RegistrationSceneController {
     private Application application;
     public void setLogic(Application application) {
         this.application = application;
     }
 
-    @FXML private Label authLabel;
+    @FXML private Label regLabel;
     @FXML private Label loginLabel;
     @FXML private TextField loginTextField;
     @FXML private Label loginErrLabel;
     @FXML private Label passwordLabel;
     @FXML private PasswordField passwordField;
     @FXML private Label passwordErrLabel;
-    @FXML private Button signInButton;
-    @FXML private Label signInErrLabel;
+    @FXML private Button signUpButton;
+    @FXML private Label signUpErrLabel;
     @FXML private Label successfulLabel;
-    @FXML private Label goToRegLabel;
-    @FXML private Hyperlink goToRegLink;
+    @FXML private Label goToAuthLabel;
+    @FXML private Hyperlink goToAuthLink;
 
     @FXML
-    private void goToRegPageMouseClicked(MouseEvent mouseEvent) {
-        goToRegPage();
-    }
-
-    private void goToRegPage() {
+    private void goToAuthPage(MouseEvent mouseEvent) {
         clear();
-        application.setScene(Application.AppScene.REGISTRATION_SCENE);
+        application.setScene(Application.AppScene.AUTHORIZATION_SCENE);
     }
 
     @FXML
-    private void signInUserKeyReleased(KeyEvent keyEvent) {
-        if (keyEvent.getCode() == KeyCode.ENTER) {
-            signInUser();
-        }
-    }
-
-    @FXML
-    private void signInUserMouseClicked(MouseEvent mouseEvent) {
-        signInUser();
-    }
-
-    private void signInUser() {
+    private void signUpUser(MouseEvent mouseEvent) {
         try {
             UserProfile.checkLogin(loginTextField.getText());
             loginErrLabel.setText("");
@@ -80,19 +63,16 @@ public class AuthorizationController {
         RequestBuilder.setUserProfile(userProfile);
         try {
             Response response = ClientConnector.getInstance().sendToServer(
-                    RequestBuilder.createNewRequest().setRequestType(Request.RequestType.LOGIN_USER).build()
+                    RequestBuilder.createNewRequest().setRequestType(Request.RequestType.REGISTER_USER).build()
             );
-            if (response.getResponseType() == Response.ResponseType.LOGIN_FAILED) {
-                signInErrLabel.setText(response.getMessage());
-            } else if (response.getResponseType() == Response.ResponseType.LOGIN_SUCCESSFUL) {
-                addLogoutHook();
-                application.getMainController().setCurrentUserName(userProfile.getName());
+            if (response.getResponseType() == Response.ResponseType.REGISTER_FAILED) {
+                signUpErrLabel.setText(response.getMessage());
+            } else if (response.getResponseType() == Response.ResponseType.REGISTER_SUCCESSFUL) {
                 // TODO: change redirection
-                successfulLabel.setText(response.getMessage() + " (you will be redirected to the main page in 5 seconds)");
+                successfulLabel.setText(response.getMessage() + " (you will be redirected to the authorization page in 5 seconds)");
                 PauseTransition pause = new PauseTransition(Duration.seconds(5));
                 pause.setOnFinished(e -> {
-                    application.getMainController().updateMovieTable(response.getHashtable());
-                    application.setScene(Application.AppScene.MAIN_SCENE);
+                    application.setScene(Application.AppScene.AUTHORIZATION_SCENE);
                     clear();
                 });
                 pause.play();
@@ -102,7 +82,7 @@ public class AuthorizationController {
                         "\"");
             }
         } catch (IOException | ClassNotFoundException e) {
-            signInErrLabel.setText(e.getMessage());
+            signUpErrLabel.setText(e.getMessage());
         }
     }
 
@@ -111,19 +91,7 @@ public class AuthorizationController {
         loginErrLabel.setText("");
         passwordField.clear();
         passwordErrLabel.setText("");
-        signInErrLabel.setText("");
+        signUpErrLabel.setText("");
         successfulLabel.setText("");
-    }
-
-    private void addLogoutHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                ClientConnector.getInstance().sendRequest(
-                        RequestBuilder.createNewRequest().setRequestType(Request.RequestType.LOGOUT_USER).build()
-                );
-            } catch (IOException e) {
-                //ignore
-            }
-        }));
     }
 }

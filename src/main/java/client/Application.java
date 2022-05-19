@@ -1,8 +1,8 @@
 package client;
 
-import client.controllers.AuthorizationController;
-import client.controllers.MainController;
-import client.controllers.RegistrationController;
+import client.controllers.AuthorizationSceneController;
+import client.controllers.MainSceneController;
+import client.controllers.RegistrationSceneController;
 import general.commands.CommandException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -19,7 +19,7 @@ import java.util.Properties;
 public class Application extends javafx.application.Application {
     private Stage stage;
     private final EnumMap<AppScene,Scene> sceneMap = new EnumMap<>(AppScene.class);
-    private MainController mainController;
+    private MainSceneController mainController;
 
     public static void main(String[] args) {
         launch();
@@ -32,22 +32,22 @@ public class Application extends javafx.application.Application {
             this.stage = stage;
             stage.setTitle("Cum");
 
-            FXMLLoader loader = new FXMLLoader(Application.class.getResource("client-authorization-scene.fxml"));
+            preInitializations();
+
+            FXMLLoader loader = new FXMLLoader(Application.class.getResource("AuthorizationScene.fxml"));
             sceneMap.put(AppScene.AUTHORIZATION_SCENE, new Scene(loader.load()));
-            ((AuthorizationController) loader.getController()).setLogic(this);
+            ((AuthorizationSceneController) loader.getController()).setLogic(this);
 
-            loader = new FXMLLoader(Application.class.getResource("client-registration-scene.fxml"));
+            loader = new FXMLLoader(Application.class.getResource("RegistrationScene.fxml"));
             sceneMap.put(AppScene.REGISTRATION_SCENE, new Scene(loader.load()));
-            ((RegistrationController) loader.getController()).setLogic(this);
+            ((RegistrationSceneController) loader.getController()).setLogic(this);
 
-            loader = new FXMLLoader(Application.class.getResource("client-main-scene.fxml"));
+            loader = new FXMLLoader(Application.class.getResource("MainScene.fxml"));
             sceneMap.put(AppScene.MAIN_SCENE, new Scene(loader.load()));
             mainController = loader.getController();
             mainController.setLogic(this);
 
-            initializations();
-
-            mainController.initialize();
+            postInitializations();
 
             setScene(AppScene.AUTHORIZATION_SCENE);
             stage.show();
@@ -64,13 +64,14 @@ public class Application extends javafx.application.Application {
         }
     }
 
-    private void initializations() throws IOException, CommandException, ClassNotFoundException {
+    private void preInitializations() throws IOException, CommandException {
         Properties properties = readProperties();
-        ClientController.getInstance().setTextFlow(mainController.getConsoleTextArea());
 
         ClientConnector.getInstance().setProperties(properties);
         ClientExecutor.getInstance().initialize();
+    }
 
+    private void postInitializations() throws IOException, ClassNotFoundException {
         ClientConnector.getInstance().initialize();
 
         ClientController.getInstance().initialize();
@@ -96,7 +97,7 @@ public class Application extends javafx.application.Application {
         stage.setScene(sceneMap.get(appScene));
     }
 
-    public MainController getMainController() {
+    public MainSceneController getMainController() {
         return mainController;
     }
 

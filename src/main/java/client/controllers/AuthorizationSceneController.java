@@ -9,38 +9,55 @@ import general.element.UserProfile;
 import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
 import java.io.IOException;
 
-public class RegistrationController {
+public class AuthorizationSceneController {
     private Application application;
     public void setLogic(Application application) {
         this.application = application;
     }
 
-    @FXML private Label regLabel;
+    @FXML private Label authLabel;
     @FXML private Label loginLabel;
     @FXML private TextField loginTextField;
     @FXML private Label loginErrLabel;
     @FXML private Label passwordLabel;
     @FXML private PasswordField passwordField;
     @FXML private Label passwordErrLabel;
-    @FXML private Button signUpButton;
-    @FXML private Label signUpErrLabel;
+    @FXML private Button signInButton;
+    @FXML private Label signInErrLabel;
     @FXML private Label successfulLabel;
-    @FXML private Label goToAuthLabel;
-    @FXML private Hyperlink goToAuthLink;
+    @FXML private Label goToRegLabel;
+    @FXML private Hyperlink goToRegLink;
 
     @FXML
-    private void goToAuthPage(MouseEvent mouseEvent) {
+    private void goToRegPageMouseClicked(MouseEvent mouseEvent) {
+        goToRegPage();
+    }
+
+    private void goToRegPage() {
         clear();
-        application.setScene(Application.AppScene.AUTHORIZATION_SCENE);
+        application.setScene(Application.AppScene.REGISTRATION_SCENE);
     }
 
     @FXML
-    private void signUpUser(MouseEvent mouseEvent) {
+    private void signInUserKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            signInUser();
+        }
+    }
+
+    @FXML
+    private void signInUserMouseClicked(MouseEvent mouseEvent) {
+        signInUser();
+    }
+
+    private void signInUser() {
         try {
             UserProfile.checkLogin(loginTextField.getText());
             loginErrLabel.setText("");
@@ -63,16 +80,20 @@ public class RegistrationController {
         RequestBuilder.setUserProfile(userProfile);
         try {
             Response response = ClientConnector.getInstance().sendToServer(
-                    RequestBuilder.createNewRequest().setRequestType(Request.RequestType.REGISTER_USER).build()
+                    RequestBuilder.createNewRequest().setRequestType(Request.RequestType.LOGIN_USER).build()
             );
-            if (response.getResponseType() == Response.ResponseType.REGISTER_FAILED) {
-                signUpErrLabel.setText(response.getMessage());
-            } else if (response.getResponseType() == Response.ResponseType.REGISTER_SUCCESSFUL) {
+            if (response.getResponseType() == Response.ResponseType.LOGIN_FAILED) {
+                signInErrLabel.setText(response.getMessage());
+            } else if (response.getResponseType() == Response.ResponseType.LOGIN_SUCCESSFUL) {
+                addLogoutHook();
+                application.getMainController().setCurrentUserName(userProfile.getName());
                 // TODO: change redirection
-                successfulLabel.setText(response.getMessage() + " (you will be redirected to the authorization page in 5 seconds)");
+                successfulLabel.setText(response.getMessage() + " (you will be redirected to the main page in 5 seconds)");
                 PauseTransition pause = new PauseTransition(Duration.seconds(5));
                 pause.setOnFinished(e -> {
-                    application.setScene(Application.AppScene.AUTHORIZATION_SCENE);
+                    // TODO: deal with
+                    //application.getMainController().updateMovieTable(response.getHashtable());
+                    application.setScene(Application.AppScene.MAIN_SCENE);
                     clear();
                 });
                 pause.play();
@@ -82,7 +103,7 @@ public class RegistrationController {
                         "\"");
             }
         } catch (IOException | ClassNotFoundException e) {
-            signUpErrLabel.setText(e.getMessage());
+            signInErrLabel.setText(e.getMessage());
         }
     }
 
@@ -91,7 +112,19 @@ public class RegistrationController {
         loginErrLabel.setText("");
         passwordField.clear();
         passwordErrLabel.setText("");
-        signUpErrLabel.setText("");
+        signInErrLabel.setText("");
         successfulLabel.setText("");
+    }
+
+    private void addLogoutHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                ClientConnector.getInstance().sendRequest(
+                        RequestBuilder.createNewRequest().setRequestType(Request.RequestType.LOGOUT_USER).build()
+                );
+            } catch (IOException e) {
+                //ignore
+            }
+        }));
     }
 }

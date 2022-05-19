@@ -1,12 +1,8 @@
 package client;
 
-import client.controllers.MainController;
-import javafx.scene.control.TextArea;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
-import java.io.PrintStream;
 import java.util.Scanner;
 
 /**
@@ -17,7 +13,7 @@ public class ClientController {
     private static final ClientController instance = new ClientController();
     private final Scanner reader = new Scanner(System.in);
     private TextFlow textFlow;
-    void setTextFlow(TextFlow textFlow) {this.textFlow = textFlow;}
+    public void setTextFlow(TextFlow textFlow) {this.textFlow = textFlow;}
 
     private ClientController() {}
 

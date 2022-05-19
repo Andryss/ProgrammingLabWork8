@@ -1,6 +1,5 @@
 package client;
 
-import general.ScriptContext;
 import general.commands.*;
 import general.Request;
 
@@ -32,9 +31,7 @@ public class ClientExecutor {
 
     private void fillCommandMap() throws IOException, CommandException {
 
-
         CommandFiller.fillCommandMap();
-
 
     }
 

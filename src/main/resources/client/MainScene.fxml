@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.MainSceneController">
+  <tabs>
+    <Tab closable="false" text="Console">
+      <content>
+            <fx:include fx:id="consoleTab" source="ConsoleTab.fxml"/>
+      </content>
+    </Tab>
+    <Tab closable="false" text="Table">
+      <content>
+          <fx:include fx:id="tableTab" source="TableTab.fxml"/>
+      </content>
+    </Tab>
+    <Tab closable="false" text="Plot">
+        <content>
+            <fx:include fx:id="plotTab" source="PlotTab.fxml"/>
+        </content>
+    </Tab>
+  </tabs>
+</TabPane>
