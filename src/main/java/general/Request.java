@@ -30,6 +30,8 @@ public interface Request extends Serializable {
     enum RequestType {
         CHECK_CONNECTION,
 
+        UPDATE_COLLECTION,
+
         LOGIN_USER,
 
         LOGOUT_USER,

@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 
 <BorderPane fx:id="tableTab" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.TableTabController">
     <center>
@@ -35,4 +41,25 @@
             </columnResizePolicy>
         </TableView>
     </center>
+   <bottom>
+      <HBox BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Do you think here is an old collection?" />
+            <Button fx:id="updateButton" mnemonicParsing="false" onMouseClicked="#updateCollectionMouseClicked" text="Update" />
+            <Label text="or set" />
+            <CheckBox fx:id="autoUpdateCheckBox" mnemonicParsing="false" onMouseClicked="#autoUpdateMouseClicked" text="Auto-update" />
+            <Label fx:id="updateErrLabel" textFill="#b00000" />
+         </children>
+      </HBox>
+   </bottom>
+   <top>
+      <HBox BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="filterLabelFirst" text="Filter by" />
+            <ChoiceBox fx:id="filterChoiceBox" prefWidth="150.0" />
+            <Label fx:id="filterLabelSecond" text="with value contains:" />
+            <TextField fx:id="filterTextField" />
+         </children>
+      </HBox>
+   </top>
 </BorderPane>

@@ -17,10 +17,6 @@ import javafx.util.Duration;
 import java.io.IOException;
 
 public class AuthorizationSceneController {
-    private Application application;
-    public void setLogic(Application application) {
-        this.application = application;
-    }
 
     @FXML private Label authLabel;
     @FXML private Label loginLabel;
@@ -42,7 +38,12 @@ public class AuthorizationSceneController {
 
     private void goToRegPage() {
         clear();
-        application.setScene(Application.AppScene.REGISTRATION_SCENE);
+        ControllersContext.getInstance().setScene(Application.AppScene.REGISTRATION_SCENE);
+    }
+
+    private void goToMainPage() {
+        clear();
+        ControllersContext.getInstance().setScene(Application.AppScene.MAIN_SCENE);
     }
 
     @FXML
@@ -79,23 +80,18 @@ public class AuthorizationSceneController {
         }
         RequestBuilder.setUserProfile(userProfile);
         try {
-            Response response = ClientConnector.getInstance().sendToServer(
+            Response response = ControllersContext.getInstance().sendToServer(
                     RequestBuilder.createNewRequest().setRequestType(Request.RequestType.LOGIN_USER).build()
             );
             if (response.getResponseType() == Response.ResponseType.LOGIN_FAILED) {
                 signInErrLabel.setText(response.getMessage());
             } else if (response.getResponseType() == Response.ResponseType.LOGIN_SUCCESSFUL) {
                 addLogoutHook();
-                application.getMainController().setCurrentUserName(userProfile.getName());
+                ControllersContext.getInstance().setUserName(userProfile.getName());
                 // TODO: change redirection
-                successfulLabel.setText(response.getMessage() + " (you will be redirected to the main page in 5 seconds)");
-                PauseTransition pause = new PauseTransition(Duration.seconds(5));
-                pause.setOnFinished(e -> {
-                    // TODO: deal with
-                    //application.getMainController().updateMovieTable(response.getHashtable());
-                    application.setScene(Application.AppScene.MAIN_SCENE);
-                    clear();
-                });
+                successfulLabel.setText(response.getMessage() + " (you will be redirected to the main page in 1 seconds)");
+                PauseTransition pause = new PauseTransition(Duration.seconds(1));
+                pause.setOnFinished(e -> goToMainPage());
                 pause.play();
             } else {
                 throw new IOException("Server has wrong logic: unexpected \"" +

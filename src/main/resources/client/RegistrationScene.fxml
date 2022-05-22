@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane minHeight="200.0" minWidth="300.0" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #cccccc;" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.RegistrationSceneController">
+<AnchorPane minHeight="200.0" minWidth="300.0" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #cccccc;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.RegistrationSceneController">
    <children>
       <Label fx:id="regLabel" alignment="CENTER" layoutX="135.0" layoutY="90.0" prefHeight="140.0" prefWidth="630.0" text="Registration page" textFill="#b00000">
          <font>
@@ -33,7 +37,7 @@
          </font>
       </PasswordField>
       <Label fx:id="passwordErrLabel" layoutX="546.0" layoutY="366.0" prefHeight="40.0" prefWidth="190.0" textFill="#cd0000" />
-      <Button fx:id="signUpButton" alignment="CENTER" layoutX="408.0" layoutY="421.0" mnemonicParsing="false" onMouseClicked="#signUpUser" prefWidth="80.0" text="Sign up">
+      <Button fx:id="signUpButton" alignment="CENTER" layoutX="408.0" layoutY="421.0" mnemonicParsing="false" onMouseClicked="#signUpUserMouseClicked" prefWidth="80.0" text="Sign up">
          <font>
             <Font size="14.0" />
          </font>
@@ -52,6 +56,6 @@
             <Font size="14.0" />
          </font>
       </Label>
-      <Hyperlink fx:id="goToAuthLink" alignment="CENTER" layoutX="356.0" layoutY="518.0" onMouseClicked="#goToAuthPage" prefHeight="25.0" prefWidth="190.0" text="Go to the authorization page" />
+      <Hyperlink fx:id="goToAuthLink" alignment="CENTER" layoutX="356.0" layoutY="518.0" onMouseClicked="#goToAuthPageMouseClicked" prefHeight="25.0" prefWidth="190.0" text="Go to the authorization page" />
    </children>
 </AnchorPane>

@@ -76,7 +76,7 @@ public class ClientConnector {
         }
     }
 
-    public Response sendToServer(Request request) throws IOException, ClassNotFoundException {
+    public synchronized Response sendToServer(Request request) throws IOException, ClassNotFoundException {
         try {
             sendRequest(request);
         } catch (IOException e) {
@@ -93,7 +93,7 @@ public class ClientConnector {
         }
     }
 
-    public void sendRequest(Request request) throws IOException {
+    public synchronized void sendRequest(Request request) throws IOException {
         sendPacket(ConnectorHelper.objectToBuffer(request));
     }
 

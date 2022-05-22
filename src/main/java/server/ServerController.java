@@ -26,7 +26,7 @@ public class ServerController {
     }
 
     public void error(String message) {
-        logger.error("\u001B[31m" + message + "\u001B[0m");
+        logger.error("ERROR: " + message);
     }
 
     public void run() {

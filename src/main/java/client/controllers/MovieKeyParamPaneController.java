@@ -1,11 +1,11 @@
 package client.controllers;
 
-import client.ClientConnector;
 import client.ClientExecutor;
 import client.RequestBuilder;
 import general.Request;
 import general.Response;
 import general.commands.BadArgumentsException;
+import general.commands.Command;
 import general.commands.ElementCommand;
 import general.element.Coordinates;
 import general.element.FieldException;
@@ -55,23 +55,21 @@ public class MovieKeyParamPaneController {
     private Integer currentKey;
     private Movie currentMovie;
 
-    void setCurrentUserName(String currentUserName) {
-        movieOwnerTextField.setText(currentUserName);
-    }
-
     @FXML
     private void initialize() {
+        ControllersContext.getInstance().getCurrentCommandProperty().addListener(((observableValue, oldValue, newValue) -> {
+            if (newValue.getCommandType() == Command.CommandType.MOVIE_KEY_PARAM) {
+                currentMovie = new Movie();
+                currentMovie.setCoordinates(new Coordinates());
+                currentMovie.setScreenwriter(new Person());
+                movieKeyLabel.setText("Movie " + newValue.getParamName() + ":");
+                movieCreationDateTextField.setText(currentMovie.getCreationDate().toString());
+            }
+        }));
+
         movieGenreChoiceBox.setItems(FXCollections.observableList(Arrays.asList(Movie.MovieGenre.values())));
         movieMpaaRatingChoiceBox.setItems(FXCollections.observableList(Arrays.asList(Movie.MpaaRating.values())));
         screenwriterHairColorChoiceBox.setItems(FXCollections.observableList(Arrays.asList(Person.Color.values())));
-    }
-
-    void prepareToSelect() {
-        currentMovie = new Movie();
-        currentMovie.setCoordinates(new Coordinates());
-        currentMovie.setScreenwriter(new Person());
-        movieKeyLabel.setText("Movie " + getCurrentCommand().getParamName() + ":");
-        movieCreationDateTextField.setText(currentMovie.getCreationDate().toString());
     }
 
     @FXML
@@ -81,22 +79,21 @@ public class MovieKeyParamPaneController {
 
     private void checkMovieKey() {
         if (checkMovieKeyByType()) {
-            if (getCurrentCommand().getCommand() instanceof ElementCommand) {
+            if (ControllersContext.getInstance().getCurrentCommand().getCommand() instanceof ElementCommand) {
                 try {
-                    // TODO: maybe make it better (not use client module here)
-                    Response response = ClientConnector.getInstance().sendToServer(RequestBuilder.createNewRequest()
+                    Response response = ControllersContext.getInstance().sendToServer(RequestBuilder.createNewRequest()
                             .setRequestType(Request.RequestType.CHECK_ELEMENT)
                             .setCheckingIndex(currentKey)
                             .build()
                     );
-                    ElementCommand elementCommand = (ElementCommand) getCurrentCommand().getCommand();
+                    ElementCommand elementCommand = (ElementCommand) ControllersContext.getInstance().getCurrentCommand().getCommand();
                     elementCommand.checkElement(response);
                     movieKeyErrLabel.setText("OK");
                 } catch (IOException | ClassNotFoundException | BadArgumentsException e) {
                     movieKeyErrLabel.setText(e.getMessage());
                 }
             } else {
-                movieKeyErrLabel.setText(getCurrentCommand().getCommandName() + " not extends ElementCommand");
+                movieKeyErrLabel.setText(ControllersContext.getInstance().getCurrentCommand().getCommandName() + " not extends ElementCommand");
             }
         }
     }
@@ -119,10 +116,13 @@ public class MovieKeyParamPaneController {
         if (checkMovie()) {
             getClientContext().setParam(null).setMovie(currentMovie).setMovieKey(currentKey);
             try {
-                getCurrentCommand().getCommand().setGUIArgs(getClientContext());
-                Optional<ButtonType> buttonType = showConfirmWindow("Are you sure?", "Are you sure to send command \"" + getCurrentCommand().getCommandName() + "\" with given arguments?");
+                ClientExecutor.CommandContainer currentCommand = ControllersContext.getInstance().getCurrentCommand();
+                currentCommand.getCommand().setGUIArgs(getClientContext());
+                Optional<ButtonType> buttonType = ControllersContext.getInstance().showConfirmWindow(
+                        "Are you sure?", "Are you sure to send command \"" + currentCommand.getCommandName() + "\" with given arguments?"
+                );
                 if (buttonType.isPresent() && buttonType.get() == ButtonType.OK) {
-                    createRequestAndReceiveResponse();
+                    consoleTabController.createRequestAndReceiveResponse();
                     returnToTheMainPane();
                 }
             } catch (BadArgumentsException e) {
@@ -229,16 +229,7 @@ public class MovieKeyParamPaneController {
         screenwriterHairColorChoiceBox.setValue(null);
     }
 
-    private ClientExecutor.CommandContainer getCurrentCommand() {
-        return consoleTabController.getCurrentCommand();
-    }
     private ConsoleTabController.ClientContextImpl getClientContext() {
         return consoleTabController.getClientContext();
-    }
-    private Optional<ButtonType> showConfirmWindow(String title, String contextText) {
-        return consoleTabController.showConfirmWindow(title, contextText);
-    }
-    private void createRequestAndReceiveResponse() {
-        consoleTabController.createRequestAndReceiveResponse();
     }
 }

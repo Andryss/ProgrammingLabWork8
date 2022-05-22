@@ -2,6 +2,11 @@ package client.controllers;
 
 import client.ClientExecutor;
 import general.commands.BadArgumentsException;
+import general.commands.Command;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -10,6 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
 import java.util.Optional;
+import java.util.concurrent.Callable;
 
 public class OneParamPaneController {
     private ConsoleTabController consoleTabController;
@@ -22,8 +28,13 @@ public class OneParamPaneController {
     @FXML private Label oneParamErrLabel;
     @FXML private Button oneParamConfirmButton;
 
-    void prepareToSelect() {
-        oneParamLabel.setText("Enter " + getCurrentCommand().getParamName() + ":");
+    @FXML
+    private void initialize() {
+        ControllersContext.getInstance().getCurrentCommandProperty().addListener((observableValue, oldValue, newValue) -> {
+            if (newValue.getCommandType() == Command.CommandType.ONE_PARAM) {
+                oneParamLabel.setText("Enter " + newValue.getParamName() + ":");
+            }
+        });
     }
 
     @FXML
@@ -43,10 +54,13 @@ public class OneParamPaneController {
     private void oneParamConfirm() {
         getClientContext().setParam(oneParamTextField.getText()).setMovie(null).setMovieKey(null);
         try {
-            getCurrentCommand().getCommand().setGUIArgs(getClientContext());
-            Optional<ButtonType> buttonType = showConfirmWindow("Are you sure?", "Are you sure to send command \"" + getCurrentCommand().getCommandName() + "\" with given argument?");
+            ClientExecutor.CommandContainer currentCommand = ControllersContext.getInstance().getCurrentCommand();
+            currentCommand.getCommand().setGUIArgs(getClientContext());
+            Optional<ButtonType> buttonType = ControllersContext.getInstance().showConfirmWindow(
+                    "Are you sure?", "Are you sure to send command \"" + currentCommand.getCommandName() + "\" with given argument?"
+            );
             if (buttonType.isPresent() && buttonType.get() == ButtonType.OK) {
-                createRequestAndReceiveResponse();
+                consoleTabController.createRequestAndReceiveResponse();
                 returnToTheMainPane();
             }
         } catch (BadArgumentsException e) {
@@ -59,16 +73,7 @@ public class OneParamPaneController {
         oneParamErrLabel.setText("");
     }
 
-    private ClientExecutor.CommandContainer getCurrentCommand() {
-        return consoleTabController.getCurrentCommand();
-    }
     private ConsoleTabController.ClientContextImpl getClientContext() {
         return consoleTabController.getClientContext();
-    }
-    private Optional<ButtonType> showConfirmWindow(String title, String contextText) {
-        return consoleTabController.showConfirmWindow(title, contextText);
-    }
-    private void createRequestAndReceiveResponse() {
-        consoleTabController.createRequestAndReceiveResponse();
     }
 }

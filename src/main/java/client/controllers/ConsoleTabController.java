@@ -46,24 +46,13 @@ public class ConsoleTabController {
     @FXML private ComboBox<String> commandComboBox;
 
 
-    private String currentUserName;
-    private ClientExecutor.CommandContainer currentCommand;
-    ClientExecutor.CommandContainer getCurrentCommand() {
-        return currentCommand;
-    }
     private final ClientContextImpl clientContext = new ClientContextImpl();
-
-    // TODO: add user name setting
-    void setCurrentUserName (String currentUserName) {
-        this.currentUserName = currentUserName;
-        movieKeyParamPaneController.setCurrentUserName(currentUserName);
-    }
 
     @FXML
     private void initialize() {
         oneParamPaneController.setLogic(this);
         movieKeyParamPaneController.setLogic(this);
-        ClientController.getInstance().setTextFlow(consoleTextFlow);
+        ControllersContext.getInstance().setConsoleTextFlow(consoleTextFlow);
 
         consoleScrollPane.vvalueProperty().bind(consoleTextFlow.heightProperty());
         commandComboBox.setItems(FXCollections.observableList(
@@ -81,11 +70,11 @@ public class ConsoleTabController {
     private void sendCommand() {
         String commandName = commandComboBox.getValue();
         if (!ClientExecutor.getInstance().hasCommand(commandName)) {
-            mainSceneController.showWarningWindow("Choose command", "You should choose command to send!");
+            ControllersContext.getInstance().showWarningWindow("Choose command", "You should choose command to send!");
             return;
         }
-        currentCommand = ClientExecutor.getInstance().getCommandContainer(commandName);
-        Command.CommandType currentCommandType = currentCommand.getCommandType();
+        ControllersContext.getInstance().setCurrentCommand(ClientExecutor.getInstance().getCommandContainer(commandName));
+        Command.CommandType currentCommandType = ControllersContext.getInstance().getCurrentCommand().getCommandType();
         if (currentCommandType == Command.CommandType.NO_PARAMS) {
             noParamCommand();
         } else if (currentCommandType == Command.CommandType.ONE_PARAM) {
@@ -93,12 +82,14 @@ public class ConsoleTabController {
         } else if (currentCommandType == Command.CommandType.MOVIE_KEY_PARAM) {
             movieKeyParamCommand();
         } else {
-            mainSceneController.showWarningWindow("Undefined command type", "Undefined type: " + currentCommandType);
+            ControllersContext.getInstance().showWarningWindow("Undefined command type", "Undefined type: " + currentCommandType);
         }
     }
 
     private void noParamCommand() {
-        Optional<ButtonType> buttonType = showConfirmWindow("Are you sure?", "Are you sure to send command \"" + currentCommand.getCommandName() + "\"?");
+        Optional<ButtonType> buttonType = ControllersContext.getInstance().showConfirmWindow(
+                "Are you sure?", "Are you sure to send command \"" + ControllersContext.getInstance().getCurrentCommand().getCommandName() + "\"?"
+        );
 
         if (buttonType.isPresent() && buttonType.get() == ButtonType.OK) {
 
@@ -108,21 +99,18 @@ public class ConsoleTabController {
     }
 
     private void oneParamCommand() {
-        oneParamPaneController.prepareToSelect();
         selectOneParamPane();
     }
 
     private void movieKeyParamCommand() {
-        movieKeyParamPaneController.prepareToSelect();
         selectMovieKeyPane();
     }
 
     void createRequestAndReceiveResponse() {
         try {
-            ClientController.getInstance().println(currentCommand.getCommandName());
-            ClientExecutor.getInstance().executeCommand(currentCommand.getCommandName());
-            Response response = ClientConnector.getInstance().sendToServer(ClientExecutor.getInstance().getRequest());
-            mainSceneController.updateMovieTable(response.getHashtable());
+            ClientController.getInstance().println(ControllersContext.getInstance().getCurrentCommand().getCommandName());
+            ClientExecutor.getInstance().executeCommand(ControllersContext.getInstance().getCurrentCommand().getCommandName());
+            Response response = ControllersContext.getInstance().sendToServer(ClientExecutor.getInstance().getRequest());
             if (response.getResponseType() == Response.ResponseType.EXECUTION_SUCCESSFUL) {
                 ClientController.getInstance().println(response.getMessage());
             } else if (response.getResponseType() == Response.ResponseType.EXECUTION_FAILED) {
@@ -137,10 +125,6 @@ public class ConsoleTabController {
         } catch (IOException | ClassNotFoundException | CommandException e) {
             ClientController.getInstance().printlnErr(e.getMessage());
         }
-    }
-
-    Optional<ButtonType> showConfirmWindow(String title, String contextText) {
-        return mainSceneController.showConfirmWindow(title, contextText);
     }
 
     void returnToTheMainPane() {

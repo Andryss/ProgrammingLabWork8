@@ -28,6 +28,8 @@ public interface Response extends Serializable {
 
         CONNECTION_SUCCESSFUL,
 
+        COLLECTION_UPDATED_SUCCESSFUL,
+
         LOGIN_SUCCESSFUL,
         LOGIN_FAILED,
 

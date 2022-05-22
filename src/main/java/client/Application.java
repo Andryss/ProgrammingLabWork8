@@ -1,6 +1,7 @@
 package client;
 
 import client.controllers.AuthorizationSceneController;
+import client.controllers.ControllersContext;
 import client.controllers.MainSceneController;
 import client.controllers.RegistrationSceneController;
 import general.commands.CommandException;
@@ -19,7 +20,6 @@ import java.util.Properties;
 public class Application extends javafx.application.Application {
     private Stage stage;
     private final EnumMap<AppScene,Scene> sceneMap = new EnumMap<>(AppScene.class);
-    private MainSceneController mainController;
 
     public static void main(String[] args) {
         launch();
@@ -30,22 +30,20 @@ public class Application extends javafx.application.Application {
         try {
 
             this.stage = stage;
-            stage.setTitle("Cum");
+            stage.setTitle("NO Cum");
 
             preInitializations();
 
             FXMLLoader loader = new FXMLLoader(Application.class.getResource("AuthorizationScene.fxml"));
             sceneMap.put(AppScene.AUTHORIZATION_SCENE, new Scene(loader.load()));
-            ((AuthorizationSceneController) loader.getController()).setLogic(this);
 
             loader = new FXMLLoader(Application.class.getResource("RegistrationScene.fxml"));
             sceneMap.put(AppScene.REGISTRATION_SCENE, new Scene(loader.load()));
-            ((RegistrationSceneController) loader.getController()).setLogic(this);
 
             loader = new FXMLLoader(Application.class.getResource("MainScene.fxml"));
             sceneMap.put(AppScene.MAIN_SCENE, new Scene(loader.load()));
-            mainController = loader.getController();
-            mainController.setLogic(this);
+
+            ControllersContext.getInstance().setApplication(this);
 
             postInitializations();
 
@@ -72,6 +70,8 @@ public class Application extends javafx.application.Application {
     }
 
     private void postInitializations() throws IOException, ClassNotFoundException {
+        ClientController.getInstance().setTextFlow(ControllersContext.getInstance().getConsoleTextFlow());
+
         ClientConnector.getInstance().initialize();
 
         ClientController.getInstance().initialize();
@@ -95,10 +95,6 @@ public class Application extends javafx.application.Application {
 
     public void setScene(AppScene appScene) {
         stage.setScene(sceneMap.get(appScene));
-    }
-
-    public MainSceneController getMainController() {
-        return mainController;
     }
 
     public enum AppScene {

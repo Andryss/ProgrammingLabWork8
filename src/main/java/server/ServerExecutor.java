@@ -51,6 +51,8 @@ public class ServerExecutor {
         try {
             if (request.getRequestType() == Request.RequestType.CHECK_CONNECTION) {
                 checkConnectionRequest();
+            } else if (request.getRequestType() == Request.RequestType.UPDATE_COLLECTION) {
+                updateCollectionRequest();
             } else if (request.getRequestType() == Request.RequestType.LOGIN_USER) {
                 loginUserRequest();
             } else if (request.getRequestType() == Request.RequestType.LOGOUT_USER) {
@@ -89,6 +91,15 @@ public class ServerExecutor {
         } catch (InterruptedException e) {
             // ignore
         }
+    }
+
+    private void updateCollectionRequest() {
+        new Thread(() -> ServerConnector.getInstance().sendToClient(client,
+                ResponseBuilder.createNewResponse()
+                        .setResponseType(Response.ResponseType.COLLECTION_UPDATED_SUCCESSFUL)
+                        .setHashtable(ServerCollectionManager.getInstance().getMovieCollection())
+                        .build()),
+                "SendingUCThread").start();
     }
 
     private void loginUserRequest() {
@@ -243,5 +254,5 @@ public class ServerExecutor {
     public static ExecutorService getService() {
         return executorService;
     }
-    static List<UserProfile> getAuthorizedUsers() {return authorizedUsers;}
+    public static List<UserProfile> getAuthorizedUsers() {return authorizedUsers;}
 }

@@ -15,10 +15,6 @@ import javafx.util.Duration;
 import java.io.IOException;
 
 public class RegistrationSceneController {
-    private Application application;
-    public void setLogic(Application application) {
-        this.application = application;
-    }
 
     @FXML private Label regLabel;
     @FXML private Label loginLabel;
@@ -34,13 +30,21 @@ public class RegistrationSceneController {
     @FXML private Hyperlink goToAuthLink;
 
     @FXML
-    private void goToAuthPage(MouseEvent mouseEvent) {
+    private void goToAuthPageMouseClicked(MouseEvent mouseEvent) {
+        goToAuthPage();
+    }
+
+    private void goToAuthPage() {
+        ControllersContext.getInstance().setScene(Application.AppScene.AUTHORIZATION_SCENE);
         clear();
-        application.setScene(Application.AppScene.AUTHORIZATION_SCENE);
     }
 
     @FXML
-    private void signUpUser(MouseEvent mouseEvent) {
+    private void signUpUserMouseClicked(MouseEvent mouseEvent) {
+        signUpUser();
+    }
+
+    private void signUpUser() {
         try {
             UserProfile.checkLogin(loginTextField.getText());
             loginErrLabel.setText("");
@@ -62,19 +66,16 @@ public class RegistrationSceneController {
         }
         RequestBuilder.setUserProfile(userProfile);
         try {
-            Response response = ClientConnector.getInstance().sendToServer(
+            Response response = ControllersContext.getInstance().sendToServer(
                     RequestBuilder.createNewRequest().setRequestType(Request.RequestType.REGISTER_USER).build()
             );
             if (response.getResponseType() == Response.ResponseType.REGISTER_FAILED) {
                 signUpErrLabel.setText(response.getMessage());
             } else if (response.getResponseType() == Response.ResponseType.REGISTER_SUCCESSFUL) {
                 // TODO: change redirection
-                successfulLabel.setText(response.getMessage() + " (you will be redirected to the authorization page in 5 seconds)");
-                PauseTransition pause = new PauseTransition(Duration.seconds(5));
-                pause.setOnFinished(e -> {
-                    application.setScene(Application.AppScene.AUTHORIZATION_SCENE);
-                    clear();
-                });
+                successfulLabel.setText(response.getMessage() + " (you will be redirected to the authorization page in 1 seconds)");
+                PauseTransition pause = new PauseTransition(Duration.seconds(1));
+                pause.setOnFinished(e -> goToAuthPage());
                 pause.play();
             } else {
                 throw new IOException("Server has wrong logic: unexpected \"" +
