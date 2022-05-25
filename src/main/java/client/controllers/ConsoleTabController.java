@@ -25,6 +25,7 @@ import javafx.scene.text.TextFlow;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Optional;
 
 public class ConsoleTabController {
@@ -102,8 +103,40 @@ public class ConsoleTabController {
         selectOneParamPane();
     }
 
+    void setToRemove(Map.Entry<Integer, Movie> entry) {
+        ClientExecutor.CommandContainer commandContainer = ClientExecutor.getInstance().getCommandContainer("remove_key");
+        if (commandContainer == null) {
+            ControllersContext.getInstance().showWarningWindow("Cannot find command", "Cannot find \"remove_key\" command :(");
+        } else {
+            ControllersContext.getInstance().setCurrentCommand(commandContainer);
+            Command.CommandType currentCommandType = commandContainer.getCommandType();
+            if (currentCommandType == Command.CommandType.ONE_PARAM) {
+                oneParamPaneController.setToRemove(entry);
+                oneParamCommand();
+            } else {
+                ControllersContext.getInstance().showWarningWindow("Logic has been changed", "Undefined \"remove_key\" command type: " + currentCommandType);
+            }
+        }
+    }
+
     private void movieKeyParamCommand() {
         selectMovieKeyPane();
+    }
+
+    void setToUpdate(Map.Entry<Integer, Movie> entry) {
+        ClientExecutor.CommandContainer commandContainer = ClientExecutor.getInstance().getCommandContainer("update");
+        if (commandContainer == null) {
+            ControllersContext.getInstance().showWarningWindow("Cannot find command", "Cannot find \"update\" command :(");
+        } else {
+            ControllersContext.getInstance().setCurrentCommand(commandContainer);
+            Command.CommandType currentCommandType = commandContainer.getCommandType();
+            if (currentCommandType == Command.CommandType.MOVIE_KEY_PARAM) {
+                movieKeyParamPaneController.setToUpdate(entry);
+                movieKeyParamCommand();
+            } else {
+                ControllersContext.getInstance().showWarningWindow("Logic has been changed", "Undefined \"update\" command type: " + currentCommandType);
+            }
+        }
     }
 
     void createRequestAndReceiveResponse() {

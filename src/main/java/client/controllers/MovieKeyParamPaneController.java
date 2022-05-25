@@ -18,6 +18,7 @@ import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 
 public class MovieKeyParamPaneController {
@@ -66,6 +67,7 @@ public class MovieKeyParamPaneController {
                 movieCreationDateTextField.setText(currentMovie.getCreationDate().toString());
             }
         }));
+        ControllersContext.getInstance().getUserNameProperty().addListener((observableValue, oldValue, newValue) -> movieOwnerTextField.setText(newValue));
 
         movieGenreChoiceBox.setItems(FXCollections.observableList(Arrays.asList(Movie.MovieGenre.values())));
         movieMpaaRatingChoiceBox.setItems(FXCollections.observableList(Arrays.asList(Movie.MpaaRating.values())));
@@ -205,6 +207,21 @@ public class MovieKeyParamPaneController {
             // never
         }
         return allOk;
+    }
+
+    void setToUpdate(Map.Entry<Integer, Movie> entry) {
+        movieKeyTextField.setText(entry.getKey().toString());
+        movieNameTextField.setText(entry.getValue().getName());
+        coordinatesXTextField.setText(String.valueOf(entry.getValue().getCoordinates().getX()));
+        coordinatesYTextField.setText(String.valueOf(entry.getValue().getCoordinates().getY()));
+        movieCreationDateTextField.setText(entry.getValue().getCreationDate().toString());
+        movieOscarsCountTextField.setText(String.valueOf(entry.getValue().getOscarsCount()));
+        movieLengthTextField.setText(String.valueOf(entry.getValue().getLength()));
+        movieGenreChoiceBox.setValue(entry.getValue().getGenre());
+        movieMpaaRatingChoiceBox.setValue(entry.getValue().getMpaaRating());
+        screenwriterNameTextField.setText(entry.getValue().getScreenwriter().getName());
+        screenwriterBirthdayTextField.setText(entry.getValue().getScreenwriter().getBirthdayString());
+        screenwriterHairColorChoiceBox.setValue(entry.getValue().getScreenwriter().getHairColor());
     }
 
     void clearPane() {

@@ -16,6 +16,7 @@ import javafx.scene.text.TextFlow;
 
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Optional;
 
 public class ControllersContext {
@@ -56,7 +57,7 @@ public class ControllersContext {
 
     private final SimpleObjectProperty<Hashtable<Integer, Movie>> collection = new SimpleObjectProperty<>(new Hashtable<>());
     void setCollection(Hashtable<Integer,Movie> collection) {
-        collectionList.setAll(collection.values());
+        collectionList.setAll(collection.entrySet());
         this.collection.set(collection);
     }
     SimpleObjectProperty<Hashtable<Integer, Movie>> getCollectionProperty() {
@@ -66,10 +67,11 @@ public class ControllersContext {
         return collection.get();
     }
 
-    private final ObservableList<Movie> collectionList = FXCollections.observableArrayList();
-    ObservableList<Movie> getCollectionList() {
+    private final ObservableList<Map.Entry<Integer, Movie>> collectionList = FXCollections.observableArrayList();
+    ObservableList<Map.Entry<Integer, Movie>> getCollectionList() {
         return collectionList;
     }
+
 
     private final SimpleObjectProperty<ClientExecutor.CommandContainer> currentCommand = new SimpleObjectProperty<>(null);
     void setCurrentCommand(ClientExecutor.CommandContainer currentCommand) {

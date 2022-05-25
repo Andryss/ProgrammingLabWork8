@@ -14,7 +14,8 @@
     <center>
         <TableView fx:id="tableMovieTable" BorderPane.alignment="CENTER">
             <columns>
-                <TableColumn fx:id="movieOwnerColumn" prefWidth="42.0" text="Owner" />
+            <TableColumn fx:id="movieKeyColumn" prefWidth="25.0" text="Key" />
+                <TableColumn fx:id="movieOwnerColumn" prefWidth="48.0" text="Owner" />
                 <TableColumn fx:id="movieIdColumn" prefWidth="17.0" text="Id" />
                 <TableColumn fx:id="movieNameColumn" prefWidth="38.0" text="Name" />
                 <TableColumn fx:id="movieCoordinatesColumn" prefWidth="76.0" text="Coordinates">
@@ -58,7 +59,7 @@
             <Label fx:id="filterLabelFirst" text="Filter by" />
             <ChoiceBox fx:id="filterChoiceBox" prefWidth="150.0" />
             <Label fx:id="filterLabelSecond" text="with value contains:" />
-            <TextField fx:id="filterTextField" />
+            <TextField fx:id="filterTextField" promptText="anything" />
          </children>
       </HBox>
    </top>

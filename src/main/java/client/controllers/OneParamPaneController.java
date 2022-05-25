@@ -3,6 +3,7 @@ package client.controllers;
 import client.ClientExecutor;
 import general.commands.BadArgumentsException;
 import general.commands.Command;
+import general.element.Movie;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -14,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
@@ -66,6 +68,10 @@ public class OneParamPaneController {
         } catch (BadArgumentsException e) {
             oneParamErrLabel.setText(e.getMessage());
         }
+    }
+
+    void setToRemove(Map.Entry<Integer, Movie> entry) {
+        oneParamTextField.setText(entry.getKey().toString());
     }
 
     void clearPane() {
