@@ -1,14 +1,15 @@
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ChoiceBox?>
+<?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 
 <ScrollPane fx:id="movieKeyParamPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.MovieKeyParamPaneController">
     <content>
@@ -22,9 +23,6 @@
                     </children>
                 </HBox>
             </bottom>
-            <top>
-                <HBox BorderPane.alignment="CENTER" />
-            </top>
             <center>
                 <GridPane BorderPane.alignment="CENTER">
                     <columnConstraints>
@@ -80,9 +78,9 @@
                         <Label fx:id="movieLengthErrLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="8" />
                         <Label minWidth="200.0" text="Movie genre:" GridPane.rowIndex="9" />
                         <ChoiceBox fx:id="movieGenreChoiceBox" maxWidth="1.7976931348623157E308" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                        <Label fx:id="movieGenreErrLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="9" />
                         <Label minWidth="200.0" text="Movie mpaa rating:" GridPane.rowIndex="10" />
                         <ChoiceBox fx:id="movieMpaaRatingChoiceBox" maxWidth="1.7976931348623157E308" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                        <Label fx:id="movieMpaaRatingErrLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="10" />
                         <Label minWidth="200.0" text="Screenwriter name:" GridPane.rowIndex="11" />
                         <TextField fx:id="screenwriterNameTextField" promptText="e.g. James Francis Cameron" GridPane.columnIndex="1" GridPane.rowIndex="11" />
                         <Label fx:id="screenwriterNameErrLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="11" />

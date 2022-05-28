@@ -6,6 +6,7 @@ import client.ClientExecutor;
 import general.Request;
 import general.Response;
 import general.element.Movie;
+import javafx.animation.Interpolator;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -112,6 +113,16 @@ public class ControllersContext {
     }
     void sendRequest(Request request) throws IOException {
         ClientConnector.getInstance().sendRequest(request);
+    }
+
+    private final Interpolator progressInterpolator = new Interpolator() {
+        @Override
+        protected double curve(double v) {
+            return (v < 0.2) ? (-22.5*v*v + 9*v) : (v < 0.6) ? (0.225*v + 0.855) : (v < 0.9) ? (-2./15*v +1.07) : (5*v*v -9*v + 5);
+        }
+    };
+    Interpolator getProgressInterpolator() {
+        return progressInterpolator;
     }
 
 }

@@ -43,8 +43,8 @@ public class MovieKeyParamPaneController {
     @FXML private TextField movieLengthTextField;
     @FXML private Label movieLengthErrLabel;
     @FXML private ChoiceBox<Movie.MovieGenre> movieGenreChoiceBox;
-    @FXML private Label movieGenreErrLabel;
     @FXML private ChoiceBox<Movie.MpaaRating> movieMpaaRatingChoiceBox;
+    @FXML private Label movieMpaaRatingErrLabel;
     @FXML private TextField screenwriterNameTextField;
     @FXML private Label screenwriterNameErrLabel;
     @FXML private TextField screenwriterBirthdayTextField;
@@ -178,15 +178,14 @@ public class MovieKeyParamPaneController {
         try {
             currentMovie.setGenre((movieGenreChoiceBox.getValue() == null) ?
                     null : movieGenreChoiceBox.getValue().toString());
-            movieGenreErrLabel.setText("");
         } catch (FieldException e) {
-            movieGenreErrLabel.setText(e.getMessage()); allOk = false;
+            // never
         }
         try {
             currentMovie.setMpaaRating((movieMpaaRatingChoiceBox.getValue() == null) ?
                     null : movieMpaaRatingChoiceBox.getValue().toString());
         } catch (FieldException e) {
-            // never
+            movieMpaaRatingErrLabel.setText(e.getMessage()); allOk = false;
         }
         try {
             currentMovie.getScreenwriter().setName(screenwriterNameTextField.getText());

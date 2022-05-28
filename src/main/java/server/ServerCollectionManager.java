@@ -260,7 +260,11 @@ public class ServerCollectionManager {
         try {
             getMovieStatement.setInt(1, key);
             try (ResultSet resultSet = getMovieStatement.executeQuery()) {
-                return resultSet.getLong("movie_id");
+                if (resultSet.next()) {
+                    return resultSet.getLong("movie_id");
+                } else {
+                    return -1;
+                }
             }
         } catch (SQLException e) {
             ServerController.getInstance().error(e.getMessage());

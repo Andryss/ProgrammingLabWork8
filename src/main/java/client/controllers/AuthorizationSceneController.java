@@ -6,7 +6,7 @@ import client.RequestBuilder;
 import general.Request;
 import general.Response;
 import general.element.UserProfile;
-import javafx.animation.PauseTransition;
+import javafx.animation.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -18,6 +18,7 @@ import java.io.IOException;
 
 public class AuthorizationSceneController {
 
+    @FXML private ProgressBar authProgressBar;
     @FXML private Label authLabel;
     @FXML private Label loginLabel;
     @FXML private TextField loginTextField;
@@ -88,11 +89,12 @@ public class AuthorizationSceneController {
             } else if (response.getResponseType() == Response.ResponseType.LOGIN_SUCCESSFUL) {
                 addLogoutHook();
                 ControllersContext.getInstance().setUserName(userProfile.getName());
-                // TODO: change redirection
-                successfulLabel.setText(response.getMessage() + " (you will be redirected to the main page in 1 seconds)");
-                PauseTransition pause = new PauseTransition(Duration.seconds(1));
-                pause.setOnFinished(e -> goToMainPage());
-                pause.play();
+                successfulLabel.setText(response.getMessage());
+                signInErrLabel.setText("");
+                authProgressBar.setVisible(true);
+                Timeline authProgress = new Timeline(new KeyFrame(Duration.seconds(1), new KeyValue(authProgressBar.progressProperty(), 1, ControllersContext.getInstance().getProgressInterpolator())));
+                authProgress.setOnFinished(e -> goToMainPage());
+                authProgress.play();
             } else {
                 throw new IOException("Server has wrong logic: unexpected \"" +
                         response.getResponseType() +
@@ -104,6 +106,8 @@ public class AuthorizationSceneController {
     }
 
     private void clear() {
+        authProgressBar.setProgress(0);
+        authProgressBar.setVisible(false);
         loginTextField.clear();
         loginErrLabel.setText("");
         passwordField.clear();

@@ -6,7 +6,10 @@ import client.RequestBuilder;
 import general.Request;
 import general.Response;
 import general.element.UserProfile;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
@@ -16,6 +19,7 @@ import java.io.IOException;
 
 public class RegistrationSceneController {
 
+    @FXML private ProgressBar regProgressBar;
     @FXML private Label regLabel;
     @FXML private Label loginLabel;
     @FXML private TextField loginTextField;
@@ -72,11 +76,12 @@ public class RegistrationSceneController {
             if (response.getResponseType() == Response.ResponseType.REGISTER_FAILED) {
                 signUpErrLabel.setText(response.getMessage());
             } else if (response.getResponseType() == Response.ResponseType.REGISTER_SUCCESSFUL) {
-                // TODO: change redirection
-                successfulLabel.setText(response.getMessage() + " (you will be redirected to the authorization page in 1 seconds)");
-                PauseTransition pause = new PauseTransition(Duration.seconds(1));
-                pause.setOnFinished(e -> goToAuthPage());
-                pause.play();
+                successfulLabel.setText(response.getMessage());
+                signUpErrLabel.setText("");
+                regProgressBar.setVisible(true);
+                Timeline authProgress = new Timeline(new KeyFrame(Duration.seconds(10), new KeyValue(regProgressBar.progressProperty(), 1, ControllersContext.getInstance().getProgressInterpolator())));
+                authProgress.setOnFinished(e -> goToAuthPage());
+                authProgress.play();
             } else {
                 throw new IOException("Server has wrong logic: unexpected \"" +
                         response.getResponseType() +
@@ -88,6 +93,8 @@ public class RegistrationSceneController {
     }
 
     private void clear() {
+        regProgressBar.setProgress(0);
+        regProgressBar.setVisible(false);
         loginTextField.clear();
         loginErrLabel.setText("");
         passwordField.clear();

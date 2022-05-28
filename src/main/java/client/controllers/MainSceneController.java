@@ -1,6 +1,8 @@
 package client.controllers;
 
 import general.element.Movie;
+import javafx.event.Event;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -23,6 +25,10 @@ public class MainSceneController {
         consoleTabController.setLogic(this);
         tableTabController.setLogic(this);
         plotTabController.setLogic(this);
+
+        plotTabTab.selectedProperty().addListener((obs, o, n) -> {
+            if (n) plotTabController.paintCollection();
+        });
     }
 
     void setToUpdate(Map.Entry<Integer, Movie> entry) {
@@ -37,5 +43,9 @@ public class MainSceneController {
 
     private void selectTab(Tab tab) {
         mainTabPane.getSelectionModel().select(tab);
+    }
+
+    Tab getPlotTab() {
+        return plotTabTab;
     }
 }

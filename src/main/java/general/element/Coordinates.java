@@ -30,6 +30,9 @@ public class Coordinates implements Serializable, Cloneable {
             if (!Float.isFinite(x)) {
                 throw new NumberFormatException();
             }
+            if (x < -200 || x > 200) {
+                throw new FieldException(String.valueOf(x), "Value must be in range [-200,200]");
+            }
             this.x = x;
         } catch (NumberFormatException | NullPointerException e) {
             throw new FieldException(xString, "Value must be float");
@@ -46,6 +49,9 @@ public class Coordinates implements Serializable, Cloneable {
             float y = Float.parseFloat(yString);
             if (!Float.isFinite(y)) {
                 throw new NumberFormatException();
+            }
+            if (y < -200 || y > 200) {
+                throw new FieldException(String.valueOf(y), "Value must be in range [-200,200]");
             }
             this.y = y;
         } catch (NumberFormatException | NullPointerException e) {

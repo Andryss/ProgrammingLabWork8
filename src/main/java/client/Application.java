@@ -1,9 +1,6 @@
 package client;
 
-import client.controllers.AuthorizationSceneController;
 import client.controllers.ControllersContext;
-import client.controllers.MainSceneController;
-import client.controllers.RegistrationSceneController;
 import general.commands.CommandException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -30,7 +27,7 @@ public class Application extends javafx.application.Application {
         try {
 
             this.stage = stage;
-            stage.setTitle("NO Cum");
+            stage.setTitle("Free trial version for 3 minutes (then 1 BARS point for minute)");
 
             preInitializations();
 

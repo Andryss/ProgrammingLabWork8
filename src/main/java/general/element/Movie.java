@@ -125,6 +125,9 @@ public class Movie implements Comparable<Movie>, Serializable, Cloneable {
             if (length <= 0) {
                 throw new FieldException(String.valueOf(length), "Value must be more than 0");
             }
+            if (length < 60 || length > 300) {
+                throw new FieldException(String.valueOf(length), "Value must be more than 60 and less than 300");
+            }
             this.length = length;
         } catch (NumberFormatException | NullPointerException e) {
             throw new FieldException(lengthString, "Value must be integer");
