@@ -50,12 +50,7 @@ public class Application extends javafx.application.Application {
             // TODO: delete trash below
             e.printStackTrace();
             // TODO: delete trash above
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Something went wrong");
-            alert.setHeaderText(null);
-            alert.setContentText("Error: " + e.getMessage());
-
-            alert.show();
+            ControllersContext.getInstance().showErrorWindow("Something went wrong", "Error: " + e.getMessage());
         }
     }
 

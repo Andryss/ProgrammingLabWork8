@@ -11,20 +11,25 @@ import java.util.Map;
 
 public class MainSceneController {
 
+    @FXML private UserTabController userTabController;
     @FXML private ConsoleTabController consoleTabController;
     @FXML private TableTabController tableTabController;
     @FXML private PlotTabController plotTabController;
 
     @FXML private TabPane mainTabPane;
+    @FXML private Tab userTabTab;
     @FXML private Tab consoleTabTab;
     @FXML private Tab tableTabTab;
     @FXML private Tab plotTabTab;
 
     @FXML
     private void initialize() {
+        userTabController.setLogic(this);
         consoleTabController.setLogic(this);
         tableTabController.setLogic(this);
         plotTabController.setLogic(this);
+
+        mainTabPane.getSelectionModel().select(consoleTabTab);
 
         plotTabTab.selectedProperty().addListener((obs, o, n) -> {
             if (n) plotTabController.paintCollection();
@@ -45,6 +50,9 @@ public class MainSceneController {
         mainTabPane.getSelectionModel().select(tab);
     }
 
+    Tab getUserTab() {
+        return userTabTab;
+    }
     Tab getPlotTab() {
         return plotTabTab;
     }

@@ -119,7 +119,7 @@ public class AuthorizationSceneController {
     private void addLogoutHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
-                ClientConnector.getInstance().sendRequest(
+                ControllersContext.getInstance().sendRequest(
                         RequestBuilder.createNewRequest().setRequestType(Request.RequestType.LOGOUT_USER).build()
                 );
             } catch (IOException e) {

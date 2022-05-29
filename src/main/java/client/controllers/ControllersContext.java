@@ -30,19 +30,30 @@ public class ControllersContext {
     }
 
     private final Alert confirmWindow = new Alert(Alert.AlertType.CONFIRMATION);
-    Optional<ButtonType> showConfirmWindow(String title, String contextText) {
+    public Optional<ButtonType> showConfirmWindow(String title, String contextText) {
         confirmWindow.setTitle(title);
-        confirmWindow.setHeaderText(null);
         confirmWindow.setContentText(contextText);
         return confirmWindow.showAndWait();
     }
 
     private final Alert warningWindow = new Alert(Alert.AlertType.WARNING);
-    void showWarningWindow(String title, String contextText) {
+    public void showWarningWindow(String title, String contextText) {
         warningWindow.setTitle(title);
-        warningWindow.setHeaderText(null);
         warningWindow.setContentText(contextText);
         warningWindow.show();
+    }
+
+    private final Alert errorWindow = new Alert(Alert.AlertType.ERROR);
+    public void showErrorWindow(String title, String contextText) {
+        errorWindow.setTitle(title);
+        errorWindow.setContentText(contextText);
+        errorWindow.show();
+    }
+
+    {
+        confirmWindow.setHeaderText(null);
+        warningWindow.setHeaderText(null);
+        errorWindow.setHeaderText(null);
     }
 
     private final SimpleStringProperty userName = new SimpleStringProperty("");
