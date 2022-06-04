@@ -48,7 +48,7 @@ public class RemoveLowerKeyCommand extends NameableCommand {
         try {
             this.key = Integer.parseInt(client.getParam());
         } catch (NumberFormatException e) {
-            throw new BadArgumentsFormatException(getCommandName(), "integer");
+            throw new BadArgumentsException("value must be integer");
         }
     }
 

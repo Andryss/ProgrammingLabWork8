@@ -57,16 +57,23 @@ public class TableTabController {
     @FXML private TableColumn<Map.Entry<Integer,Movie>, Date> screenwriterBirthdayColumn;
     @FXML private TableColumn<Map.Entry<Integer,Movie>, Person.Color> screenwriterHairColorColumn;
 
+    @FXML private Label updateLabelFirst;
     @FXML private Button updateButton;
+    @FXML private Label updateLabelSecond;
     @FXML private CheckBox autoUpdateCheckBox;
     @FXML private Label updateErrLabel;
 
     private FilteredList<Map.Entry<Integer,Movie>> filteredList;
     private final LinkedHashMap<String, TableColumn<Map.Entry<Integer,Movie>, ?>> columns = new LinkedHashMap<>();
 
+    Timeline autoUpdate = new Timeline(new KeyFrame(Duration.seconds(5), e -> updateCollection()));
+    {
+        autoUpdate.setCycleCount(Animation.INDEFINITE);
+        autoUpdate.setAutoReverse(false);
+    }
+
     @FXML
     private void initialize() {
-        // TODO: maybe connect it with @FieldSetter
         movieKeyColumn.setCellValueFactory(e -> new SimpleIntegerProperty(e.getValue().getKey()).asObject());
         movieOwnerColumn.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getValue().getOwner()));
         movieNameColumn.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getValue().getName()));
@@ -117,17 +124,43 @@ public class TableTabController {
             removeItem.setOnAction(e -> mainSceneController.setToRemove(tableRow.getItem()));
             ContextMenu contextMenu = new ContextMenu(editItem, removeItem);
 
-            SimpleBooleanProperty booleanProperty = new SimpleBooleanProperty(false);
-            tableRow.itemProperty().addListener((observableValue, oldValue, newValue) -> booleanProperty.set(newValue != null && newValue.getValue().getOwner().equals(ControllersContext.getInstance().getUserName())));
+            SimpleBooleanProperty isCurrentUser = new SimpleBooleanProperty(false);
+            tableRow.itemProperty().addListener((observableValue, oldValue, newValue) -> isCurrentUser.set(newValue != null && newValue.getValue().getOwner().equals(ControllersContext.getInstance().getUserName())));
 
             tableRow.contextMenuProperty().bind(
-                    Bindings.when(Bindings.isNotNull(tableRow.itemProperty()).and(booleanProperty))
+                    Bindings.when(Bindings.isNotNull(tableRow.itemProperty()).and(isCurrentUser))
                             .then(contextMenu)
                             .otherwise((ContextMenu) null)
             );
+
+            ControllersContext.getInstance().localizedData().resourceBundleProperty().addListener((obs, o, n) -> {
+                editItem.setText(n.getString("Edit"));
+                removeItem.setText(n.getString("Remove"));
+            });
+
             return tableRow;
         });
 
+        autoUpdateCheckBox.selectedProperty().addListener((obs, o, n) -> {
+            if (n) {
+                autoUpdate.play();
+            } else {
+                autoUpdate.pause();
+            }
+        });
+
+        ControllersContext.getInstance().localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+    }
+
+    private void localize(ResourceBundle resourceBundle) {
+        filterLabelFirst.setText(resourceBundle.getString("Filter by"));
+        filterLabelSecond.setText(resourceBundle.getString("with value contains") + ":");
+        filterTextField.setPromptText(resourceBundle.getString("anything"));
+        updateLabelFirst.setText(resourceBundle.getString("Do you think here is an old collection?"));
+        updateButton.setText(resourceBundle.getString("Update"));
+        updateLabelSecond.setText(resourceBundle.getString("or set"));
+        autoUpdateCheckBox.setText(resourceBundle.getString("Auto-update"));
+        updateErrLabel.setText("");
     }
 
     private void initColumns(ObservableList<TableColumn<Map.Entry<Integer,Movie>, ?>> list) {
@@ -169,31 +202,6 @@ public class TableTabController {
         updateCollection();
     }
 
-    Timeline autoUpdate = new Timeline(new KeyFrame(Duration.seconds(5), e -> updateCollection()));
-    {
-        autoUpdate.setCycleCount(Animation.INDEFINITE);
-        autoUpdate.setAutoReverse(false);
-    }
-    private void setAutoUpdatePlay() {
-        autoUpdate.play();
-    }
-    private void setAutoUpdatePause() {
-        autoUpdate.pause();
-    }
-
-    @FXML
-    private void autoUpdateMouseClicked(MouseEvent mouseEvent) {
-        autoUpdate();
-    }
-
-    private void autoUpdate() {
-        if (autoUpdateCheckBox.isSelected()) {
-            setAutoUpdatePlay();
-        } else {
-            setAutoUpdatePause();
-        }
-    }
-
     private void updateCollection() {
         try {
             ControllersContext.getInstance().sendToServer(
@@ -202,7 +210,8 @@ public class TableTabController {
                             .build()
             );
         } catch (IOException | ClassNotFoundException e) {
-            updateErrLabel.setText(e.getMessage());
+            ControllersContext.getInstance().showUserError(e);
+            autoUpdateCheckBox.setSelected(false);
         }
     }
 }

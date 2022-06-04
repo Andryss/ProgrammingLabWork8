@@ -27,6 +27,7 @@ import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 public class ConsoleTabController {
     private MainSceneController mainSceneController;
@@ -45,6 +46,7 @@ public class ConsoleTabController {
     @FXML private ScrollPane consoleScrollPane;
     @FXML private TextFlow consoleTextFlow;
     @FXML private ComboBox<String> commandComboBox;
+    @FXML private Button sendCommandButton;
 
 
     private final ClientContextImpl clientContext = new ClientContextImpl();
@@ -59,8 +61,14 @@ public class ConsoleTabController {
         commandComboBox.setItems(FXCollections.observableList(
                 new ArrayList<>(ClientExecutor.getInstance().getCommandMap().keySet())
         ));
+        ControllersContext.getInstance().localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
 
         selectMainPane();
+    }
+
+    private void localize(ResourceBundle resourceBundle) {
+        commandComboBox.setPromptText(resourceBundle.getString("Choose the command you want to send"));
+        sendCommandButton.setText(resourceBundle.getString("Send"));
     }
 
     @FXML
@@ -71,7 +79,10 @@ public class ConsoleTabController {
     private void sendCommand() {
         String commandName = commandComboBox.getValue();
         if (!ClientExecutor.getInstance().hasCommand(commandName)) {
-            ControllersContext.getInstance().showWarningWindow("Choose command", "You should choose command to send!");
+            ControllersContext.getInstance().showWarningWindow(
+                    ControllersContext.getInstance().getString("Choose command"),
+                    ControllersContext.getInstance().getString("You should choose command to send!")
+            );
             return;
         }
         ControllersContext.getInstance().setCurrentCommand(ClientExecutor.getInstance().getCommandContainer(commandName));
@@ -83,13 +94,14 @@ public class ConsoleTabController {
         } else if (currentCommandType == Command.CommandType.MOVIE_KEY_PARAM) {
             movieKeyParamCommand();
         } else {
-            ControllersContext.getInstance().showWarningWindow("Undefined command type", "Undefined type: " + currentCommandType);
+            ControllersContext.getInstance().showUserError(new RuntimeException("Undefined command type: " + currentCommandType));
         }
     }
 
     private void noParamCommand() {
         Optional<ButtonType> buttonType = ControllersContext.getInstance().showConfirmWindow(
-                "Are you sure?", "Are you sure to send command \"" + ControllersContext.getInstance().getCurrentCommand().getCommandName() + "\"?"
+                ControllersContext.getInstance().getString("Are you sure?"),
+                ControllersContext.getInstance().getString("Are you sure to send command") + " \"" + ControllersContext.getInstance().getCurrentCommand().getCommandName() + "\"?"
         );
 
         if (buttonType.isPresent() && buttonType.get() == ButtonType.OK) {
@@ -106,7 +118,7 @@ public class ConsoleTabController {
     void setToRemove(Map.Entry<Integer, Movie> entry) {
         ClientExecutor.CommandContainer commandContainer = ClientExecutor.getInstance().getCommandContainer("remove_key");
         if (commandContainer == null) {
-            ControllersContext.getInstance().showWarningWindow("Cannot find command", "Cannot find \"remove_key\" command :(");
+            ControllersContext.getInstance().showUserError(new RuntimeException("Cannot find \"remove_key\" command :("));
         } else {
             ControllersContext.getInstance().setCurrentCommand(commandContainer);
             Command.CommandType currentCommandType = commandContainer.getCommandType();
@@ -114,7 +126,7 @@ public class ConsoleTabController {
                 oneParamPaneController.setToRemove(entry);
                 oneParamCommand();
             } else {
-                ControllersContext.getInstance().showWarningWindow("Logic has been changed", "Undefined \"remove_key\" command type: " + currentCommandType);
+                ControllersContext.getInstance().showUserError(new RuntimeException("Undefined \"remove_key\" command type: " + currentCommandType));
             }
         }
     }
@@ -126,7 +138,7 @@ public class ConsoleTabController {
     void setToUpdate(Map.Entry<Integer, Movie> entry) {
         ClientExecutor.CommandContainer commandContainer = ClientExecutor.getInstance().getCommandContainer("update");
         if (commandContainer == null) {
-            ControllersContext.getInstance().showWarningWindow("Cannot find command", "Cannot find \"update\" command :(");
+            ControllersContext.getInstance().showUserError(new RuntimeException("Cannot find \"update\" command :("));
         } else {
             ControllersContext.getInstance().setCurrentCommand(commandContainer);
             Command.CommandType currentCommandType = commandContainer.getCommandType();
@@ -134,7 +146,7 @@ public class ConsoleTabController {
                 movieKeyParamPaneController.setToUpdate(entry);
                 movieKeyParamCommand();
             } else {
-                ControllersContext.getInstance().showWarningWindow("Logic has been changed", "Undefined \"update\" command type: " + currentCommandType);
+                ControllersContext.getInstance().showUserError(new RuntimeException("Undefined \"update\" command type: " + currentCommandType));
             }
         }
     }
@@ -155,8 +167,10 @@ public class ConsoleTabController {
             }
         } catch (SocketTimeoutException e) {
             ClientController.getInstance().printlnErr("Server isn't responding (try again later)");
-        } catch (IOException | ClassNotFoundException | CommandException e) {
+        } catch (CommandException e) {
             ClientController.getInstance().printlnErr(e.getMessage());
+        } catch (IOException | ClassNotFoundException e) {
+            ControllersContext.getInstance().showUserError(e);
         }
     }
 

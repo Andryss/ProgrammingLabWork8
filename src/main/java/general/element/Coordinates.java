@@ -31,11 +31,11 @@ public class Coordinates implements Serializable, Cloneable {
                 throw new NumberFormatException();
             }
             if (x < -200 || x > 200) {
-                throw new FieldException(String.valueOf(x), "Value must be in range [-200,200]");
+                throw new FieldException("value must be in range [-200,200]");
             }
             this.x = x;
         } catch (NumberFormatException | NullPointerException e) {
-            throw new FieldException(xString, "Value must be float");
+            throw new FieldException("value must be float");
         }
     }
 
@@ -51,11 +51,11 @@ public class Coordinates implements Serializable, Cloneable {
                 throw new NumberFormatException();
             }
             if (y < -200 || y > 200) {
-                throw new FieldException(String.valueOf(y), "Value must be in range [-200,200]");
+                throw new FieldException("value must be in range [-200,200]");
             }
             this.y = y;
         } catch (NumberFormatException | NullPointerException e) {
-            throw new FieldException(yString, "Value must be float");
+            throw new FieldException("value must be float");
         }
     }
 

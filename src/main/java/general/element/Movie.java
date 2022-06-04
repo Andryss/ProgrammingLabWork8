@@ -81,10 +81,10 @@ public class Movie implements Comparable<Movie>, Serializable, Cloneable {
     @FieldSetter(fieldName = "name", example = "for example \"Terminator\"", index = 0)
     public void setName(String name) throws FieldException {
         if (name == null || name.equals("null") || name.length() == 0) {
-            throw new FieldException(null, "Field can't be null, String can't be empty");
+            throw new FieldException("field can't be null, String can't be empty");
         }
         if (name.length() > 20) {
-            throw new FieldException(name, "Name must have less than 20 characters");
+            throw new FieldException("name must have less than 20 characters");
         }
         this.name = name;
     }
@@ -106,11 +106,11 @@ public class Movie implements Comparable<Movie>, Serializable, Cloneable {
         try {
             long oscarsCount = Long.parseLong(oscarsCountString);
             if (oscarsCount <= 0) {
-                throw new FieldException(String.valueOf(oscarsCount), "Value must be more than 0");
+                throw new FieldException("value must be more than 0");
             }
             this.oscarsCount = oscarsCount;
         } catch (NumberFormatException | NullPointerException e) {
-            throw new FieldException(oscarsCountString, "Value must be long");
+            throw new FieldException("value must be long");
         }
     }
 
@@ -123,14 +123,14 @@ public class Movie implements Comparable<Movie>, Serializable, Cloneable {
         try {
             int length = Integer.parseInt(lengthString);
             if (length <= 0) {
-                throw new FieldException(String.valueOf(length), "Value must be more than 0");
+                throw new FieldException("value must be more than 0");
             }
             if (length < 60 || length > 300) {
-                throw new FieldException(String.valueOf(length), "Value must be more than 60 and less than 300");
+                throw new FieldException("value must be more than 60 and less than 300");
             }
             this.length = length;
         } catch (NumberFormatException | NullPointerException e) {
-            throw new FieldException(lengthString, "Value must be integer");
+            throw new FieldException("value must be integer");
         }
     }
 
@@ -148,7 +148,7 @@ public class Movie implements Comparable<Movie>, Serializable, Cloneable {
         try {
             this.genre = MovieGenre.valueOf(genre.toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
-            throw new FieldException(genre, "Value must be one of: " + Arrays.toString(MovieGenre.values()));
+            throw new FieldException("value must be one of: " + Arrays.toString(MovieGenre.values()));
         }
     }
 
@@ -162,7 +162,7 @@ public class Movie implements Comparable<Movie>, Serializable, Cloneable {
         try {
             this.mpaaRating = MpaaRating.valueOf(mpaaRating.toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException | NullPointerException e) {
-            throw new FieldException(mpaaRating, "Value must be one of: " + Arrays.toString(MpaaRating.values()));
+            throw new FieldException("value must be one of: " + Arrays.toString(MpaaRating.values()));
         }
     }
 

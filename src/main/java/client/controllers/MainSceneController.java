@@ -1,5 +1,6 @@
 package client.controllers;
 
+import general.commands.Command;
 import general.element.Movie;
 import javafx.event.Event;
 import javafx.event.EventType;
@@ -8,6 +9,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 
 import java.util.Map;
+import java.util.ResourceBundle;
 
 public class MainSceneController {
 
@@ -34,6 +36,14 @@ public class MainSceneController {
         plotTabTab.selectedProperty().addListener((obs, o, n) -> {
             if (n) plotTabController.paintCollection();
         });
+
+        ControllersContext.getInstance().localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+    }
+
+    private void localize(ResourceBundle resourceBundle) {
+        consoleTabTab.setText(resourceBundle.getString("Console"));
+        tableTabTab.setText(resourceBundle.getString("Table"));
+        plotTabTab.setText(resourceBundle.getString("Plot"));
     }
 
     void setToUpdate(Map.Entry<Integer, Movie> entry) {

@@ -14,21 +14,18 @@ public class CommandException extends Exception {
     private final String reason;
 
     /**
-     * Constructor with only name
-     * @param command name of command
-     */
-    public CommandException(String command) {
-        this(command, null);
-    }
-
-    /**
      * Constructor with name and reason
      * @param command name of command
      * @param reason string with reason of exception
      */
     public CommandException(String command, String reason) {
+        assert command != null | reason != null : "You must set command or reason";
         this.command = command;
         this.reason = reason;
+    }
+
+    public CommandException(String reason) {
+        this(null, reason);
     }
 
     public String getCommand() {
@@ -41,9 +38,14 @@ public class CommandException extends Exception {
 
     @Override
     public String getMessage() {
-        if (reason != null) {
-            return "ERROR: problem with command \"" + command + "\" (" + reason + ")";
+        if (command != null) {
+            if (reason != null) {
+                return "ERROR: problem with command \"" + command + "\" (" + reason + ")";
+            } else {
+                return "ERROR: some problems with command \"" + command + "\"";
+            }
+        } else {
+            return "ERROR: " + reason;
         }
-        return "ERROR: some problems with command \"" + command + "\"";
     }
 }

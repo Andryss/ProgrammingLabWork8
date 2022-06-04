@@ -15,7 +15,7 @@ public class BadArgumentsFormatException extends BadArgumentsException {
      * @param requiredFormat required format of args
      */
     public BadArgumentsFormatException(String command, String requiredFormat) {
-        super(command);
+        super(command, null);
         this.requiredFormat = requiredFormat;
     }
 

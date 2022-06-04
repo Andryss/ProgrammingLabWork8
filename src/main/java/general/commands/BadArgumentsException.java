@@ -12,14 +12,6 @@ import java.util.Map;
 public class BadArgumentsException extends CommandException {
 
     /**
-     * Constructor without reason
-     * @param command name of command
-     */
-    public BadArgumentsException(String command) {
-        this(command, null);
-    }
-
-    /**
      * Constructor with reason
      * @param command name of command
      * @param reason reason of exception
@@ -29,20 +21,28 @@ public class BadArgumentsException extends CommandException {
         super(command, reason);
     }
 
+    public BadArgumentsException(String reason) {
+        super(reason);
+    }
+
     public static String getExample(String command) {
         return ClientExecutor.getInstance().getExample(command);
     }
 
     @Override
     public String getMessage() {
-        if (getReason() != null) {
-            return "ERROR: bad arguments command \"" + getCommand() + "\" (" + getReason() + ")";
+        if (getCommand() != null) {
+            if (getReason() != null) {
+                return "ERROR: bad arguments command \"" + getCommand() + "\" (" + getReason() + ")";
+            } else {
+                String example = getExample(getCommand());
+                if (example != null) {
+                    return "ERROR: bad arguments command \"" + getCommand() + "\" (example: \"" + example + "\")";
+                } else {
+                    return "ERROR: bad arguments command \"" + getCommand() + "\" (try another variations)";
+                }
+            }
         }
-        String example = getExample(getCommand());
-        if (example != null) {
-            return "ERROR: bad arguments command \"" + getCommand() + "\" (example: \"" + example + "\")";
-        } else {
-            return "ERROR: bad arguments command \"" + getCommand() + "\" (try another variations)";
-        }
+        return super.getMessage();
     }
 }

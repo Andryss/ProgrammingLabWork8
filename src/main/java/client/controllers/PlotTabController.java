@@ -1,5 +1,6 @@
 package client.controllers;
 
+import general.commands.Command;
 import general.element.Movie;
 import general.element.Person;
 import javafx.animation.Interpolator;
@@ -31,6 +32,7 @@ public class PlotTabController {
 
     @FXML private BubbleChart<Float,Float> plotChart;
 
+    @FXML private Label selectedMovieLabel;
     @FXML private Label nothingSelectedLabel;
     @FXML private BorderPane selectedMoviePane;
 
@@ -70,6 +72,15 @@ public class PlotTabController {
         }));
         editSelectedMovieButton.setOnAction(e -> mainSceneController.setToUpdate(selectedMovie.getValue()));
         removeSelectedMovieButton.setOnAction(e -> mainSceneController.setToRemove(selectedMovie.getValue()));
+
+        ControllersContext.getInstance().localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+    }
+
+    private void localize(ResourceBundle resourceBundle) {
+        selectedMovieLabel.setText(resourceBundle.getString("Selected movie"));
+        nothingSelectedLabel.setText("*" + resourceBundle.getString("nothing selected") + "*");
+        editSelectedMovieButton.setText(resourceBundle.getString("Edit"));
+        removeSelectedMovieButton.setText(resourceBundle.getString("Remove"));
     }
 
     void paintCollection() {

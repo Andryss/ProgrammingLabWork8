@@ -3,6 +3,7 @@ package client.controllers;
 import client.Application;
 import client.ClientConnector;
 import client.ClientExecutor;
+import client.localization.LocalizedData;
 import general.Request;
 import general.Response;
 import general.element.Movie;
@@ -15,10 +16,14 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.text.TextFlow;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 public class ControllersContext {
     private static final ControllersContext instance = new ControllersContext();
@@ -54,6 +59,23 @@ public class ControllersContext {
         confirmWindow.setHeaderText(null);
         warningWindow.setHeaderText(null);
         errorWindow.setHeaderText(null);
+    }
+
+    public void showUserError(Throwable throwable) {
+        showErrorWindow(
+                getString("Error"),
+                getString("Oops... Seems like evil goblins cut some wires... Try again later")
+        );
+        try {
+            File file = new File("errStackTrace" + (Math.random() * Long.MAX_VALUE));
+            if (file.createNewFile()) {
+                try (PrintStream stream = new PrintStream(file)) {
+                    throwable.printStackTrace(stream);
+                }
+            } // Else sadness :(
+        } catch (IOException e) {
+            // Also, sadness :(
+        }
     }
 
     private final SimpleStringProperty userName = new SimpleStringProperty("");
@@ -124,6 +146,13 @@ public class ControllersContext {
     }
     void sendRequest(Request request) throws IOException {
         ClientConnector.getInstance().sendRequest(request);
+    }
+
+    LocalizedData localizedData() {
+        return LocalizedData.getInstance();
+    }
+    String getString(String key) {
+        return localizedData().getResourceBundle().getString(key);
     }
 
     private final Interpolator progressInterpolator = new Interpolator() {

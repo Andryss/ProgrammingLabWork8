@@ -7,7 +7,7 @@ package general.commands;
 public class UndefinedCommandException extends CommandException {
 
     public UndefinedCommandException(String command) {
-        super(command);
+        super(command, null);
     }
 
     @Override

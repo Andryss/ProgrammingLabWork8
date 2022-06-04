@@ -45,10 +45,10 @@
    <bottom>
       <HBox BorderPane.alignment="CENTER">
          <children>
-            <Label text="Do you think here is an old collection?" />
+            <Label fx:id="updateLabelFirst" text="Do you think here is an old collection?" />
             <Button fx:id="updateButton" mnemonicParsing="false" onMouseClicked="#updateCollectionMouseClicked" text="Update" />
-            <Label text="or set" />
-            <CheckBox fx:id="autoUpdateCheckBox" mnemonicParsing="false" onMouseClicked="#autoUpdateMouseClicked" text="Auto-update" />
+            <Label fx:id="updateLabelSecond" text="or set" />
+            <CheckBox fx:id="autoUpdateCheckBox" mnemonicParsing="false" text="Auto-update" />
             <Label fx:id="updateErrLabel" textFill="#b00000" />
          </children>
       </HBox>

@@ -15,7 +15,7 @@ public class BadArgumentsCountException extends BadArgumentsException {
      * @param requiredCount - required count of args
      */
     public BadArgumentsCountException(String command, int requiredCount) {
-        super(command);
+        super(command, null);
         this.requiredCount = requiredCount;
     }
 

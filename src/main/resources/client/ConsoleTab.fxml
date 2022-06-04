@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.text.TextFlow?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Button?>
 
 <BorderPane fx:id="consoleTab" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.ConsoleTabController">
    <center>
       <StackPane fx:id="consoleStackPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
           <children>
+              <fx:include fx:id="movieKeyParamPane" source="MovieKeyParamPane.fxml" />
+              <fx:include fx:id="oneParamPane" source="OneParamPane.fxml" />
               <BorderPane fx:id="consoleMainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                   <center>
                       <ScrollPane fx:id="consoleScrollPane" pannable="true" BorderPane.alignment="CENTER">
@@ -30,8 +32,6 @@
                       </BorderPane>
                   </bottom>
               </BorderPane>
-              <fx:include fx:id="oneParamPane" source="OneParamPane.fxml"/>
-              <fx:include fx:id="movieKeyParamPane" source="MovieKeyParamPane.fxml"/>
           </children>
       </StackPane>
    </center>

@@ -53,7 +53,7 @@ public class FilterByMpaaRatingCommand extends NameableCommand {
         try {
             mpaaRating = Movie.MpaaRating.valueOf(client.getParam());
         } catch (IllegalArgumentException e) {
-            throw new BadArgumentsFormatException(getCommandName(), "one of: " + Arrays.toString(Movie.MpaaRating.values()));
+            throw new BadArgumentsException("value must be one of: " + Arrays.toString(Movie.MpaaRating.values()));
         }
     }
 

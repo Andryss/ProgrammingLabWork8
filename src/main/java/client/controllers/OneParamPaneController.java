@@ -17,6 +17,7 @@ import javafx.scene.input.MouseEvent;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 
 public class OneParamPaneController {
@@ -28,15 +29,27 @@ public class OneParamPaneController {
     @FXML private Label oneParamLabel;
     @FXML private TextField oneParamTextField;
     @FXML private Label oneParamErrLabel;
-    @FXML private Button oneParamConfirmButton;
+    @FXML private Button returnButton;
+    @FXML private Button confirmButton;
 
     @FXML
     private void initialize() {
         ControllersContext.getInstance().getCurrentCommandProperty().addListener((observableValue, oldValue, newValue) -> {
             if (newValue.getCommandType() == Command.CommandType.ONE_PARAM) {
-                oneParamLabel.setText("Enter " + newValue.getParamName() + ":");
+                oneParamLabel.setText(ControllersContext.getInstance().getString("Enter " + newValue.getParamName()));
             }
         });
+        ControllersContext.getInstance().localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+    }
+
+    private void localize(ResourceBundle resourceBundle) {
+        ClientExecutor.CommandContainer command = ControllersContext.getInstance().getCurrentCommand();
+        if (command != null && command.getCommandType() == Command.CommandType.ONE_PARAM) {
+            oneParamLabel.setText(ControllersContext.getInstance().getString("Enter " + ControllersContext.getInstance().getCurrentCommand().getParamName()));
+        }
+        oneParamErrLabel.setText("");
+        returnButton.setText(resourceBundle.getString("Return"));
+        confirmButton.setText(resourceBundle.getString("Confirm"));
     }
 
     @FXML
@@ -59,14 +72,16 @@ public class OneParamPaneController {
             ClientExecutor.CommandContainer currentCommand = ControllersContext.getInstance().getCurrentCommand();
             currentCommand.getCommand().setGUIArgs(getClientContext());
             Optional<ButtonType> buttonType = ControllersContext.getInstance().showConfirmWindow(
-                    "Are you sure?", "Are you sure to send command \"" + currentCommand.getCommandName() + "\" with given argument?"
+                    ControllersContext.getInstance().getString("Are you sure?"),
+                    ControllersContext.getInstance().getString("Are you sure to send command") + "\" " +
+                            currentCommand.getCommandName() + "\"" + ControllersContext.getInstance().getString("with given argument?")
             );
             if (buttonType.isPresent() && buttonType.get() == ButtonType.OK) {
                 consoleTabController.createRequestAndReceiveResponse();
                 returnToTheMainPane();
             }
         } catch (BadArgumentsException e) {
-            oneParamErrLabel.setText(e.getMessage());
+            oneParamErrLabel.setText(ControllersContext.getInstance().getString(e.getMessage()));
         }
     }
 

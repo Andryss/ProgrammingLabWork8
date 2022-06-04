@@ -17,8 +17,8 @@
             <bottom>
                 <HBox BorderPane.alignment="CENTER">
                     <children>
-                        <Button mnemonicParsing="false" onMouseClicked="#returnToTheMainPaneMouseClicked" text="Return" />
-                        <Button fx:id="movieKeyParamConfirmButton" mnemonicParsing="false" onMouseClicked="#movieKeyConfirmMouseClicked" text="Confirm" />
+                        <Button fx:id="returnButton" mnemonicParsing="false" onMouseClicked="#returnToTheMainPaneMouseClicked" text="Return" />
+                        <Button fx:id="confirmButton" mnemonicParsing="false" onMouseClicked="#movieKeyConfirmMouseClicked" text="Confirm" />
                         <Label fx:id="movieKeyParamConfirmErrLabel" textFill="#b00000" />
                     </children>
                 </HBox>

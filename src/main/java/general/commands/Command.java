@@ -29,7 +29,7 @@ public interface Command extends Serializable {
      * @param client Object fot getting arguments
      */
     default void setGUIArgs(ClientContext client) throws BadArgumentsException {
-        throw new BadArgumentsException("command", "method \"setGUIArgs\" is not overridden");
+        throw new BadArgumentsException("method \"setGUIArgs\" is not overridden");
     }
 
     /**

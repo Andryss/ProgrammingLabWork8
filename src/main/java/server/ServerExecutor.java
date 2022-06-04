@@ -154,24 +154,24 @@ public class ServerExecutor {
                 if (ServerCollectionManager.getInstance().countElements(request.getUserProfile().getName()) >= ServerCollectionManager.getInstance().getUserElementsLimit()) {
                     response = ResponseBuilder.createNewResponse()
                             .setResponseType(Response.ResponseType.USER_LIMIT_EXCEEDED)
-                            .addMessage("Your elements count limit (" + ServerCollectionManager.getInstance().getUserElementsLimit() + ") exceeded")
+                            .addMessage("Your elements count limit exceeded")
                             .build();
                 } else {
                     response = ResponseBuilder.createNewResponse()
                             .setResponseType(Response.ResponseType.ELEMENT_NOT_PRESENTED)
-                            .addMessage("Movie with key \"" + request.getCheckingIndex() + "\" doesn't exist")
+                            .addMessage("Movie with given key doesn't exist")
                             .build();
                 }
             } else {
                 if (!movie.getOwner().equals(request.getUserProfile().getName())) {
                     response = ResponseBuilder.createNewResponse()
                             .setResponseType(Response.ResponseType.PERMISSION_DENIED)
-                            .addMessage("User \"" + request.getUserProfile().getName() + "\" doesn't have permission to update movie with key \"" + request.getCheckingIndex() + "\"")
+                            .addMessage("You don't have permission to update movie with given key")
                             .build();
                 } else {
                     response = ResponseBuilder.createNewResponse()
                             .setResponseType(Response.ResponseType.CHECKING_SUCCESSFUL)
-                            .addMessage("User \"" + request.getUserProfile().getName() + "\" have permission to update movie with key \"" + request.getCheckingIndex() + "\"")
+                            .addMessage("You have permission to update movie with given key")
                             .build();
                 }
             }

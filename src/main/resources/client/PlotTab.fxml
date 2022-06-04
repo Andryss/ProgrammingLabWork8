@@ -30,9 +30,9 @@
       </BubbleChart>
    </center>
    <right>
-      <VBox BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
          <children>
-            <Label text="Selected movie" />
+            <Label fx:id="selectedMovieLabel" text="Selected movie" />
             <StackPane prefWidth="300.0">
                <children>
                   <BorderPane fx:id="selectedMoviePane" disable="true">

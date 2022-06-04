@@ -41,7 +41,7 @@ public class UserProfile implements Serializable {
             throw new IllegalArgumentException("Password must have at least 3 characters");
         }
         if (password.length() > 20) {
-            throw new IllegalArgumentException("Login must have less than 20 characters");
+            throw new IllegalArgumentException("Password must have less than 20 characters");
         }
         return password;
     }

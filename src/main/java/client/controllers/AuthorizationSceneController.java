@@ -1,12 +1,13 @@
 package client.controllers;
 
 import client.Application;
-import client.ClientConnector;
 import client.RequestBuilder;
+import client.localization.LocalizedData;
 import general.Request;
 import general.Response;
 import general.element.UserProfile;
 import javafx.animation.*;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -15,6 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.util.ResourceBundle;
 
 public class AuthorizationSceneController {
 
@@ -27,10 +29,31 @@ public class AuthorizationSceneController {
     @FXML private PasswordField passwordField;
     @FXML private Label passwordErrLabel;
     @FXML private Button signInButton;
-    @FXML private Label signInErrLabel;
     @FXML private Label successfulLabel;
     @FXML private Label goToRegLabel;
     @FXML private Hyperlink goToRegLink;
+    @FXML private ChoiceBox<LocalizedData.AvailableLocale> languageChoiceBox;
+
+    @FXML
+    private void initialize() {
+        languageChoiceBox.setItems(FXCollections.observableArrayList(LocalizedData.AvailableLocale.values()));
+        languageChoiceBox.valueProperty().bindBidirectional(ControllersContext.getInstance().localizedData().availableLocaleProperty());
+        ControllersContext.getInstance().localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+    }
+
+    private void localize(ResourceBundle resourceBundle) {
+        authLabel.setText(resourceBundle.getString("Authorization page"));
+        loginLabel.setText(resourceBundle.getString("Login") + ":");
+        loginTextField.setPromptText(resourceBundle.getString("Type here your login"));
+        loginErrLabel.setText("");
+        passwordLabel.setText(resourceBundle.getString("Password") + ":");
+        passwordField.setPromptText(resourceBundle.getString("Type here your pass"));
+        passwordErrLabel.setText("");
+        signInButton.setText(resourceBundle.getString("Sign in"));
+        successfulLabel.setText("");
+        goToRegLabel.setText(resourceBundle.getString("Don't have an account yet?"));
+        goToRegLink.setText(resourceBundle.getString("Go to the registration page"));
+    }
 
     @FXML
     private void goToRegPageMouseClicked(MouseEvent mouseEvent) {
@@ -64,13 +87,13 @@ public class AuthorizationSceneController {
             UserProfile.checkLogin(loginTextField.getText());
             loginErrLabel.setText("");
         } catch (IllegalArgumentException e) {
-            loginErrLabel.setText(e.getMessage());
+            loginErrLabel.setText(ControllersContext.getInstance().getString(e.getMessage()));
         }
         try {
             UserProfile.checkPassword(passwordField.getText());
             passwordErrLabel.setText("");
         } catch (IllegalArgumentException e) {
-            passwordErrLabel.setText(e.getMessage());
+            passwordErrLabel.setText(ControllersContext.getInstance().getString(e.getMessage()));
         }
 
         UserProfile userProfile;
@@ -85,12 +108,14 @@ public class AuthorizationSceneController {
                     RequestBuilder.createNewRequest().setRequestType(Request.RequestType.LOGIN_USER).build()
             );
             if (response.getResponseType() == Response.ResponseType.LOGIN_FAILED) {
-                signInErrLabel.setText(response.getMessage());
+                ControllersContext.getInstance().showErrorWindow(
+                        ControllersContext.getInstance().getString("Login failed"),
+                        ControllersContext.getInstance().getString(response.getMessage())
+                );
             } else if (response.getResponseType() == Response.ResponseType.LOGIN_SUCCESSFUL) {
                 addLogoutHook();
                 ControllersContext.getInstance().setUserName(userProfile.getName());
-                successfulLabel.setText(response.getMessage());
-                signInErrLabel.setText("");
+                successfulLabel.setText(ControllersContext.getInstance().getString(response.getMessage()));
                 authProgressBar.setVisible(true);
                 Timeline authProgress = new Timeline(new KeyFrame(Duration.seconds(1), new KeyValue(authProgressBar.progressProperty(), 1, ControllersContext.getInstance().getProgressInterpolator())));
                 authProgress.setOnFinished(e -> goToMainPage());
@@ -101,7 +126,7 @@ public class AuthorizationSceneController {
                         "\"");
             }
         } catch (IOException | ClassNotFoundException e) {
-            signInErrLabel.setText(e.getMessage());
+            ControllersContext.getInstance().showUserError(e);
         }
     }
 
@@ -112,7 +137,6 @@ public class AuthorizationSceneController {
         loginErrLabel.setText("");
         passwordField.clear();
         passwordErrLabel.setText("");
-        signInErrLabel.setText("");
         successfulLabel.setText("");
     }
 

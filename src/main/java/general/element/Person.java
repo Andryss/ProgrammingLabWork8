@@ -34,10 +34,10 @@ public class Person implements Serializable, Cloneable {
     @FieldSetter(fieldName = "name", example = "for example \"James Francis Cameron\"", index = 7)
     public void setName(String name) throws FieldException {
         if (name == null || name.equals("null") || name.length() == 0) {
-            throw new FieldException(null, "Field can't be null, String can't be empty");
+            throw new FieldException("field can't be null, String can't be empty");
         }
         if (name.length() > 20) {
-            throw new FieldException(name, "Name must have less than 20 characters");
+            throw new FieldException("name must have less than 20 characters");
         }
         this.name = name;
     }
@@ -56,11 +56,11 @@ public class Person implements Serializable, Cloneable {
         try {
             LocalDate date = LocalDate.parse(birthday, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
             if (date.getYear() < 1000) {
-                throw new FieldException(birthday, "Year must be at least 1000 (vampire-screenwriters is not supported)");
+                throw new FieldException("year must be at least 1000 (vampire-screenwriters is not supported)");
             }
             this.birthday = new Date(date.getYear(),date.getMonthValue(),date.getDayOfMonth());
         } catch (DateTimeParseException e) {
-            throw new FieldException(birthday, "Field must have \"DD.MM.YYYY\" format");
+            throw new FieldException("field must have \"DD.MM.YYYY\" format");
         }
     }
 
@@ -78,7 +78,7 @@ public class Person implements Serializable, Cloneable {
         try {
             this.hairColor = Color.valueOf(hairColor.toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
-            throw new FieldException(hairColor, "Value must be one of: " + Arrays.toString(Color.values()));
+            throw new FieldException("value must be one of: " + Arrays.toString(Color.values()));
         }
     }
 

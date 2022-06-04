@@ -50,7 +50,7 @@ public class ExecuteScriptCommand extends NameableCommand {
     public void setGUIArgs(ClientContext client) throws BadArgumentsException {
         file = new File(client.getParam());
         if (!file.exists() || !file.isFile()) {
-            throw new BadArgumentsException(getCommandName(), "script with name \"" + file.getName() + "\" doesn't exists");
+            throw new BadArgumentsException("current script doesn't exists");
         }
     }
 

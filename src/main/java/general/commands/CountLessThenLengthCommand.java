@@ -35,7 +35,7 @@ public class CountLessThenLengthCommand extends NameableCommand {
         try {
             length = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
-            throw new BadArgumentsFormatException(getCommandName(), "value must be integer");
+            throw new BadArgumentsFormatException(getCommandName(), "integer");
         }
     }
 
@@ -44,7 +44,7 @@ public class CountLessThenLengthCommand extends NameableCommand {
         try {
             length = Integer.parseInt(client.getParam());
         } catch (NumberFormatException e) {
-            throw new BadArgumentsFormatException(getCommandName(), "value must be integer");
+            throw new BadArgumentsException("value must be integer");
         }
     }
 
