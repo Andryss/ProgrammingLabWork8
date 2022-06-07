@@ -9,26 +9,19 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 
 import java.io.IOException;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TableTabController {
     MainSceneController mainSceneController;
@@ -42,19 +35,19 @@ public class TableTabController {
     @FXML private TextField filterTextField;
 
     @FXML private TableView<Map.Entry<Integer, Movie>> tableMovieTable;
-    @FXML private TableColumn<Map.Entry<Integer,Movie>, Integer> movieKeyColumn;
+    @FXML private TableColumn<Map.Entry<Integer,Movie>, String> movieKeyColumn;
     @FXML private TableColumn<Map.Entry<Integer,Movie>, String> movieOwnerColumn;
     @FXML private TableColumn<Map.Entry<Integer,Movie>, String> movieNameColumn;
-    @FXML private TableColumn<Map.Entry<Integer,Movie>, Long> movieIdColumn;
-    @FXML private TableColumn<Map.Entry<Integer,Movie>, Float> coordinatesXColumn;
-    @FXML private TableColumn<Map.Entry<Integer,Movie>, Float> coordinatesYColumn;
-    @FXML private TableColumn<Map.Entry<Integer,Movie>, ZonedDateTime> movieCreationDateColumn;
-    @FXML private TableColumn<Map.Entry<Integer,Movie>, Long> movieOscarsCountColumn;
-    @FXML private TableColumn<Map.Entry<Integer,Movie>, Integer> movieLengthColumn;
+    @FXML private TableColumn<Map.Entry<Integer,Movie>, String> movieIdColumn;
+    @FXML private TableColumn<Map.Entry<Integer,Movie>, String> coordinatesXColumn;
+    @FXML private TableColumn<Map.Entry<Integer,Movie>, String> coordinatesYColumn;
+    @FXML private TableColumn<Map.Entry<Integer,Movie>, String> movieCreationDateColumn;
+    @FXML private TableColumn<Map.Entry<Integer,Movie>, String> movieOscarsCountColumn;
+    @FXML private TableColumn<Map.Entry<Integer,Movie>, String> movieLengthColumn;
     @FXML private TableColumn<Map.Entry<Integer,Movie>, Movie.MovieGenre> movieGenreColumn;
     @FXML private TableColumn<Map.Entry<Integer,Movie>, Movie.MpaaRating> movieMpaaRatingColumn;
     @FXML private TableColumn<Map.Entry<Integer,Movie>, String> screenwriterNameColumn;
-    @FXML private TableColumn<Map.Entry<Integer,Movie>, Date> screenwriterBirthdayColumn;
+    @FXML private TableColumn<Map.Entry<Integer,Movie>, String> screenwriterBirthdayColumn;
     @FXML private TableColumn<Map.Entry<Integer,Movie>, Person.Color> screenwriterHairColorColumn;
 
     @FXML private Label updateLabelFirst;
@@ -74,53 +67,17 @@ public class TableTabController {
 
     @FXML
     private void initialize() {
-        movieKeyColumn.setCellValueFactory(e -> new SimpleIntegerProperty(e.getValue().getKey()).asObject());
-        movieOwnerColumn.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getValue().getOwner()));
-        movieNameColumn.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getValue().getName()));
-        movieIdColumn.setCellValueFactory(e -> new SimpleLongProperty(e.getValue().getValue().getId()).asObject());
-        coordinatesXColumn.setCellValueFactory(e -> new SimpleFloatProperty(e.getValue().getValue().getCoordinates().getX()).asObject());
-        coordinatesYColumn.setCellValueFactory(e -> new SimpleFloatProperty(e.getValue().getValue().getCoordinates().getY()).asObject());
-        movieCreationDateColumn.setCellValueFactory(e -> new SimpleObjectProperty<>(e.getValue().getValue().getCreationDate()));
-        movieOscarsCountColumn.setCellValueFactory(e -> new SimpleLongProperty(e.getValue().getValue().getOscarsCount()).asObject());
-        movieLengthColumn.setCellValueFactory(e -> new SimpleIntegerProperty(e.getValue().getValue().getLength()).asObject());
-        movieGenreColumn.setCellValueFactory(e -> new SimpleObjectProperty<>(e.getValue().getValue().getGenre()));
-        movieMpaaRatingColumn.setCellValueFactory(e -> new SimpleObjectProperty<>(e.getValue().getValue().getMpaaRating()));
-        screenwriterNameColumn.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getValue().getScreenwriter().getName()));
-        screenwriterBirthdayColumn.setCellValueFactory(e -> new SimpleObjectProperty<>(e.getValue().getValue().getScreenwriter().getBirthday()));
-        screenwriterHairColorColumn.setCellValueFactory(e -> new SimpleObjectProperty<>(e.getValue().getValue().getScreenwriter().getHairColor()));
+        setColumnsProperties();
 
         initColumns(tableMovieTable.getColumns());
 
-        filteredList = new FilteredList<>(ControllersContext.getInstance().getCollectionList(), m -> true);
-        SortedList<Map.Entry<Integer,Movie>> sortedList = new SortedList<>(filteredList);
-        tableMovieTable.setItems(sortedList);
-        sortedList.comparatorProperty().bind(tableMovieTable.comparatorProperty());
-
-        // FOR STREAM FILTERING
-        //ControllersContext.getInstance().getCollectionList().addListener((ListChangeListener<Map.Entry<Integer, Movie>>) change -> filterCollection());
-
-        filterChoiceBox.setItems(FXCollections.observableArrayList(columns.values()));
-        filterChoiceBox.setConverter(new StringConverter<TableColumn<Map.Entry<Integer,Movie>, ?>>() {
-            @Override
-            public String toString(TableColumn<Map.Entry<Integer,Movie>, ?> movieTableColumn) {
-                //noinspection OptionalGetWithoutIsPresent
-                return columns.entrySet().stream().filter(e -> e.getValue() == movieTableColumn).findAny().get().getKey();
-            }
-            @Override
-            public TableColumn<Map.Entry<Integer,Movie>, ?> fromString(String s) {
-                return columns.get(s);
-            }
-        });
-        //noinspection OptionalGetWithoutIsPresent
-        filterChoiceBox.setValue(columns.values().stream().findFirst().get());
-
-        filterTextField.textProperty().addListener((observableValue, oldValue, newValue) -> filterCollection());
+        setSortingAndFiltering();
 
         tableMovieTable.setRowFactory(entryTableView -> {
             TableRow<Map.Entry<Integer, Movie>> tableRow = new TableRow<>();
-            MenuItem editItem = new MenuItem("Edit");
+            MenuItem editItem = new MenuItem(ControllersContext.getInstance().getString("Edit"));
             editItem.setOnAction(e -> mainSceneController.setToUpdate(tableRow.getItem()));
-            MenuItem removeItem = new MenuItem("Remove");
+            MenuItem removeItem = new MenuItem(ControllersContext.getInstance().getString("Remove"));
             removeItem.setOnAction(e -> mainSceneController.setToRemove(tableRow.getItem()));
             ContextMenu contextMenu = new ContextMenu(editItem, removeItem);
 
@@ -132,11 +89,6 @@ public class TableTabController {
                             .then(contextMenu)
                             .otherwise((ContextMenu) null)
             );
-
-            ControllersContext.getInstance().localizedData().resourceBundleProperty().addListener((obs, o, n) -> {
-                editItem.setText(n.getString("Edit"));
-                removeItem.setText(n.getString("Remove"));
-            });
 
             return tableRow;
         });
@@ -163,6 +115,30 @@ public class TableTabController {
         updateErrLabel.setText("");
     }
 
+    private void setColumnsProperties() {
+        movieKeyColumn.setCellValueFactory(e -> new SimpleStringProperty(ControllersContext.getInstance().localizedData().getNumberFormat().format(e.getValue().getKey())));
+        movieOwnerColumn.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getValue().getOwner()));
+        movieNameColumn.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getValue().getName()));
+        movieIdColumn.setCellValueFactory(e -> new SimpleStringProperty(ControllersContext.getInstance().localizedData().getNumberFormat().format(e.getValue().getValue().getId())));
+        coordinatesXColumn.setCellValueFactory(e -> new SimpleStringProperty(ControllersContext.getInstance().localizedData().getNumberFormat().format(e.getValue().getValue().getCoordinates().getX())));
+        coordinatesYColumn.setCellValueFactory(e -> new SimpleStringProperty(ControllersContext.getInstance().localizedData().getNumberFormat().format(e.getValue().getValue().getCoordinates().getY())));
+        movieCreationDateColumn.setCellValueFactory(e -> new SimpleStringProperty(ControllersContext.getInstance().localizedData().getLongDateFormat().format(Date.from(Instant.from(e.getValue().getValue().getCreationDate())))));
+        movieOscarsCountColumn.setCellValueFactory(e -> new SimpleStringProperty(ControllersContext.getInstance().localizedData().getNumberFormat().format(e.getValue().getValue().getOscarsCount())));
+        movieLengthColumn.setCellValueFactory(e -> new SimpleStringProperty(ControllersContext.getInstance().localizedData().getNumberFormat().format(e.getValue().getValue().getLength())));
+        movieGenreColumn.setCellValueFactory(e -> new SimpleObjectProperty<>(e.getValue().getValue().getGenre()));
+        movieMpaaRatingColumn.setCellValueFactory(e -> new SimpleObjectProperty<>(e.getValue().getValue().getMpaaRating()));
+        screenwriterNameColumn.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getValue().getScreenwriter().getName()));
+        screenwriterBirthdayColumn.setCellValueFactory(e -> {
+            if (e.getValue().getValue().getScreenwriter().getBirthday() == null) {
+                return new SimpleStringProperty(null);
+            }
+            return new SimpleStringProperty(ControllersContext.getInstance().localizedData().getShortDateFormat().format(e.getValue().getValue().getScreenwriter().getBirthday()));
+        });
+        screenwriterHairColorColumn.setCellValueFactory(e -> new SimpleObjectProperty<>(e.getValue().getValue().getScreenwriter().getHairColor()));
+
+        ControllersContext.getInstance().localizedData().availableLocaleProperty().addListener((obs, o, n) -> tableMovieTable.refresh());
+    }
+
     private void initColumns(ObservableList<TableColumn<Map.Entry<Integer,Movie>, ?>> list) {
         initColumns("", list);
     }
@@ -177,11 +153,43 @@ public class TableTabController {
         }
     }
 
+    private void setSortingAndFiltering() {
+        filteredList = new FilteredList<>(ControllersContext.getInstance().getCollectionList(), m -> true);
+        SortedList<Map.Entry<Integer,Movie>> sortedList = new SortedList<>(filteredList);
+        tableMovieTable.setItems(sortedList);
+        sortedList.comparatorProperty().bind(tableMovieTable.comparatorProperty());
+
+        // FOR STREAM FILTERING
+        //ControllersContext.getInstance().getCollectionList().addListener((ListChangeListener<Map.Entry<Integer, Movie>>) change -> filterCollection());
+
+        filterChoiceBox.setItems(FXCollections.observableArrayList(columns.values()));
+        filterChoiceBox.setConverter(new StringConverter<TableColumn<Map.Entry<Integer,Movie>, ?>>() {
+            @Override
+            public String toString(TableColumn<Map.Entry<Integer,Movie>, ?> movieTableColumn) {
+                //noinspection OptionalGetWithoutIsPresent
+                return columns.entrySet().stream().filter(e -> e.getValue() == movieTableColumn).findAny().get().getKey();
+            }
+            @Override
+            public TableColumn<Map.Entry<Integer,Movie>, ?> fromString(String s) {
+                return columns.get(s);
+            }
+        });
+        //noinspection OptionalGetWithoutIsPresent
+        filterChoiceBox.setValue(columns.values().stream().findFirst().get());
+
+        filterTextField.textProperty().addListener((observableValue, oldValue, newValue) -> filterCollection());
+    }
+
     private void filterCollection() {
         if (filterTextField.getText().equals("")) {
             filteredList.setPredicate(m -> true);
         } else {
-            filteredList.setPredicate(m -> filterChoiceBox.getValue().getCellData(m).toString().toLowerCase().contains(filterTextField.getText()));
+            filteredList.setPredicate(m -> {
+                if (filterChoiceBox.getValue().getCellData(m) == null) {
+                    return false;
+                }
+                return filterChoiceBox.getValue().getCellData(m).toString().toLowerCase().contains(filterTextField.getText());
+            });
         }
     }
 

@@ -61,23 +61,6 @@ public class ControllersContext {
         errorWindow.setHeaderText(null);
     }
 
-    public void showUserError(Throwable throwable) {
-        showErrorWindow(
-                getString("Error"),
-                getString("Oops... Seems like evil goblins cut some wires... Try again later")
-        );
-        try {
-            File file = new File("errStackTrace" + (Math.random() * Long.MAX_VALUE));
-            if (file.createNewFile()) {
-                try (PrintStream stream = new PrintStream(file)) {
-                    throwable.printStackTrace(stream);
-                }
-            } // Else sadness :(
-        } catch (IOException e) {
-            // Also, sadness :(
-        }
-    }
-
     private final SimpleStringProperty userName = new SimpleStringProperty("");
     void setUserName(String username) {
         this.userName.set(username);
@@ -165,4 +148,20 @@ public class ControllersContext {
         return progressInterpolator;
     }
 
+    public void showUserError(Throwable throwable) {
+        showErrorWindow(
+                getString("Error"),
+                getString("Oops... Seems like evil goblins cut some wires... Try again later")
+        );
+        try {
+            File file = new File("errStackTrace" + (Math.random() * Long.MAX_VALUE));
+            if (file.createNewFile()) {
+                try (PrintStream stream = new PrintStream(file)) {
+                    throwable.printStackTrace(stream);
+                }
+            } // Else sadness :(
+        } catch (IOException e) {
+            // Also, sadness :(
+        }
+    }
 }

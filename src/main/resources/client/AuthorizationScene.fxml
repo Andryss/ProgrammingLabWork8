@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Hyperlink?>
@@ -8,53 +9,99 @@
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane minHeight="200.0" minWidth="300.0" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #cccccc;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.AuthorizationSceneController">
-   <children>
-      <ProgressBar fx:id="authProgressBar" prefHeight="18.0" prefWidth="900.0" progress="0.0" visible="false" />
-      <Label fx:id="authLabel" alignment="CENTER" layoutX="135.0" layoutY="90.0" maxWidth="1.7976931348623157E308" prefHeight="140.0" prefWidth="630.0" text="Authorization page" textFill="#b00000">
-         <font>
-            <Font size="60.0" />
-         </font>
-      </Label>
-      <Label fx:id="loginLabel" layoutX="354.0" layoutY="247.0" prefHeight="40.0" prefWidth="190.0" text="Login:">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-      <TextField fx:id="loginTextField" layoutX="353.0" layoutY="287.0" prefHeight="40.0" prefWidth="190.0" promptText="Type here your login">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </TextField>
-      <Label fx:id="loginErrLabel" layoutX="546.0" layoutY="287.0" prefHeight="40.0" prefWidth="190.0" textFill="#cd0000" />
-      <Label fx:id="passwordLabel" layoutX="355.0" layoutY="326.0" prefHeight="40.0" prefWidth="190.0" text="Password:">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-      <PasswordField fx:id="passwordField" layoutX="354.0" layoutY="366.0" prefHeight="40.0" prefWidth="190.0" promptText="Type here your pass">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </PasswordField>
-      <Label fx:id="passwordErrLabel" layoutX="546.0" layoutY="366.0" prefHeight="40.0" prefWidth="190.0" textFill="#cd0000" />
-      <Button fx:id="signInButton" alignment="CENTER" layoutX="408.0" layoutY="421.0" mnemonicParsing="false" onKeyReleased="#signInUserKeyReleased" onMouseClicked="#signInUserMouseClicked" prefWidth="80.0" text="Sign in">
-         <font>
-            <Font size="14.0" />
-         </font>
-      </Button>
-      <Label fx:id="successfulLabel" alignment="CENTER" layoutX="63.0" layoutY="453.0" prefHeight="40.0" prefWidth="770.0" textFill="#00a138">
-         <font>
-            <Font size="18.0" />
-         </font></Label>
-      <Label fx:id="goToRegLabel" alignment="CENTER" layoutX="354.0" layoutY="493.0" prefHeight="25.0" prefWidth="190.0" text="Don't have an account yet?">
-         <font>
-            <Font size="14.0" />
-         </font>
-      </Label>
-      <Hyperlink fx:id="goToRegLink" alignment="CENTER" layoutX="356.0" layoutY="518.0" onMouseClicked="#goToRegPageMouseClicked" prefHeight="25.0" prefWidth="190.0" text="Go to the registration page" />
-      <ChoiceBox fx:id="languageChoiceBox" layoutX="750.0" layoutY="575.0" prefWidth="150.0" />
-   </children>
-</AnchorPane>
+
+<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.AuthorizationSceneController">
+   <center>
+      <VBox alignment="CENTER" spacing="40.0">
+         <children>
+            <Label fx:id="authLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Authorization page" textFill="#b00000">
+               <font>
+                  <Font size="70.0" />
+               </font>
+            </Label>
+            <VBox>
+               <children>
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="40.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="40.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="40.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="40.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="40.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label fx:id="loginLabel" text="Login:" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="loginTextField" promptText="Type here your login" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </TextField>
+                        <Label fx:id="loginErrLabel" textFill="#cd0000" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <Label fx:id="passwordLabel" text="Password:" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <PasswordField fx:id="passwordField" promptText="Type here your pass" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </PasswordField>
+                        <Label fx:id="passwordErrLabel" textFill="#cd0000" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <Button fx:id="signInButton" alignment="CENTER" mnemonicParsing="false" onKeyReleased="#signInUserKeyReleased" onMouseClicked="#signInUserMouseClicked" text="Sign in" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="BOTTOM">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </GridPane>
+                  <Label fx:id="successfulLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" textFill="#00a138">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER">
+               <children>
+                  <Label fx:id="goToRegLabel" alignment="CENTER" text="Don't have an account yet?">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Hyperlink fx:id="goToRegLink" alignment="CENTER" onMouseClicked="#goToRegPageMouseClicked" text="Go to the registration page" />
+               </children>
+            </VBox>
+         </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+      </VBox>
+   </center>
+   <top>
+      <ProgressBar fx:id="authProgressBar" prefHeight="18.0" prefWidth="900.0" progress="0.0" visible="false" BorderPane.alignment="CENTER" />
+   </top>
+   <bottom>
+      <AnchorPane>
+         <children>
+            <ChoiceBox fx:id="languageChoiceBox" layoutX="750.0" prefWidth="150.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+         </children>
+      </AnchorPane>
+   </bottom>
+</BorderPane>

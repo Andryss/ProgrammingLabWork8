@@ -87,15 +87,15 @@ public class Data extends ListResourceBundle {
 
 
             // CHECK INDEX ERRORS
-            {"Server is not responding, try later or choose another server :(", "Server is not responding, try later or choose another server :("},
-            {"User isn't logged in yet (or connection support time is out)", "User isn't logged in yet (or connection support time is out)"},
-            {"Your elements count limit exceeded", "Your elements count limit exceeded"},
-            {"Movie with given key doesn't exist", "Movie with given key doesn't exist"},
-            {"You don't have permission to update movie with given key", "You don't have permission to update movie with given key"},
-            {"You have permission to update movie with given key", "You have permission to update movie with given key"},
-            {"Movie with given key already exists", "Movie with given key already exists"},
-            {"You can't replace movie with given key", "You can't replace movie with given key"},
-            {"You can't update movie with given key", "You can't update movie with given key"},
+            {"ERROR: Server is not responding, try later or choose another server :(", "ERROR: Server is not responding, try later or choose another server :("},
+            {"ERROR: User isn't logged in yet (or connection support time is out)", "ERROR: User isn't logged in yet (or connection support time is out)"},
+            {"ERROR: Your elements count limit exceeded", "ERROR: Your elements count limit exceeded"},
+            {"ERROR: Movie with given key doesn't exist", "ERROR: Movie with given key doesn't exist"},
+            {"ERROR: You don't have permission to update movie with given key", "ERROR: You don't have permission to update movie with given key"},
+            {"ERROR: You have permission to update movie with given key", "ERROR: You have permission to update movie with given key"},
+            {"ERROR: Movie with given key already exists", "ERROR: Movie with given key already exists"},
+            {"ERROR: You can't replace movie with given key", "ERROR: You can't replace movie with given key"},
+            {"ERROR: You can't update movie with given key", "ERROR: You can't update movie with given key"},
             {"OK", "OK"},
 
 
@@ -118,7 +118,7 @@ public class Data extends ListResourceBundle {
             {"ERROR: value must be integer", "ERROR: value must be integer"},
             {"ERROR: value must be one of: [G, PG, PG_13, R, NC_17]", "ERROR: value must be one of: [G, PG, PG_13, R, NC_17]"},
             {"ERROR: name must have less than 20 characters", "ERROR: name must have less than 20 characters"},
-            {"ERROR: year must be at least 1000 (vampire-screenwriters is not supported)", "ERROR: year must be at least 1000 (vampire-screenwriters is not supported)"},
+            {"ERROR: year must be at least 1900 (vampire-screenwriters is not supported)", "ERROR: year must be at least 1900 (vampire-screenwriters is not supported)"},
             {"ERROR: field must have \"DD.MM.YYYY\" format", "ERROR: field must have \"DD.MM.YYYY\" format"},
 
 

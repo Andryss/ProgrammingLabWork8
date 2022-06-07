@@ -18,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.Effect;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.shape.Line;
 import javafx.util.Duration;
@@ -69,6 +70,15 @@ public class PlotTabController {
                 editSelectedMovieButton.setDisable(disable);
                 removeSelectedMovieButton.setDisable(disable);
             }
+            movieData.forEach((key, value) -> {
+                if (value == newValue) {
+                    key.getNode().setScaleX(1.2);
+                    key.getNode().setScaleY(1.2);
+                } else if (value == oldValue) {
+                    key.getNode().setScaleX(1);
+                    key.getNode().setScaleY(1);
+                }
+            });
         }));
         editSelectedMovieButton.setOnAction(e -> mainSceneController.setToUpdate(selectedMovie.getValue()));
         removeSelectedMovieButton.setOnAction(e -> mainSceneController.setToRemove(selectedMovie.getValue()));

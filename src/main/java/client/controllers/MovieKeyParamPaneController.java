@@ -214,6 +214,7 @@ public class MovieKeyParamPaneController {
         try {
             currentMovie.setMpaaRating((movieMpaaRatingChoiceBox.getValue() == null) ?
                     null : movieMpaaRatingChoiceBox.getValue().toString());
+            movieMpaaRatingErrLabel.setText("");
         } catch (FieldException e) {
             movieMpaaRatingErrLabel.setText(ControllersContext.getInstance().getString(e.getMessage())); allOk = false;
         }
@@ -268,6 +269,7 @@ public class MovieKeyParamPaneController {
         movieLengthErrLabel.setText("");
         movieGenreChoiceBox.setValue(null);
         movieMpaaRatingChoiceBox.setValue(null);
+        movieMpaaRatingErrLabel.setText("");
         screenwriterNameTextField.clear();
         screenwriterNameErrLabel.setText("");
         screenwriterBirthdayTextField.clear();

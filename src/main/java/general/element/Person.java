@@ -2,6 +2,7 @@ package general.element;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -42,6 +43,8 @@ public class Person implements Serializable, Cloneable {
         this.name = name;
     }
 
+    private static final DateTimeFormatter birthdayFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
     /**
      * Parse birthday (in format "DD.MM.YYYY") from string and set
      * @throws FieldException if string is incorrect
@@ -54,11 +57,11 @@ public class Person implements Serializable, Cloneable {
             return;
         }
         try {
-            LocalDate date = LocalDate.parse(birthday, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-            if (date.getYear() < 1000) {
-                throw new FieldException("year must be at least 1000 (vampire-screenwriters is not supported)");
+            LocalDate date = LocalDate.parse(birthday, birthdayFormatter);
+            if (date.getYear() < 1900) {
+                throw new FieldException("year must be at least 1900 (vampire-screenwriters is not supported)");
             }
-            this.birthday = new Date(date.getYear(),date.getMonthValue(),date.getDayOfMonth());
+            this.birthday = new Date(date.getYear() - 1900, date.getMonthValue() -1, date.getDayOfMonth());
         } catch (DateTimeParseException e) {
             throw new FieldException("field must have \"DD.MM.YYYY\" format");
         }
@@ -72,7 +75,7 @@ public class Person implements Serializable, Cloneable {
     @FieldSetter(fieldName = "hairColor", example = "it must be one of: [RED, BLACK, BLUE, WHITE, BROWN]", index = 9)
     public void setHairColor(String hairColor) throws FieldException {
         if (hairColor == null || hairColor.equals("null") || hairColor.length() == 0) {
-            this.birthday = null;
+            this.hairColor = null;
             return;
         }
         try {
@@ -101,11 +104,11 @@ public class Person implements Serializable, Cloneable {
     @SuppressWarnings("deprecation")
     public String getBirthdayString() {
         if (birthday == null) {
-            return "null";
+            return "";
         }
         int day = birthday.getDate();
-        int month = (birthday.getMonth() == Calendar.JANUARY ? 12 : birthday.getMonth());
-        int year = birthday.getYear();
+        int month = birthday.getMonth() + 1;
+        int year = birthday.getYear() + 1900;
         return "" + day / 10 + day % 10 + "." +
                 month / 10 + month % 10 + "." +
                 year / 1000 + year / 100 % 10 + year / 10 % 10 + year % 10;
@@ -154,7 +157,7 @@ public class Person implements Serializable, Cloneable {
     protected Person clone() {
         Person clone = new Person();
         clone.name = name;
-        clone.birthday = (Date) birthday.clone();
+        clone.birthday = birthday;
         clone.hairColor = hairColor;
         return clone;
     }
