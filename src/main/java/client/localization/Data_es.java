@@ -18,6 +18,7 @@ public class Data_es extends ListResourceBundle {
             {"Type here your login", "Escriba aquí su nombre de usuario"},
             {"Type here your pass", "Escriba aquí su pase"},
             {"Sign in", "Iniciar sesión"},
+            {"Login failed", "Error de inicio de sesión"},
             {"User already authorized (multi-session is not supported)", "Usuario ya autorizado (no se admite multisesión)"},
             {"User successfully logged in", "El usuario ha iniciado sesión correctamente"},
             {"Incorrect login or password", "Nombre de usuario o contraseña incorrectos"},

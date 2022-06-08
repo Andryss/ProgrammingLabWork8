@@ -28,6 +28,9 @@ public class MovieKeyParamPaneController {
     void setLogic(ConsoleTabController consoleTabController) {
         this.consoleTabController = consoleTabController;
     }
+    private final ControllersContext context = ControllersContext.getInstance();
+
+    @FXML private Label headerLabel;
 
     @FXML private Label movieKeyLabel;
     @FXML private TextField movieKeyTextField;
@@ -62,28 +65,29 @@ public class MovieKeyParamPaneController {
 
     @FXML
     private void initialize() {
-        ControllersContext.getInstance().getCurrentCommandProperty().addListener(((observableValue, oldValue, newValue) -> {
+        context.getCurrentCommandProperty().addListener(((observableValue, oldValue, newValue) -> {
             if (newValue.getCommandType() == Command.CommandType.MOVIE_KEY_PARAM) {
                 currentMovie = new Movie();
                 currentMovie.setCoordinates(new Coordinates());
                 currentMovie.setScreenwriter(new Person());
-                movieKeyLabel.setText(ControllersContext.getInstance().getString("Movie " + newValue.getParamName()) + ":");
+                movieKeyLabel.setText(context.getString("Movie " + newValue.getParamName()) + ":");
                 movieCreationDateTextField.setText(currentMovie.getCreationDate().toString());
             }
         }));
-        ControllersContext.getInstance().getUserNameProperty().addListener((observableValue, oldValue, newValue) -> movieOwnerTextField.setText(newValue));
+        context.getUserNameProperty().addListener((observableValue, oldValue, newValue) -> movieOwnerTextField.setText(newValue));
 
         movieGenreChoiceBox.setItems(FXCollections.observableList(Arrays.asList(Movie.MovieGenre.values())));
         movieMpaaRatingChoiceBox.setItems(FXCollections.observableList(Arrays.asList(Movie.MpaaRating.values())));
         screenwriterHairColorChoiceBox.setItems(FXCollections.observableList(Arrays.asList(Person.Color.values())));
 
-        ControllersContext.getInstance().localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+        context.localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
     }
 
     private void localize(ResourceBundle resourceBundle) {
-        ClientExecutor.CommandContainer command = ControllersContext.getInstance().getCurrentCommand();
+        headerLabel.setText(resourceBundle.getString("Element filling page"));
+        ClientExecutor.CommandContainer command = context.getCurrentCommand();
         if (command != null && command.getCommandType() == Command.CommandType.MOVIE_KEY_PARAM) {
-            movieKeyLabel.setText(resourceBundle.getString("Movie " + ControllersContext.getInstance().getCurrentCommand().getParamName()) + ":");
+            movieKeyLabel.setText(resourceBundle.getString("Movie " + context.getCurrentCommand().getParamName()) + ":");
         }
         returnButton.setText(resourceBundle.getString("Return"));
         confirmButton.setText(resourceBundle.getString("Confirm"));
@@ -105,24 +109,24 @@ public class MovieKeyParamPaneController {
 
     private void checkMovieKey() {
         if (checkMovieKeyByType()) {
-            if (ControllersContext.getInstance().getCurrentCommand().getCommand() instanceof ElementCommand) {
+            if (context.getCurrentCommand().getCommand() instanceof ElementCommand) {
                 try {
-                    Response response = ControllersContext.getInstance().sendToServer(RequestBuilder.createNewRequest()
+                    Response response = context.sendToServer(RequestBuilder.createNewRequest()
                             .setRequestType(Request.RequestType.CHECK_ELEMENT)
                             .setCheckingIndex(currentKey)
                             .build()
                     );
-                    ElementCommand elementCommand = (ElementCommand) ControllersContext.getInstance().getCurrentCommand().getCommand();
+                    ElementCommand elementCommand = (ElementCommand) context.getCurrentCommand().getCommand();
                     elementCommand.checkElement(response);
-                    movieKeyErrLabel.setText(ControllersContext.getInstance().getString("OK"));
+                    movieKeyErrLabel.setText(context.getString("OK"));
                 } catch (BadArgumentsException | SocketTimeoutException e) {
-                    movieKeyErrLabel.setText(ControllersContext.getInstance().getString(e.getMessage()));
+                    movieKeyErrLabel.setText(context.getString(e.getMessage()));
                 } catch (IOException | ClassNotFoundException e) {
-                    ControllersContext.getInstance().showErrorWindow("Something wrong", e.getMessage());
+                    context.showErrorWindow("Something wrong", e.getMessage());
                 }
             } else {
-                ControllersContext.getInstance().showErrorWindow("Something wrong",
-                        ControllersContext.getInstance().getCurrentCommand().getCommandName() + " not extends ElementCommand");
+                context.showErrorWindow("Something wrong",
+                        context.getCurrentCommand().getCommandName() + " not extends ElementCommand");
             }
         }
     }
@@ -145,13 +149,13 @@ public class MovieKeyParamPaneController {
         if (checkMovie()) {
             getClientContext().setParam(null).setMovie(currentMovie).setMovieKey(currentKey);
             try {
-                ClientExecutor.CommandContainer currentCommand = ControllersContext.getInstance().getCurrentCommand();
+                ClientExecutor.CommandContainer currentCommand = context.getCurrentCommand();
                 currentCommand.getCommand().setGUIArgs(getClientContext());
-                Optional<ButtonType> buttonType = ControllersContext.getInstance().showConfirmWindow(
-                        ControllersContext.getInstance().getString("Are you sure?"),
-                        ControllersContext.getInstance().getString("Are you sure to send command") + " \"" +
+                Optional<ButtonType> buttonType = context.showConfirmWindow(
+                        context.getString("Are you sure?"),
+                        context.getString("Are you sure to send command") + " \"" +
                                 currentCommand.getCommandName() + "\" " +
-                                ControllersContext.getInstance().getString("with given arguments?")
+                                context.getString("with given arguments?")
                 );
                 if (buttonType.isPresent() && buttonType.get() == ButtonType.OK) {
                     consoleTabController.createRequestAndReceiveResponse();
@@ -168,7 +172,7 @@ public class MovieKeyParamPaneController {
             currentKey = Integer.parseInt(movieKeyTextField.getText());
             return true;
         } catch (NumberFormatException e) {
-            movieKeyErrLabel.setText("Value must be integer");
+            movieKeyErrLabel.setText(new BadArgumentsException("value must be integer").getMessage());
             return false;
         }
     }
@@ -179,31 +183,31 @@ public class MovieKeyParamPaneController {
             currentMovie.setName(movieNameTextField.getText());
             movieNameErrLabel.setText("");
         } catch (FieldException e) {
-            movieNameErrLabel.setText(ControllersContext.getInstance().getString(e.getMessage())); allOk = false;
+            movieNameErrLabel.setText(context.getString(e.getMessage())); allOk = false;
         }
         try {
             currentMovie.getCoordinates().setX(coordinatesXTextField.getText());
             coordinatesXErrLabel.setText("");
         } catch (FieldException e) {
-            coordinatesXErrLabel.setText(ControllersContext.getInstance().getString(e.getMessage())); allOk = false;
+            coordinatesXErrLabel.setText(context.getString(e.getMessage())); allOk = false;
         }
         try {
             currentMovie.getCoordinates().setY(coordinatesYTextField.getText());
             coordinatesYErrLabel.setText("");
         } catch (FieldException e) {
-            coordinatesYErrLabel.setText(ControllersContext.getInstance().getString(e.getMessage())); allOk = false;
+            coordinatesYErrLabel.setText(context.getString(e.getMessage())); allOk = false;
         }
         try {
             currentMovie.setOscarsCount(movieOscarsCountTextField.getText());
             movieOscarsCountErrLabel.setText("");
         } catch (FieldException e) {
-            movieOscarsCountErrLabel.setText(ControllersContext.getInstance().getString(e.getMessage())); allOk = false;
+            movieOscarsCountErrLabel.setText(context.getString(e.getMessage())); allOk = false;
         }
         try {
             currentMovie.setLength(movieLengthTextField.getText());
             movieLengthErrLabel.setText("");
         } catch (FieldException e) {
-            movieLengthErrLabel.setText(ControllersContext.getInstance().getString(e.getMessage())); allOk = false;
+            movieLengthErrLabel.setText(context.getString(e.getMessage())); allOk = false;
         }
         try {
             currentMovie.setGenre((movieGenreChoiceBox.getValue() == null) ?
@@ -216,19 +220,19 @@ public class MovieKeyParamPaneController {
                     null : movieMpaaRatingChoiceBox.getValue().toString());
             movieMpaaRatingErrLabel.setText("");
         } catch (FieldException e) {
-            movieMpaaRatingErrLabel.setText(ControllersContext.getInstance().getString(e.getMessage())); allOk = false;
+            movieMpaaRatingErrLabel.setText(context.getString(e.getMessage())); allOk = false;
         }
         try {
             currentMovie.getScreenwriter().setName(screenwriterNameTextField.getText());
             screenwriterNameErrLabel.setText("");
         } catch (FieldException e) {
-            screenwriterNameErrLabel.setText(ControllersContext.getInstance().getString(e.getMessage())); allOk = false;
+            screenwriterNameErrLabel.setText(context.getString(e.getMessage())); allOk = false;
         }
         try {
             currentMovie.getScreenwriter().setBirthday(screenwriterBirthdayTextField.getText());
             screenwriterBirthdayErrLabel.setText("");
         } catch (FieldException e) {
-            screenwriterBirthdayErrLabel.setText(ControllersContext.getInstance().getString(e.getMessage())); allOk = false;
+            screenwriterBirthdayErrLabel.setText(context.getString(e.getMessage())); allOk = false;
         }
         try {
             currentMovie.getScreenwriter().setHairColor((screenwriterHairColorChoiceBox.getValue() == null) ?

@@ -1,7 +1,6 @@
 package client.controllers;
 
 import client.Application;
-import client.ClientConnector;
 import client.RequestBuilder;
 import client.localization.LocalizedData;
 import general.Request;
@@ -9,7 +8,6 @@ import general.Response;
 import general.element.UserProfile;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
-import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -21,6 +19,7 @@ import java.io.IOException;
 import java.util.ResourceBundle;
 
 public class RegistrationSceneController {
+    private final ControllersContext context = ControllersContext.getInstance();
 
     @FXML private ProgressBar regProgressBar;
     @FXML private Label regLabel;
@@ -39,22 +38,21 @@ public class RegistrationSceneController {
     @FXML
     private void initialize() {
         languageChoiceBox.setItems(FXCollections.observableArrayList(LocalizedData.AvailableLocale.values()));
-        languageChoiceBox.valueProperty().bindBidirectional(ControllersContext.getInstance().localizedData().availableLocaleProperty());
-        ControllersContext.getInstance().localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+        languageChoiceBox.valueProperty().bindBidirectional(context.localizedData().availableLocaleProperty());
+        context.localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
     }
 
     private void localize(ResourceBundle resourceBundle) {
         regLabel.setText(resourceBundle.getString("Registration page"));
         loginLabel.setText(resourceBundle.getString("Login") + ":");
         loginTextField.setPromptText(resourceBundle.getString("New user login"));
-        loginErrLabel.setText("");
         passwordLabel.setText(resourceBundle.getString("Password") + ":");
         passwordField.setPromptText(resourceBundle.getString("New user pass"));
-        passwordErrLabel.setText("");
         signUpButton.setText(resourceBundle.getString("Sign up"));
-        successfulLabel.setText("");
         goToAuthLabel.setText(resourceBundle.getString("Already have an account?"));
         goToAuthLink.setText(resourceBundle.getString("Go to the authorization page"));
+
+        resetErrLabels();
     }
 
     @FXML
@@ -63,7 +61,7 @@ public class RegistrationSceneController {
     }
 
     private void goToAuthPage() {
-        ControllersContext.getInstance().setScene(Application.AppScene.AUTHORIZATION_SCENE);
+        context.setScene(Application.AppScene.AUTHORIZATION_SCENE);
         clear();
     }
 
@@ -73,6 +71,61 @@ public class RegistrationSceneController {
     }
 
     private void signUpUser() {
+        checkTextFields();
+
+        UserProfile userProfile;
+        try {
+            userProfile = new UserProfile(loginTextField.getText(),passwordField.getText());
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+        RequestBuilder.setUserProfile(userProfile);
+        try {
+            Response response = context.sendToServer(
+                    RequestBuilder.createNewRequest().setRequestType(Request.RequestType.REGISTER_USER).build()
+            );
+            if (response.getResponseType() == Response.ResponseType.REGISTER_FAILED) {
+                context.showErrorWindow(
+                        context.getString("Registration failed"),
+                        context.getString(response.getMessage())
+                );
+            } else if (response.getResponseType() == Response.ResponseType.REGISTER_SUCCESSFUL) {
+                successfulLabel.setText(response.getMessage());
+                disableAll();
+                regProgressBar.setVisible(true);
+                Timeline authProgress = new Timeline(new KeyFrame(Duration.seconds(10), new KeyValue(regProgressBar.progressProperty(), 1, context.getProgressInterpolator())));
+                authProgress.setOnFinished(e -> {
+                    goToAuthPage();
+                    ableAll();
+                });
+                authProgress.play();
+            } else {
+                throw new IOException("Server has wrong logic: unexpected \"" +
+                        response.getResponseType() +
+                        "\"");
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            context.showUserError(e);
+        }
+    }
+
+    private void disableAll() {
+        loginTextField.setDisable(true);
+        passwordField.setDisable(true);
+        signUpButton.setDisable(true);
+        goToAuthLink.setDisable(true);
+        languageChoiceBox.setDisable(true);
+    }
+
+    private void ableAll() {
+        loginTextField.setDisable(false);
+        passwordField.setDisable(false);
+        signUpButton.setDisable(false);
+        goToAuthLink.setDisable(false);
+        languageChoiceBox.setDisable(false);
+    }
+
+    private void checkTextFields() {
         try {
             UserProfile.checkLogin(loginTextField.getText());
             loginErrLabel.setText("");
@@ -85,45 +138,19 @@ public class RegistrationSceneController {
         } catch (IllegalArgumentException e) {
             passwordErrLabel.setText(e.getMessage());
         }
-
-        UserProfile userProfile;
-        try {
-            userProfile = new UserProfile(loginTextField.getText(),passwordField.getText());
-        } catch (IllegalArgumentException e) {
-            return;
-        }
-        RequestBuilder.setUserProfile(userProfile);
-        try {
-            Response response = ControllersContext.getInstance().sendToServer(
-                    RequestBuilder.createNewRequest().setRequestType(Request.RequestType.REGISTER_USER).build()
-            );
-            if (response.getResponseType() == Response.ResponseType.REGISTER_FAILED) {
-                ControllersContext.getInstance().showErrorWindow(
-                        ControllersContext.getInstance().getString("Registration failed"),
-                        ControllersContext.getInstance().getString(response.getMessage())
-                );
-            } else if (response.getResponseType() == Response.ResponseType.REGISTER_SUCCESSFUL) {
-                successfulLabel.setText(response.getMessage());
-                regProgressBar.setVisible(true);
-                Timeline authProgress = new Timeline(new KeyFrame(Duration.seconds(10), new KeyValue(regProgressBar.progressProperty(), 1, ControllersContext.getInstance().getProgressInterpolator())));
-                authProgress.setOnFinished(e -> goToAuthPage());
-                authProgress.play();
-            } else {
-                throw new IOException("Server has wrong logic: unexpected \"" +
-                        response.getResponseType() +
-                        "\"");
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            ControllersContext.getInstance().showUserError(e);
-        }
     }
 
     private void clear() {
         regProgressBar.setProgress(0);
         regProgressBar.setVisible(false);
         loginTextField.clear();
-        loginErrLabel.setText("");
         passwordField.clear();
+
+        resetErrLabels();
+    }
+
+    private void resetErrLabels() {
+        loginErrLabel.setText("");
         passwordErrLabel.setText("");
         successfulLabel.setText("");
     }

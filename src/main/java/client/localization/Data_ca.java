@@ -18,6 +18,7 @@ public class Data_ca extends ListResourceBundle {
             {"Type here your login", "Escriu aquí la teva entrada"},
             {"Type here your pass", "Escriviu aquí el vostre passi"},
             {"Sign in", "Inicia sessió"},
+            {"Login failed", "Ha fallat la connexió"},
             {"User already authorized (multi-session is not supported)", "Usuari ja autoritzat (multi-sessió no és compatible)"},
             {"User successfully logged in", "Usuari registrat amb èxit"},
             {"Incorrect login or password", "Accés o contrasenya incorrectes"},

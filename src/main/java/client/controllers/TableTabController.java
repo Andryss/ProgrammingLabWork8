@@ -2,6 +2,7 @@ package client.controllers;
 
 import client.RequestBuilder;
 import general.Request;
+import general.commands.BadArgumentsException;
 import general.element.Movie;
 import general.element.Person;
 import javafx.animation.Animation;
@@ -20,6 +21,7 @@ import javafx.util.Duration;
 import javafx.util.StringConverter;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.time.Instant;
 import java.util.*;
 
@@ -28,6 +30,7 @@ public class TableTabController {
     void setLogic(MainSceneController mainSceneController) {
         this.mainSceneController = mainSceneController;
     }
+    private final ControllersContext context = ControllersContext.getInstance();
 
     @FXML private Label filterLabelFirst;
     @FXML private ChoiceBox<TableColumn<Map.Entry<Integer,Movie>,?>> filterChoiceBox;
@@ -75,14 +78,14 @@ public class TableTabController {
 
         tableMovieTable.setRowFactory(entryTableView -> {
             TableRow<Map.Entry<Integer, Movie>> tableRow = new TableRow<>();
-            MenuItem editItem = new MenuItem(ControllersContext.getInstance().getString("Edit"));
+            MenuItem editItem = new MenuItem(context.getString("Edit"));
             editItem.setOnAction(e -> mainSceneController.setToUpdate(tableRow.getItem()));
-            MenuItem removeItem = new MenuItem(ControllersContext.getInstance().getString("Remove"));
+            MenuItem removeItem = new MenuItem(context.getString("Remove"));
             removeItem.setOnAction(e -> mainSceneController.setToRemove(tableRow.getItem()));
             ContextMenu contextMenu = new ContextMenu(editItem, removeItem);
 
             SimpleBooleanProperty isCurrentUser = new SimpleBooleanProperty(false);
-            tableRow.itemProperty().addListener((observableValue, oldValue, newValue) -> isCurrentUser.set(newValue != null && newValue.getValue().getOwner().equals(ControllersContext.getInstance().getUserName())));
+            tableRow.itemProperty().addListener((observableValue, oldValue, newValue) -> isCurrentUser.set(newValue != null && newValue.getValue().getOwner().equals(context.getUserName())));
 
             tableRow.contextMenuProperty().bind(
                     Bindings.when(Bindings.isNotNull(tableRow.itemProperty()).and(isCurrentUser))
@@ -101,7 +104,7 @@ public class TableTabController {
             }
         });
 
-        ControllersContext.getInstance().localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+        context.localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
     }
 
     private void localize(ResourceBundle resourceBundle) {
@@ -116,15 +119,15 @@ public class TableTabController {
     }
 
     private void setColumnsProperties() {
-        movieKeyColumn.setCellValueFactory(e -> new SimpleStringProperty(ControllersContext.getInstance().localizedData().getNumberFormat().format(e.getValue().getKey())));
+        movieKeyColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizedData().getNumberFormat().format(e.getValue().getKey())));
         movieOwnerColumn.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getValue().getOwner()));
         movieNameColumn.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getValue().getName()));
-        movieIdColumn.setCellValueFactory(e -> new SimpleStringProperty(ControllersContext.getInstance().localizedData().getNumberFormat().format(e.getValue().getValue().getId())));
-        coordinatesXColumn.setCellValueFactory(e -> new SimpleStringProperty(ControllersContext.getInstance().localizedData().getNumberFormat().format(e.getValue().getValue().getCoordinates().getX())));
-        coordinatesYColumn.setCellValueFactory(e -> new SimpleStringProperty(ControllersContext.getInstance().localizedData().getNumberFormat().format(e.getValue().getValue().getCoordinates().getY())));
-        movieCreationDateColumn.setCellValueFactory(e -> new SimpleStringProperty(ControllersContext.getInstance().localizedData().getLongDateFormat().format(Date.from(Instant.from(e.getValue().getValue().getCreationDate())))));
-        movieOscarsCountColumn.setCellValueFactory(e -> new SimpleStringProperty(ControllersContext.getInstance().localizedData().getNumberFormat().format(e.getValue().getValue().getOscarsCount())));
-        movieLengthColumn.setCellValueFactory(e -> new SimpleStringProperty(ControllersContext.getInstance().localizedData().getNumberFormat().format(e.getValue().getValue().getLength())));
+        movieIdColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizedData().getNumberFormat().format(e.getValue().getValue().getId())));
+        coordinatesXColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizedData().getNumberFormat().format(e.getValue().getValue().getCoordinates().getX())));
+        coordinatesYColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizedData().getNumberFormat().format(e.getValue().getValue().getCoordinates().getY())));
+        movieCreationDateColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizedData().getLongDateFormat().format(Date.from(Instant.from(e.getValue().getValue().getCreationDate())))));
+        movieOscarsCountColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizedData().getNumberFormat().format(e.getValue().getValue().getOscarsCount())));
+        movieLengthColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizedData().getNumberFormat().format(e.getValue().getValue().getLength())));
         movieGenreColumn.setCellValueFactory(e -> new SimpleObjectProperty<>(e.getValue().getValue().getGenre()));
         movieMpaaRatingColumn.setCellValueFactory(e -> new SimpleObjectProperty<>(e.getValue().getValue().getMpaaRating()));
         screenwriterNameColumn.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getValue().getScreenwriter().getName()));
@@ -132,11 +135,11 @@ public class TableTabController {
             if (e.getValue().getValue().getScreenwriter().getBirthday() == null) {
                 return new SimpleStringProperty(null);
             }
-            return new SimpleStringProperty(ControllersContext.getInstance().localizedData().getShortDateFormat().format(e.getValue().getValue().getScreenwriter().getBirthday()));
+            return new SimpleStringProperty(context.localizedData().getShortDateFormat().format(e.getValue().getValue().getScreenwriter().getBirthday()));
         });
         screenwriterHairColorColumn.setCellValueFactory(e -> new SimpleObjectProperty<>(e.getValue().getValue().getScreenwriter().getHairColor()));
 
-        ControllersContext.getInstance().localizedData().availableLocaleProperty().addListener((obs, o, n) -> tableMovieTable.refresh());
+        context.localizedData().availableLocaleProperty().addListener((obs, o, n) -> tableMovieTable.refresh());
     }
 
     private void initColumns(ObservableList<TableColumn<Map.Entry<Integer,Movie>, ?>> list) {
@@ -154,13 +157,13 @@ public class TableTabController {
     }
 
     private void setSortingAndFiltering() {
-        filteredList = new FilteredList<>(ControllersContext.getInstance().getCollectionList(), m -> true);
+        filteredList = new FilteredList<>(context.getCollectionList(), m -> true);
         SortedList<Map.Entry<Integer,Movie>> sortedList = new SortedList<>(filteredList);
         tableMovieTable.setItems(sortedList);
         sortedList.comparatorProperty().bind(tableMovieTable.comparatorProperty());
 
         // FOR STREAM FILTERING
-        //ControllersContext.getInstance().getCollectionList().addListener((ListChangeListener<Map.Entry<Integer, Movie>>) change -> filterCollection());
+        //context.getCollectionList().addListener((ListChangeListener<Map.Entry<Integer, Movie>>) change -> filterCollection());
 
         filterChoiceBox.setItems(FXCollections.observableArrayList(columns.values()));
         filterChoiceBox.setConverter(new StringConverter<TableColumn<Map.Entry<Integer,Movie>, ?>>() {
@@ -195,7 +198,7 @@ public class TableTabController {
 
     // FOR STREAM FILTERING
 //    private void filterCollection() {
-//        ObservableList<Map.Entry<Integer,Movie>> collectionList = ControllersContext.getInstance().getCollectionList();
+//        ObservableList<Map.Entry<Integer,Movie>> collectionList = context.getCollectionList();
 //        if (filterTextField.getText().equals("")) {
 //            tableMovieTable.setItems(collectionList);
 //        } else {
@@ -212,13 +215,19 @@ public class TableTabController {
 
     private void updateCollection() {
         try {
-            ControllersContext.getInstance().sendToServer(
+            context.sendToServer(
                     RequestBuilder.createNewRequest()
                             .setRequestType(Request.RequestType.UPDATE_COLLECTION)
                             .build()
             );
+        } catch (SocketTimeoutException e) {
+            context.showErrorWindow(
+                    context.getString("Something wrong"),
+                    context.getString(new BadArgumentsException("Server is not responding, try later or choose another server :(").getMessage())
+            );
+            autoUpdateCheckBox.setSelected(false);
         } catch (IOException | ClassNotFoundException e) {
-            ControllersContext.getInstance().showUserError(e);
+            context.showUserError(e);
             autoUpdateCheckBox.setSelected(false);
         }
     }

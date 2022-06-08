@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.EnumMap;
+import java.util.Objects;
 import java.util.Properties;
 
 public class Application extends javafx.application.Application {
@@ -31,14 +32,9 @@ public class Application extends javafx.application.Application {
 
             preInitializations();
 
-            FXMLLoader loader = new FXMLLoader(Application.class.getResource("AuthorizationScene.fxml"));
-            sceneMap.put(AppScene.AUTHORIZATION_SCENE, new Scene(loader.load()));
-
-            loader = new FXMLLoader(Application.class.getResource("RegistrationScene.fxml"));
-            sceneMap.put(AppScene.REGISTRATION_SCENE, new Scene(loader.load()));
-
-            loader = new FXMLLoader(Application.class.getResource("MainScene.fxml"));
-            sceneMap.put(AppScene.MAIN_SCENE, new Scene(loader.load()));
+            loadScene("AuthorizationScene.fxml", AppScene.AUTHORIZATION_SCENE);
+            loadScene("RegistrationScene.fxml", AppScene.REGISTRATION_SCENE);
+            loadScene("MainScene.fxml", AppScene.MAIN_SCENE);
 
             ControllersContext.getInstance().setApplication(this);
 
@@ -50,11 +46,28 @@ public class Application extends javafx.application.Application {
             // TODO: delete trash below
             e.printStackTrace();
             // TODO: delete trash above
-            ControllersContext.getInstance().showErrorWindow("Something went wrong", "Error: " + e.getMessage());
+            ControllersContext.getInstance().showUserError(e);
         }
     }
 
+    private String cssStyle;
+    private void loadSccStyle() throws FileNotFoundException {
+        try {
+            cssStyle = Objects.requireNonNull(this.getClass().getResource("defaultTheme.css")).toExternalForm();
+        } catch (NullPointerException e) {
+            throw new FileNotFoundException("Can't find defaultTheme.css file");
+        }
+    }
+    private void loadScene(String name, AppScene sceneType) throws IOException {
+        FXMLLoader loader = new FXMLLoader(Application.class.getResource(name));
+        Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(cssStyle);
+        sceneMap.put(sceneType, scene);
+    }
+
     private void preInitializations() throws IOException, CommandException {
+        loadSccStyle();
+
         Properties properties = readProperties();
 
         ClientConnector.getInstance().setProperties(properties);

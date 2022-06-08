@@ -4,40 +4,49 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<ScrollPane fx:id="oneParamPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.OneParamPaneController">
+<ScrollPane fx:id="oneParamPane" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.OneParamPaneController">
     <content>
-        <BorderPane>
-            <bottom>
-                <HBox BorderPane.alignment="CENTER">
-                    <children>
-                        <Button fx:id="returnButton" mnemonicParsing="false" onMouseClicked="#returnToTheMainPaneMouseClicked" text="Return" />
-                        <Button fx:id="confirmButton" mnemonicParsing="false" onMouseClicked="#oneParamConfirmMouseClicked" text="Confirm" />
-                    </children>
-                </HBox>
-            </bottom>
-            <center>
-                <GridPane BorderPane.alignment="CENTER">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                    <children>
-                        <Label fx:id="oneParamLabel" minWidth="200.0" text="Key to smth:" />
-                        <TextField fx:id="oneParamTextField" GridPane.columnIndex="1" />
-                        <Label fx:id="oneParamErrLabel" textFill="#b00000" GridPane.columnIndex="2" />
-                    </children>
-                </GridPane>
-            </center>
-        </BorderPane>
+      <AnchorPane>
+         <children>
+            <VBox fillWidth="false" layoutX="20.0" layoutY="20.0" spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+               <children>
+                  <Label fx:id="headerLabel" text="Param filling page" underline="true">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                      <GridPane>
+                          <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" prefWidth="200.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                          <children>
+                              <Label fx:id="oneParamLabel" text="Key to smth:" />
+                              <TextField fx:id="oneParamTextField" GridPane.columnIndex="1" />
+                              <Label fx:id="oneParamErrLabel" textFill="#b00000" GridPane.columnIndex="2" />
+                          </children>
+                      </GridPane>
+                      <HBox spacing="20.0">
+                          <children>
+                              <Button fx:id="returnButton" mnemonicParsing="false" onMouseClicked="#returnToTheMainPaneMouseClicked" text="Return" />
+                              <Button fx:id="confirmButton" mnemonicParsing="false" onMouseClicked="#oneParamConfirmMouseClicked" text="Confirm" />
+                          </children>
+                      </HBox>
+               </children>
+            </VBox>
+         </children>
+      </AnchorPane>
     </content>
 </ScrollPane>

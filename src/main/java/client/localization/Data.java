@@ -10,14 +10,12 @@ public class Data extends ListResourceBundle {
 
     private final Object[][] contents = new Object[][] {
 
-            {"Connection with server was successful", "Connection with server was successful"},
-
-
             // AUTH SCENE
             {"Authorization page", "Authorization page"},
             {"Type here your login", "Type here your login"},
             {"Type here your pass", "Type here your pass"},
             {"Sign in", "Sign in"},
+            {"Login failed", "Login failed"},
             {"User already authorized (multi-session is not supported)", "User already authorized (multi-session is not supported)"},
             {"User successfully logged in", "User successfully logged in"},
             {"Incorrect login or password", "Incorrect login or password"},
@@ -54,6 +52,7 @@ public class Data extends ListResourceBundle {
 
             // USER TAB
             {"User", "User"},
+            {"Icon", "Icon"},
             {"Username", "Username"},
             {"Sign out", "Sign out"},
             {"Are you sure to sign out? (all unsaved data will be deleted)", "Are you sure to sign out? (all unsaved data will be deleted)"},
@@ -68,6 +67,12 @@ public class Data extends ListResourceBundle {
             {"Send", "Send"},
             {"Choose command", "Choose command"},
             {"You should choose command to send!", "You should choose command to send!"},
+
+            // ONE PARAM PANE
+            {"Param filling page", "Param filling page"},
+
+            // MOVIE KEY PARAM PANE
+            {"Element filling page", "Element filling page"},
 
 
             // COMMAND
@@ -148,8 +153,6 @@ public class Data extends ListResourceBundle {
             {"Error", "Error"},
             {"Something wrong", "Something wrong"},
             {"Oops... Seems like evil goblins cut some wires... Try again later", "Oops... Seems like evil goblins cut some wires... Try again later"},
-            {"Wrong request format", "Wrong request format"},
-            {"Server has wrong logic: unexpected", "Server has wrong logic: unexpected"},
             {"FATAL", "FATAL"},
             {"FATAL ERROR: don't peek", "FATAL ERROR: don't peek"}
     };

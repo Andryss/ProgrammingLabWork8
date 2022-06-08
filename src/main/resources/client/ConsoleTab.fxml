@@ -7,32 +7,29 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.TextFlow?>
 
-<BorderPane fx:id="consoleTab" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.ConsoleTabController">
-   <center>
-      <StackPane fx:id="consoleStackPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-          <children>
-              <fx:include fx:id="movieKeyParamPane" source="MovieKeyParamPane.fxml" />
-              <fx:include fx:id="oneParamPane" source="OneParamPane.fxml" />
-              <BorderPane fx:id="consoleMainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                  <center>
-                      <ScrollPane fx:id="consoleScrollPane" pannable="true" BorderPane.alignment="CENTER">
-                          <content>
-                              <TextFlow fx:id="consoleTextFlow" />
-                          </content>
-                      </ScrollPane>
-                  </center>
-                  <bottom>
-                      <BorderPane BorderPane.alignment="CENTER">
-                          <center>
-                              <ComboBox fx:id="commandComboBox" maxWidth="1.7976931348623157E308" promptText="Choose the command you want to send" />
-                          </center>
-                          <right>
-                              <Button fx:id="sendCommandButton" mnemonicParsing="false" onMouseClicked="#sendCommandMouseClicked" text="Send" BorderPane.alignment="CENTER" />
-                          </right>
-                      </BorderPane>
-                  </bottom>
-              </BorderPane>
-          </children>
-      </StackPane>
-   </center>
-</BorderPane>
+
+<StackPane fx:id="consoleStackPane" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.ConsoleTabController">
+    <children>
+        <BorderPane fx:id="consoleMainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+            <center>
+                <ScrollPane fx:id="consoleScrollPane" pannable="true" BorderPane.alignment="CENTER">
+                    <content>
+                        <TextFlow fx:id="consoleTextFlow" />
+                    </content>
+                </ScrollPane>
+            </center>
+            <bottom>
+                <BorderPane BorderPane.alignment="CENTER">
+                    <center>
+                        <ComboBox fx:id="commandComboBox" maxWidth="1.7976931348623157E308" promptText="Choose the command you want to send" />
+                    </center>
+                    <right>
+                        <Button fx:id="sendCommandButton" mnemonicParsing="false" onMouseClicked="#sendCommandMouseClicked" text="Send" BorderPane.alignment="CENTER" />
+                    </right>
+                </BorderPane>
+            </bottom>
+        </BorderPane>
+        <fx:include fx:id="oneParamPane" source="OneParamPane.fxml" />
+        <fx:include fx:id="movieKeyParamPane" source="MovieKeyParamPane.fxml" />
+    </children>
+</StackPane>

@@ -17,13 +17,11 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.text.TextFlow;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Optional;
-import java.util.ResourceBundle;
 
 public class ControllersContext {
     private static final ControllersContext instance = new ControllersContext();
@@ -157,6 +155,9 @@ public class ControllersContext {
             File file = new File("errStackTrace" + (Math.random() * Long.MAX_VALUE));
             if (file.createNewFile()) {
                 try (PrintStream stream = new PrintStream(file)) {
+                    // And now we can send stackTrace to the server
+                    // COMING SOON ... (no, I'm lazy)
+                    // Let's just print stackTrace into a file
                     throwable.printStackTrace(stream);
                 }
             } // Else sadness :(

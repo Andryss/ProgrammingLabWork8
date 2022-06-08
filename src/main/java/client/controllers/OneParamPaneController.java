@@ -25,27 +25,32 @@ public class OneParamPaneController {
     void setLogic(ConsoleTabController consoleTabController) {
         this.consoleTabController = consoleTabController;
     }
+    private final ControllersContext context = ControllersContext.getInstance();
+
+    @FXML private Label headerLabel;
 
     @FXML private Label oneParamLabel;
     @FXML private TextField oneParamTextField;
     @FXML private Label oneParamErrLabel;
+
     @FXML private Button returnButton;
     @FXML private Button confirmButton;
 
     @FXML
     private void initialize() {
-        ControllersContext.getInstance().getCurrentCommandProperty().addListener((observableValue, oldValue, newValue) -> {
+        context.getCurrentCommandProperty().addListener((observableValue, oldValue, newValue) -> {
             if (newValue.getCommandType() == Command.CommandType.ONE_PARAM) {
-                oneParamLabel.setText(ControllersContext.getInstance().getString("Enter " + newValue.getParamName()));
+                oneParamLabel.setText(context.getString("Enter " + newValue.getParamName()));
             }
         });
-        ControllersContext.getInstance().localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+        context.localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
     }
 
     private void localize(ResourceBundle resourceBundle) {
-        ClientExecutor.CommandContainer command = ControllersContext.getInstance().getCurrentCommand();
+        headerLabel.setText(resourceBundle.getString("Param filling page"));
+        ClientExecutor.CommandContainer command = context.getCurrentCommand();
         if (command != null && command.getCommandType() == Command.CommandType.ONE_PARAM) {
-            oneParamLabel.setText(ControllersContext.getInstance().getString("Enter " + ControllersContext.getInstance().getCurrentCommand().getParamName()));
+            oneParamLabel.setText(context.getString("Enter " + context.getCurrentCommand().getParamName()));
         }
         oneParamErrLabel.setText("");
         returnButton.setText(resourceBundle.getString("Return"));
@@ -69,19 +74,19 @@ public class OneParamPaneController {
     private void oneParamConfirm() {
         getClientContext().setParam(oneParamTextField.getText()).setMovie(null).setMovieKey(null);
         try {
-            ClientExecutor.CommandContainer currentCommand = ControllersContext.getInstance().getCurrentCommand();
+            ClientExecutor.CommandContainer currentCommand = context.getCurrentCommand();
             currentCommand.getCommand().setGUIArgs(getClientContext());
-            Optional<ButtonType> buttonType = ControllersContext.getInstance().showConfirmWindow(
-                    ControllersContext.getInstance().getString("Are you sure?"),
-                    ControllersContext.getInstance().getString("Are you sure to send command") + "\" " +
-                            currentCommand.getCommandName() + "\"" + ControllersContext.getInstance().getString("with given argument?")
+            Optional<ButtonType> buttonType = context.showConfirmWindow(
+                    context.getString("Are you sure?"),
+                    context.getString("Are you sure to send command") + "\" " +
+                            currentCommand.getCommandName() + "\"" + context.getString("with given argument?")
             );
             if (buttonType.isPresent() && buttonType.get() == ButtonType.OK) {
                 consoleTabController.createRequestAndReceiveResponse();
                 returnToTheMainPane();
             }
         } catch (BadArgumentsException e) {
-            oneParamErrLabel.setText(ControllersContext.getInstance().getString(e.getMessage()));
+            oneParamErrLabel.setText(context.getString(e.getMessage()));
         }
     }
 

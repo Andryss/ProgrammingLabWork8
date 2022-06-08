@@ -7,6 +7,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
@@ -43,24 +44,32 @@
         </TableView>
     </center>
    <bottom>
-      <HBox BorderPane.alignment="CENTER">
+      <AnchorPane BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="updateLabelFirst" text="Do you think here is an old collection?" />
-            <Button fx:id="updateButton" mnemonicParsing="false" onMouseClicked="#updateCollectionMouseClicked" text="Update" />
-            <Label fx:id="updateLabelSecond" text="or set" />
-            <CheckBox fx:id="autoUpdateCheckBox" mnemonicParsing="false" text="Auto-update" />
-            <Label fx:id="updateErrLabel" textFill="#b00000" />
+            <HBox alignment="CENTER" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="10.0">
+               <children>
+                  <Label fx:id="updateLabelFirst" text="Do you think here is an old collection?" />
+                  <Button fx:id="updateButton" mnemonicParsing="false" onMouseClicked="#updateCollectionMouseClicked" text="Update" />
+                  <Label fx:id="updateLabelSecond" text="or set" />
+                  <CheckBox fx:id="autoUpdateCheckBox" mnemonicParsing="false" text="Auto-update" />
+                  <Label fx:id="updateErrLabel" textFill="#b00000" />
+               </children>
+            </HBox>
          </children>
-      </HBox>
+      </AnchorPane>
    </bottom>
    <top>
-      <HBox BorderPane.alignment="CENTER">
+      <AnchorPane BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="filterLabelFirst" text="Filter by" />
-            <ChoiceBox fx:id="filterChoiceBox" prefWidth="150.0" />
-            <Label fx:id="filterLabelSecond" text="with value contains:" />
-            <TextField fx:id="filterTextField" promptText="anything" />
+            <HBox alignment="CENTER" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="10.0">
+               <children>
+                  <Label fx:id="filterLabelFirst" text="Filter by" />
+                  <ChoiceBox fx:id="filterChoiceBox" prefWidth="150.0" />
+                  <Label fx:id="filterLabelSecond" text="with value contains:" />
+                  <TextField fx:id="filterTextField" promptText="anything" />
+               </children>
+            </HBox>
          </children>
-      </HBox>
+      </AnchorPane>
    </top>
 </BorderPane>

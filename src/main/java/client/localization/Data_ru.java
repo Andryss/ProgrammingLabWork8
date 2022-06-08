@@ -18,6 +18,7 @@ public class Data_ru extends ListResourceBundle {
             {"Type here your login", "Введите здесь свой логин"},
             {"Type here your pass", "Введите здесь свой пропуск"},
             {"Sign in", "Вход"},
+            {"Login failed", "Ошибка входа"},
             {"User already authorized (multi-session is not supported)", "Пользователь уже авторизован (мультисессионный режим не поддерживается)"},
             {"User successfully logged in", "Пользователь успешно вошел в систему"},
             {"Incorrect login or password", "Неверный логин или пароль"},

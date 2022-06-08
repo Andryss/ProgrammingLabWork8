@@ -9,6 +9,7 @@ import general.element.UserProfile;
 import javafx.animation.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.util.ResourceBundle;
 
 public class AuthorizationSceneController {
+    private final ControllersContext context = ControllersContext.getInstance();
 
     @FXML private ProgressBar authProgressBar;
     @FXML private Label authLabel;
@@ -37,22 +39,21 @@ public class AuthorizationSceneController {
     @FXML
     private void initialize() {
         languageChoiceBox.setItems(FXCollections.observableArrayList(LocalizedData.AvailableLocale.values()));
-        languageChoiceBox.valueProperty().bindBidirectional(ControllersContext.getInstance().localizedData().availableLocaleProperty());
-        ControllersContext.getInstance().localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+        languageChoiceBox.valueProperty().bindBidirectional(context.localizedData().availableLocaleProperty());
+        context.localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
     }
 
     private void localize(ResourceBundle resourceBundle) {
         authLabel.setText(resourceBundle.getString("Authorization page"));
         loginLabel.setText(resourceBundle.getString("Login") + ":");
         loginTextField.setPromptText(resourceBundle.getString("Type here your login"));
-        loginErrLabel.setText("");
         passwordLabel.setText(resourceBundle.getString("Password") + ":");
         passwordField.setPromptText(resourceBundle.getString("Type here your pass"));
-        passwordErrLabel.setText("");
         signInButton.setText(resourceBundle.getString("Sign in"));
-        successfulLabel.setText("");
         goToRegLabel.setText(resourceBundle.getString("Don't have an account yet?"));
         goToRegLink.setText(resourceBundle.getString("Go to the registration page"));
+
+        resetErrLabels();
     }
 
     @FXML
@@ -62,12 +63,12 @@ public class AuthorizationSceneController {
 
     private void goToRegPage() {
         clear();
-        ControllersContext.getInstance().setScene(Application.AppScene.REGISTRATION_SCENE);
+        context.setScene(Application.AppScene.REGISTRATION_SCENE);
     }
 
     private void goToMainPage() {
         clear();
-        ControllersContext.getInstance().setScene(Application.AppScene.MAIN_SCENE);
+        context.setScene(Application.AppScene.MAIN_SCENE);
     }
 
     @FXML
@@ -83,18 +84,7 @@ public class AuthorizationSceneController {
     }
 
     private void signInUser() {
-        try {
-            UserProfile.checkLogin(loginTextField.getText());
-            loginErrLabel.setText("");
-        } catch (IllegalArgumentException e) {
-            loginErrLabel.setText(ControllersContext.getInstance().getString(e.getMessage()));
-        }
-        try {
-            UserProfile.checkPassword(passwordField.getText());
-            passwordErrLabel.setText("");
-        } catch (IllegalArgumentException e) {
-            passwordErrLabel.setText(ControllersContext.getInstance().getString(e.getMessage()));
-        }
+        checkTextFields();
 
         UserProfile userProfile;
         try {
@@ -104,21 +94,25 @@ public class AuthorizationSceneController {
         }
         RequestBuilder.setUserProfile(userProfile);
         try {
-            Response response = ControllersContext.getInstance().sendToServer(
+            Response response = context.sendToServer(
                     RequestBuilder.createNewRequest().setRequestType(Request.RequestType.LOGIN_USER).build()
             );
             if (response.getResponseType() == Response.ResponseType.LOGIN_FAILED) {
-                ControllersContext.getInstance().showErrorWindow(
-                        ControllersContext.getInstance().getString("Login failed"),
-                        ControllersContext.getInstance().getString(response.getMessage())
+                context.showErrorWindow(
+                        context.getString("Login failed"),
+                        context.getString(response.getMessage())
                 );
             } else if (response.getResponseType() == Response.ResponseType.LOGIN_SUCCESSFUL) {
                 addLogoutHook();
-                ControllersContext.getInstance().setUserName(userProfile.getName());
-                successfulLabel.setText(ControllersContext.getInstance().getString(response.getMessage()));
+                disableAll();
+                context.setUserName(userProfile.getName());
+                successfulLabel.setText(context.getString(response.getMessage()));
                 authProgressBar.setVisible(true);
-                Timeline authProgress = new Timeline(new KeyFrame(Duration.seconds(1), new KeyValue(authProgressBar.progressProperty(), 1, ControllersContext.getInstance().getProgressInterpolator())));
-                authProgress.setOnFinished(e -> goToMainPage());
+                Timeline authProgress = new Timeline(new KeyFrame(Duration.seconds(1), new KeyValue(authProgressBar.progressProperty(), 1, context.getProgressInterpolator())));
+                authProgress.setOnFinished(e -> {
+                    goToMainPage();
+                    ableAll();
+                });
                 authProgress.play();
             } else {
                 throw new IOException("Server has wrong logic: unexpected \"" +
@@ -126,7 +120,38 @@ public class AuthorizationSceneController {
                         "\"");
             }
         } catch (IOException | ClassNotFoundException e) {
-            ControllersContext.getInstance().showUserError(e);
+            context.showUserError(e);
+        }
+    }
+
+    private void disableAll() {
+        loginTextField.setDisable(true);
+        passwordField.setDisable(true);
+        signInButton.setDisable(true);
+        goToRegLink.setDisable(true);
+        languageChoiceBox.setDisable(true);
+    }
+
+    private void ableAll() {
+        loginTextField.setDisable(false);
+        passwordField.setDisable(false);
+        signInButton.setDisable(false);
+        goToRegLink.setDisable(false);
+        languageChoiceBox.setDisable(false);
+    }
+
+    private void checkTextFields() {
+        try {
+            UserProfile.checkLogin(loginTextField.getText());
+            loginErrLabel.setText("");
+        } catch (IllegalArgumentException e) {
+            loginErrLabel.setText(context.getString(e.getMessage()));
+        }
+        try {
+            UserProfile.checkPassword(passwordField.getText());
+            passwordErrLabel.setText("");
+        } catch (IllegalArgumentException e) {
+            passwordErrLabel.setText(context.getString(e.getMessage()));
         }
     }
 
@@ -134,8 +159,12 @@ public class AuthorizationSceneController {
         authProgressBar.setProgress(0);
         authProgressBar.setVisible(false);
         loginTextField.clear();
-        loginErrLabel.setText("");
         passwordField.clear();
+        resetErrLabels();
+    }
+
+    private void resetErrLabels() {
+        loginErrLabel.setText("");
         passwordErrLabel.setText("");
         successfulLabel.setText("");
     }
@@ -143,7 +172,7 @@ public class AuthorizationSceneController {
     private void addLogoutHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
-                ControllersContext.getInstance().sendRequest(
+                context.sendRequest(
                         RequestBuilder.createNewRequest().setRequestType(Request.RequestType.LOGOUT_USER).build()
                 );
             } catch (IOException e) {

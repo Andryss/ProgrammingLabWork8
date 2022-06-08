@@ -1,9 +1,6 @@
 package client.controllers;
 
-import general.commands.Command;
 import general.element.Movie;
-import javafx.event.Event;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -12,6 +9,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class MainSceneController {
+    private final ControllersContext context = ControllersContext.getInstance();
 
     @FXML private UserTabController userTabController;
     @FXML private ConsoleTabController consoleTabController;
@@ -26,18 +24,22 @@ public class MainSceneController {
 
     @FXML
     private void initialize() {
-        userTabController.setLogic(this);
-        consoleTabController.setLogic(this);
-        tableTabController.setLogic(this);
-        plotTabController.setLogic(this);
+        setControllersLogic();
 
-        mainTabPane.getSelectionModel().select(consoleTabTab);
+        selectTab(consoleTabTab);
 
         plotTabTab.selectedProperty().addListener((obs, o, n) -> {
             if (n) plotTabController.paintCollection();
         });
 
-        ControllersContext.getInstance().localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+        context.localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+    }
+
+    private void setControllersLogic() {
+        userTabController.setLogic(this);
+        consoleTabController.setLogic(this);
+        tableTabController.setLogic(this);
+        plotTabController.setLogic(this);
     }
 
     private void localize(ResourceBundle resourceBundle) {
@@ -62,8 +64,5 @@ public class MainSceneController {
 
     Tab getUserTab() {
         return userTabTab;
-    }
-    Tab getPlotTab() {
-        return plotTabTab;
     }
 }

@@ -2,10 +2,10 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
+<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -14,72 +14,84 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.UserTabController">
-   <content>
-      <VBox spacing="20.0">
+
+<VBox alignment="TOP_CENTER" fillWidth="false" spacing="20.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.UserTabController">
+   <children>
+      <VBox alignment="CENTER" spacing="10.0">
          <children>
-            <VBox>
+            <Label fx:id="userLabel" text="User" underline="true">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <GridPane>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+              </columnConstraints>
+              <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
                <children>
-                  <Label fx:id="userLabel" text="User " />
-                  <GridPane>
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Label fx:id="usernameLabel" text="Username:" />
-                        <TextField fx:id="usernameTextField" editable="false" GridPane.columnIndex="1" />
-                        <Label fx:id="passwordLabel" text="Password:" GridPane.rowIndex="1" />
-                        <TextField fx:id="passwordTextField" editable="false" text="*******" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <ImageView fitHeight="10.0" fitWidth="20.0" onMouseClicked="#showPasswordMouseClicked" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
-                           <image>
-                              <Image url="@../eye.png" />
-                           </image>
-                           <GridPane.margin>
-                              <Insets right="5.0" />
-                           </GridPane.margin>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </ImageView>
-                     </children>
-                  </GridPane>
-                  <HBox>
-                     <children>
-                        <Button fx:id="signOutButton" mnemonicParsing="false" onMouseClicked="#signOutMouseClicked" text="Sign out" />
-                     </children>
-                  </HBox>
+                  <Label fx:id="iconLabel" text="Icon:" />
+                  <Canvas fx:id="iconCanvas" height="150.0" width="150.0" GridPane.columnIndex="1" />
+                  <Label fx:id="usernameLabel" text="Username:" GridPane.rowIndex="1" />
+                  <TextField fx:id="usernameTextField" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label fx:id="passwordLabel" text="Password:" GridPane.rowIndex="2" />
+                  <TextField fx:id="passwordTextField" editable="false" text="*******" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <ImageView fitHeight="10.0" fitWidth="20.0" onMouseClicked="#showPasswordMouseClicked" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+                     <image>
+                        <Image url="@../eye.png" />
+                     </image>
+                     <GridPane.margin>
+                        <Insets right="5.0" />
+                     </GridPane.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
                </children>
-            </VBox>
-            <VBox>
+            </GridPane>
+            <HBox alignment="CENTER">
                <children>
-                  <Label fx:id="settingsLabel" text="Settings" />
-                  <GridPane>
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Label fx:id="languageLabel" text="Language:" />
-                        <ChoiceBox fx:id="languageChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" />
-                     </children>
-                  </GridPane>
-                  <HBox>
-                     <children>
-                        <Button fx:id="exitButton" mnemonicParsing="false" onMouseClicked="#exitMouseClicked" text="Exit" />
-                     </children>
-                  </HBox>
+                  <Button fx:id="signOutButton" mnemonicParsing="false" onMouseClicked="#signOutMouseClicked" text="Sign out" />
                </children>
-            </VBox>
+            </HBox>
          </children>
       </VBox>
-   </content>
-</ScrollPane>
+      <VBox alignment="CENTER" spacing="10.0">
+         <children>
+            <Label fx:id="settingsLabel" text="Settings" underline="true">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <GridPane>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label fx:id="languageLabel" text="Language:" />
+                  <ChoiceBox fx:id="languageChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" />
+               </children>
+            </GridPane>
+            <HBox alignment="CENTER">
+               <children>
+                  <Button fx:id="exitButton" mnemonicParsing="false" onMouseClicked="#exitMouseClicked" text="Exit" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox>

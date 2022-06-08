@@ -14,12 +14,10 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BubbleChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.effect.Effect;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.util.Duration;
 
@@ -30,12 +28,13 @@ public class PlotTabController {
     void setLogic(MainSceneController mainSceneController) {
         this.mainSceneController = mainSceneController;
     }
+    private final ControllersContext context = ControllersContext.getInstance();
 
     @FXML private BubbleChart<Float,Float> plotChart;
 
     @FXML private Label selectedMovieLabel;
     @FXML private Label nothingSelectedLabel;
-    @FXML private BorderPane selectedMoviePane;
+    @FXML private VBox selectedMoviePane;
 
     @FXML private TextField movieKeyTextField;
     @FXML private TextField movieOwnerTextField;
@@ -60,13 +59,13 @@ public class PlotTabController {
 
     @FXML
     private void initialize() {
-        ControllersContext.getInstance().getCollectionProperty().addListener((observableValue, oldValue, newValue) -> paintCollection(newValue));
+        context.getCollectionProperty().addListener((observableValue, oldValue, newValue) -> paintCollection(newValue));
         selectedMovie.addListener(((observableValue, oldValue, newValue) -> {
             if (newValue == null) {
                 clearSelectedMovieFields();
             } else {
                 setSelectedMovieFields(newValue);
-                boolean disable = !newValue.getValue().getOwner().equals(ControllersContext.getInstance().getUserName());
+                boolean disable = !newValue.getValue().getOwner().equals(context.getUserName());
                 editSelectedMovieButton.setDisable(disable);
                 removeSelectedMovieButton.setDisable(disable);
             }
@@ -83,7 +82,7 @@ public class PlotTabController {
         editSelectedMovieButton.setOnAction(e -> mainSceneController.setToUpdate(selectedMovie.getValue()));
         removeSelectedMovieButton.setOnAction(e -> mainSceneController.setToRemove(selectedMovie.getValue()));
 
-        ControllersContext.getInstance().localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+        context.localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
     }
 
     private void localize(ResourceBundle resourceBundle) {
@@ -94,7 +93,7 @@ public class PlotTabController {
     }
 
     void paintCollection() {
-        paintCollection(ControllersContext.getInstance().getCollection());
+        paintCollection(context.getCollection());
     }
 
     private void paintCollection(Hashtable<Integer, Movie> hashtable) {
@@ -134,12 +133,12 @@ public class PlotTabController {
     private void setSelectedMovie(Map.Entry<Integer,Movie> entry) {
         selectedMovie.set(entry);
         nothingSelectedLabel.setVisible(false);
-        selectedMoviePane.setDisable(false);
+        selectedMoviePane.setVisible(true);
     }
 
     private void unsetSelectedMovie() {
         selectedMovie.set(null);
-        selectedMoviePane.setDisable(true);
+        selectedMoviePane.setVisible(false);
         nothingSelectedLabel.setVisible(true);
     }
 

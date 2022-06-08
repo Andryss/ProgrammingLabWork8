@@ -15,10 +15,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.RegistrationSceneController">
    <top>
-      <ProgressBar fx:id="regProgressBar" prefHeight="18.0" prefWidth="900.0" progress="0.0" visible="false" BorderPane.alignment="CENTER" />
+      <ProgressBar fx:id="regProgressBar" maxWidth="1.7976931348623157E308" prefHeight="18.0" progress="0.0" visible="false" BorderPane.alignment="CENTER" />
    </top>
    <center>
       <VBox alignment="CENTER" spacing="40.0" BorderPane.alignment="CENTER">
