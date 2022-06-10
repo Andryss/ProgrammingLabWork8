@@ -2,14 +2,13 @@ package client.controllers;
 
 import client.Application;
 import client.RequestBuilder;
-import client.localization.LocalizedData;
+import client.localization.Localizer;
 import general.Request;
 import general.Response;
 import general.element.UserProfile;
 import javafx.animation.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -34,13 +33,13 @@ public class AuthorizationSceneController {
     @FXML private Label successfulLabel;
     @FXML private Label goToRegLabel;
     @FXML private Hyperlink goToRegLink;
-    @FXML private ChoiceBox<LocalizedData.AvailableLocale> languageChoiceBox;
+    @FXML private ChoiceBox<Localizer.AvailableLocale> languageChoiceBox;
 
     @FXML
     private void initialize() {
-        languageChoiceBox.setItems(FXCollections.observableArrayList(LocalizedData.AvailableLocale.values()));
-        languageChoiceBox.valueProperty().bindBidirectional(context.localizedData().availableLocaleProperty());
-        context.localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+        languageChoiceBox.setItems(FXCollections.observableArrayList(Localizer.AvailableLocale.values()));
+        languageChoiceBox.valueProperty().bindBidirectional(context.localizer().availableLocaleProperty());
+        context.localizer().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
     }
 
     private void localize(ResourceBundle resourceBundle) {

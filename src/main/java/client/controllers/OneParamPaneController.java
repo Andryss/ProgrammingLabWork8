@@ -4,10 +4,6 @@ import client.ClientExecutor;
 import general.commands.BadArgumentsException;
 import general.commands.Command;
 import general.element.Movie;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -18,7 +14,6 @@ import javafx.scene.input.MouseEvent;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
 
 public class OneParamPaneController {
     private ConsoleTabController consoleTabController;
@@ -43,7 +38,7 @@ public class OneParamPaneController {
                 oneParamLabel.setText(context.getString("Enter " + newValue.getParamName()));
             }
         });
-        context.localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+        context.localizer().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
     }
 
     private void localize(ResourceBundle resourceBundle) {

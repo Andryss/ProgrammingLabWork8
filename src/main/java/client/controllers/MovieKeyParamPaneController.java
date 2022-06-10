@@ -80,7 +80,7 @@ public class MovieKeyParamPaneController {
         movieMpaaRatingChoiceBox.setItems(FXCollections.observableList(Arrays.asList(Movie.MpaaRating.values())));
         screenwriterHairColorChoiceBox.setItems(FXCollections.observableList(Arrays.asList(Person.Color.values())));
 
-        context.localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+        context.localizer().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
     }
 
     private void localize(ResourceBundle resourceBundle) {

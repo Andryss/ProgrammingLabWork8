@@ -2,7 +2,7 @@ package client.controllers;
 
 import client.Application;
 import client.RequestBuilder;
-import client.localization.LocalizedData;
+import client.localization.Localizer;
 import general.Request;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -10,7 +10,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Paint;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -33,7 +32,7 @@ public class UserTabController {
     @FXML private Button signOutButton;
     @FXML private Label settingsLabel;
     @FXML private Label languageLabel;
-    @FXML private ChoiceBox<LocalizedData.AvailableLocale> languageChoiceBox;
+    @FXML private ChoiceBox<Localizer.AvailableLocale> languageChoiceBox;
     @FXML private Label themeLabel;
     @FXML private ChoiceBox<Application.AppStyle> themeChoiceBox;
     @FXML private Button exitButton;
@@ -46,9 +45,9 @@ public class UserTabController {
             drawFace();
         });
 
-        languageChoiceBox.setItems(FXCollections.observableArrayList(LocalizedData.AvailableLocale.values()));
-        languageChoiceBox.valueProperty().bindBidirectional(context.localizedData().availableLocaleProperty());
-        context.localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+        languageChoiceBox.setItems(FXCollections.observableArrayList(Localizer.AvailableLocale.values()));
+        languageChoiceBox.valueProperty().bindBidirectional(context.localizer().availableLocaleProperty());
+        context.localizer().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
         
         themeChoiceBox.setItems(FXCollections.observableArrayList(Application.AppStyle.values()));
         themeChoiceBox.setValue(Application.AppStyle.DEFAULT);

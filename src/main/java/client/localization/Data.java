@@ -64,6 +64,8 @@ public class Data extends ListResourceBundle {
 
 
             // CONSOLE TAB
+            {"Save history to file", "Save history to file"},
+            {"Saved console history", "Saved console history"},
             {"Choose the command you want to send", "Choose the command you want to send"},
             {"Send", "Send"},
             {"Choose command", "Choose command"},

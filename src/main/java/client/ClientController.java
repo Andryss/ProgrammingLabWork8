@@ -1,8 +1,12 @@
 package client;
 
+import javafx.scene.Node;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -51,6 +55,9 @@ public class ClientController {
     public void println(String line) {
         print0(new Text(line + "\n"));
     }
+    public void printlnCommand(String line) {
+        println(" >>>>> " + line);
+    }
     public void print(String line) {
         print0(new Text(line));
     }
@@ -63,5 +70,17 @@ public class ClientController {
         Text text = new Text(line + "\n");
         text.setStyle("-fx-fill: RED");
         print0(text);
+    }
+
+    public void saveHistoryToFile(File file) throws IOException {
+        try (FileWriter writer = new FileWriter(file)) {
+            for (Node node : textFlow.getChildren()) {
+                if (node instanceof Text) {
+                    Text text = (Text) node;
+                    writer.write(text.getText());
+                }  // else sadness :(
+            }
+            writer.flush();
+        }
     }
 }

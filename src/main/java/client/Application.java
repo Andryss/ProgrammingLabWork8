@@ -83,6 +83,10 @@ public class Application extends javafx.application.Application {
         return properties;
     }
 
+    public Stage getStage() {
+        return stage;
+    }
+
     public void setScene(AppScene appScene) {
         stage.setScene(sceneMap.get(appScene));
     }

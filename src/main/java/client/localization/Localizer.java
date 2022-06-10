@@ -9,9 +9,9 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-public class LocalizedData {
-    private static final LocalizedData instance = new LocalizedData();
-    public static LocalizedData getInstance() {
+public class Localizer {
+    private static final Localizer instance = new Localizer();
+    public static Localizer getInstance() {
         return instance;
     }
 
@@ -71,12 +71,24 @@ public class LocalizedData {
         return longDateFormat.get();
     }
 
+    private final ObjectProperty<DateFormat> shortDateTimeFormat = new SimpleObjectProperty<>();
+    public ObjectProperty<DateFormat> shortDateTimeFormatProperty() {
+        return shortDateTimeFormat;
+    }
+    private void setShortDateTimeFormat() {
+        this.shortDateTimeFormat.set(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, getLocale()));
+    }
+    public DateFormat getShortDateTimeFormat() {
+        return shortDateTimeFormat.get();
+    }
+
     {
         availableLocale.addListener((obs, o, n) -> {
             setResourceBundle();
             setNumberFormat();
             setShortDateFormat();
             setLongDateFormat();
+            setShortDateTimeFormat();
         });
         availableLocale.set(AvailableLocale.DEFAULT);
     }

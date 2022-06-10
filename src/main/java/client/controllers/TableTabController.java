@@ -104,7 +104,7 @@ public class TableTabController {
             }
         });
 
-        context.localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+        context.localizer().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
     }
 
     private void localize(ResourceBundle resourceBundle) {
@@ -119,15 +119,15 @@ public class TableTabController {
     }
 
     private void setColumnsProperties() {
-        movieKeyColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizedData().getNumberFormat().format(e.getValue().getKey())));
+        movieKeyColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizer().getNumberFormat().format(e.getValue().getKey())));
         movieOwnerColumn.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getValue().getOwner()));
         movieNameColumn.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getValue().getName()));
-        movieIdColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizedData().getNumberFormat().format(e.getValue().getValue().getId())));
-        coordinatesXColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizedData().getNumberFormat().format(e.getValue().getValue().getCoordinates().getX())));
-        coordinatesYColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizedData().getNumberFormat().format(e.getValue().getValue().getCoordinates().getY())));
-        movieCreationDateColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizedData().getLongDateFormat().format(Date.from(Instant.from(e.getValue().getValue().getCreationDate())))));
-        movieOscarsCountColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizedData().getNumberFormat().format(e.getValue().getValue().getOscarsCount())));
-        movieLengthColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizedData().getNumberFormat().format(e.getValue().getValue().getLength())));
+        movieIdColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizer().getNumberFormat().format(e.getValue().getValue().getId())));
+        coordinatesXColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizer().getNumberFormat().format(e.getValue().getValue().getCoordinates().getX())));
+        coordinatesYColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizer().getNumberFormat().format(e.getValue().getValue().getCoordinates().getY())));
+        movieCreationDateColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizer().getLongDateFormat().format(Date.from(Instant.from(e.getValue().getValue().getCreationDate())))));
+        movieOscarsCountColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizer().getNumberFormat().format(e.getValue().getValue().getOscarsCount())));
+        movieLengthColumn.setCellValueFactory(e -> new SimpleStringProperty(context.localizer().getNumberFormat().format(e.getValue().getValue().getLength())));
         movieGenreColumn.setCellValueFactory(e -> new SimpleObjectProperty<>(e.getValue().getValue().getGenre()));
         movieMpaaRatingColumn.setCellValueFactory(e -> new SimpleObjectProperty<>(e.getValue().getValue().getMpaaRating()));
         screenwriterNameColumn.setCellValueFactory(e -> new SimpleStringProperty(e.getValue().getValue().getScreenwriter().getName()));
@@ -135,11 +135,11 @@ public class TableTabController {
             if (e.getValue().getValue().getScreenwriter().getBirthday() == null) {
                 return new SimpleStringProperty(null);
             }
-            return new SimpleStringProperty(context.localizedData().getShortDateFormat().format(e.getValue().getValue().getScreenwriter().getBirthday()));
+            return new SimpleStringProperty(context.localizer().getShortDateFormat().format(e.getValue().getValue().getScreenwriter().getBirthday()));
         });
         screenwriterHairColorColumn.setCellValueFactory(e -> new SimpleObjectProperty<>(e.getValue().getValue().getScreenwriter().getHairColor()));
 
-        context.localizedData().availableLocaleProperty().addListener((obs, o, n) -> tableMovieTable.refresh());
+        context.localizer().availableLocaleProperty().addListener((obs, o, n) -> tableMovieTable.refresh());
     }
 
     private void initColumns(ObservableList<TableColumn<Map.Entry<Integer,Movie>, ?>> list) {

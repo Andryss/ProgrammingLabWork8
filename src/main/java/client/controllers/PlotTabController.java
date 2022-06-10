@@ -78,7 +78,7 @@ public class PlotTabController {
         editSelectedMovieButton.setOnAction(e -> mainSceneController.setToUpdate(selectedMovie.getValue()));
         removeSelectedMovieButton.setOnAction(e -> mainSceneController.setToRemove(selectedMovie.getValue()));
 
-        context.localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+        context.localizer().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
     }
 
     private void localize(ResourceBundle resourceBundle) {

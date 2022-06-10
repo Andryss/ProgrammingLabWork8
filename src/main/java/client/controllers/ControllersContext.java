@@ -4,7 +4,7 @@ import client.Application;
 import client.ClientConnector;
 import client.ClientController;
 import client.ClientExecutor;
-import client.localization.LocalizedData;
+import client.localization.Localizer;
 import general.Request;
 import general.Response;
 import general.element.Movie;
@@ -16,6 +16,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.text.TextFlow;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,6 +60,24 @@ public class ControllersContext {
         confirmWindow.setHeaderText(null);
         warningWindow.setHeaderText(null);
         errorWindow.setHeaderText(null);
+    }
+
+    private final FileChooser fileChooser = new FileChooser();
+    public File chooseFile() {
+        return chooseFile(getApplication().getStage());
+    }
+    public File chooseFile(Window window) {
+        fileChooser.setInitialFileName(
+                getString("Saved console history") + " " +
+                        localizer().getShortDateTimeFormat().format(System.currentTimeMillis())
+        );
+        return fileChooser.showSaveDialog(window);
+    }
+
+    {
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("TXT", "*.txt")
+        );
     }
 
     private final SimpleStringProperty userName = new SimpleStringProperty("");
@@ -137,11 +157,11 @@ public class ControllersContext {
         ClientConnector.getInstance().sendRequest(request);
     }
 
-    LocalizedData localizedData() {
-        return LocalizedData.getInstance();
+    Localizer localizer() {
+        return Localizer.getInstance();
     }
     String getString(String key) {
-        return localizedData().getResourceBundle().getString(key);
+        return localizer().getResourceBundle().getString(key);
     }
 
     private final Interpolator progressInterpolator = new Interpolator() {

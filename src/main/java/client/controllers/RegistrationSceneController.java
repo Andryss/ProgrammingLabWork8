@@ -2,7 +2,7 @@ package client.controllers;
 
 import client.Application;
 import client.RequestBuilder;
-import client.localization.LocalizedData;
+import client.localization.Localizer;
 import general.Request;
 import general.Response;
 import general.element.UserProfile;
@@ -33,13 +33,13 @@ public class RegistrationSceneController {
     @FXML private Label successfulLabel;
     @FXML private Label goToAuthLabel;
     @FXML private Hyperlink goToAuthLink;
-    @FXML private ChoiceBox<LocalizedData.AvailableLocale> languageChoiceBox;
+    @FXML private ChoiceBox<Localizer.AvailableLocale> languageChoiceBox;
 
     @FXML
     private void initialize() {
-        languageChoiceBox.setItems(FXCollections.observableArrayList(LocalizedData.AvailableLocale.values()));
-        languageChoiceBox.valueProperty().bindBidirectional(context.localizedData().availableLocaleProperty());
-        context.localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+        languageChoiceBox.setItems(FXCollections.observableArrayList(Localizer.AvailableLocale.values()));
+        languageChoiceBox.valueProperty().bindBidirectional(context.localizer().availableLocaleProperty());
+        context.localizer().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
     }
 
     private void localize(ResourceBundle resourceBundle) {

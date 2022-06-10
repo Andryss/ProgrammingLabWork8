@@ -64,6 +64,8 @@ public class Data_ru extends ListResourceBundle {
 
 
             // CONSOLE TAB
+            {"Save history to file", "Сохранить историю в файл"},
+            {"Saved console history", "Сохраненная история консоли"},
             {"Choose the command you want to send", "Выберите команду, которую вы хотите отправить"},
             {"Send", "Отправить"},
             {"Choose command", "Выберите команду"},

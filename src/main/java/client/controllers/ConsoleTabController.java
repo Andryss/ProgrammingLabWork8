@@ -12,10 +12,11 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.TextFlow;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -34,12 +35,13 @@ public class ConsoleTabController {
     @FXML private MovieKeyParamPaneController movieKeyParamPaneController;
 
     @FXML private StackPane consoleStackPane;
-    @FXML private BorderPane consoleMainPane;
+    @FXML private AnchorPane consoleMainPane;
     @FXML private ScrollPane oneParamPane;
     @FXML private ScrollPane movieKeyParamPane;
 
     @FXML private ScrollPane consoleScrollPane;
     @FXML private TextFlow consoleTextFlow;
+    @FXML private MenuItem saveHistoryMenuItem;
     @FXML private ComboBox<String> commandComboBox;
     @FXML private Button sendCommandButton;
 
@@ -52,10 +54,11 @@ public class ConsoleTabController {
         context.setConsoleTextFlow(consoleTextFlow);
 
         consoleScrollPane.vvalueProperty().bind(consoleTextFlow.heightProperty());
+        saveHistoryMenuItem.setOnAction(e -> saveConsoleHistory());
         commandComboBox.setItems(FXCollections.observableList(
                 new ArrayList<>(ClientExecutor.getInstance().getCommandMap().keySet())
         ));
-        context.localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+        context.localizer().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
 
         selectMainPane();
     }
@@ -66,8 +69,20 @@ public class ConsoleTabController {
     }
 
     private void localize(ResourceBundle resourceBundle) {
+        saveHistoryMenuItem.setText(resourceBundle.getString("Save history to file"));
         commandComboBox.setPromptText(resourceBundle.getString("Choose the command you want to send"));
         sendCommandButton.setText(resourceBundle.getString("Send"));
+    }
+
+    private void saveConsoleHistory() {
+        File file = context.chooseFile();
+        if (file != null) {
+            try {
+                context.getClientController().saveHistoryToFile(file);
+            } catch (IOException e) {
+                context.showUserError(e);
+            }
+        }
     }
 
     @FXML
@@ -152,7 +167,7 @@ public class ConsoleTabController {
 
     void createRequestAndReceiveResponse() {
         try {
-            ClientController.getInstance().println(context.getCurrentCommand().getCommandName());
+            ClientController.getInstance().printlnCommand(context.getCurrentCommand().getCommandName());
             ClientExecutor.getInstance().executeCommand(context.getCurrentCommand().getCommandName());
             Response response = context.sendToServer(ClientExecutor.getInstance().getRequest());
             if (response.getResponseType() == Response.ResponseType.EXECUTION_SUCCESSFUL) {
@@ -193,10 +208,7 @@ public class ConsoleTabController {
     }
 
     private void popupPane(Node e) {
-        consoleStackPane.getChildren().remove(e);
-        consoleStackPane.getChildren().add(e);
-        consoleStackPane.getChildren().forEach(n -> n.setDisable(true));
-        e.setDisable(false);
+        consoleStackPane.getChildren().forEach(n -> n.setVisible(n == e));
     }
 
     public ClientContextImpl getClientContext() {

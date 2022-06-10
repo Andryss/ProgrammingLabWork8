@@ -32,7 +32,7 @@ public class MainSceneController {
             if (n) plotTabController.paintCollection();
         });
 
-        context.localizedData().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+        context.localizer().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
     }
 
     private void setControllersLogic() {
