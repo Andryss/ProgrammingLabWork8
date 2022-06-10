@@ -10,9 +10,6 @@ public class Data_ru extends ListResourceBundle {
 
     private final Object[][] contents = new Object[][] {
 
-            {"Connection with server was successful", "Соединение с сервером прошло успешно"},
-
-
             // AUTH SCENE
             {"Authorization page", "Страница авторизации"},
             {"Type here your login", "Введите здесь свой логин"},
@@ -55,11 +52,13 @@ public class Data_ru extends ListResourceBundle {
 
             // USER TAB
             {"User", "Пользователь"},
+            {"Icon", "Икона"},
             {"Username", "Имя пользователя"},
             {"Sign out", "Выход"},
             {"Are you sure to sign out? (all unsaved data will be deleted)", "Вы уверены, что хотите выйти из системы? (все несохраненные данные будут удалены)"},
             {"Settings", "Настройки"},
             {"Language", "Язык"},
+            {"Theme", "Тема"},
             {"Are you sure to exit? (all unsaved data will be deleted)", "Вы уверены, что хотите выйти? (все несохраненные данные будут удалены)"},
             {"Exit", "Выход"},
 
@@ -69,6 +68,14 @@ public class Data_ru extends ListResourceBundle {
             {"Send", "Отправить"},
             {"Choose command", "Выберите команду"},
             {"You should choose command to send!", "Вы должны выбрать команду для отправки!"},
+
+
+            // ONE PARAM PANE
+            {"Param filling page", "Страница заполнения параметров"},
+
+
+            // MOVIE KEY PARAM PANE
+            {"Element filling page", "Страница заполнения элементов"},
 
 
             // COMMAND
@@ -149,8 +156,6 @@ public class Data_ru extends ListResourceBundle {
             {"Error", "Ошибка"},
             {"Something wrong", "Что-то не так"},
             {"Oops... Seems like evil goblins cut some wires... Try again later", "Ой... Похоже, злые гоблины перерезали какие-то провода... Повторите попытку позже"},
-            {"Wrong request format", "Неправильный формат запроса"},
-            {"Server has wrong logic: unexpected", "Сервер имеет неправильную логику: неожиданный"},
             {"FATAL", "Роковой"},
             {"FATAL ERROR: don't peek", "ФАТАЛЬНАЯ ОШИБКА: не подглядывайте"}
     };

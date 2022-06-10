@@ -110,6 +110,7 @@ public class AuthorizationSceneController {
                 authProgressBar.setVisible(true);
                 Timeline authProgress = new Timeline(new KeyFrame(Duration.seconds(1), new KeyValue(authProgressBar.progressProperty(), 1, context.getProgressInterpolator())));
                 authProgress.setOnFinished(e -> {
+                    context.getClientController().initialize();
                     goToMainPage();
                     ableAll();
                 });

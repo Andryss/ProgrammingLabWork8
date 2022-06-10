@@ -4,7 +4,6 @@ import client.controllers.ControllersContext;
 import general.commands.CommandException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -43,31 +42,17 @@ public class Application extends javafx.application.Application {
             setScene(AppScene.AUTHORIZATION_SCENE);
             stage.show();
         } catch (Throwable e) {
-            // TODO: delete trash below
-            e.printStackTrace();
-            // TODO: delete trash above
             ControllersContext.getInstance().showUserError(e);
         }
     }
 
-    private String cssStyle;
-    private void loadSccStyle() throws FileNotFoundException {
-        try {
-            cssStyle = Objects.requireNonNull(this.getClass().getResource("defaultTheme.css")).toExternalForm();
-        } catch (NullPointerException e) {
-            throw new FileNotFoundException("Can't find defaultTheme.css file");
-        }
-    }
     private void loadScene(String name, AppScene sceneType) throws IOException {
         FXMLLoader loader = new FXMLLoader(Application.class.getResource(name));
         Scene scene = new Scene(loader.load());
-        scene.getStylesheets().add(cssStyle);
         sceneMap.put(sceneType, scene);
     }
 
     private void preInitializations() throws IOException, CommandException {
-        loadSccStyle();
-
         Properties properties = readProperties();
 
         ClientConnector.getInstance().setProperties(properties);
@@ -75,11 +60,11 @@ public class Application extends javafx.application.Application {
     }
 
     private void postInitializations() throws IOException, ClassNotFoundException {
+        setCssStyle(AppStyle.DEFAULT);
+
         ClientController.getInstance().setTextFlow(ControllersContext.getInstance().getConsoleTextFlow());
 
         ClientConnector.getInstance().initialize();
-
-        ClientController.getInstance().initialize();
     }
 
     private Properties readProperties() throws IOException {
@@ -106,5 +91,27 @@ public class Application extends javafx.application.Application {
         AUTHORIZATION_SCENE,
         REGISTRATION_SCENE,
         MAIN_SCENE
+    }
+
+    public void setCssStyle(AppStyle appStyle) {
+        for (Scene scene : sceneMap.values()) {
+            scene.getStylesheets().setAll(appStyle.path());
+        }
+    }
+
+    public enum AppStyle {
+        DEFAULT("defaultTheme.css"),
+        // TODO: add dark theme
+        DARK("darkTheme.css");
+
+        private final String path;
+
+        AppStyle(String path) {
+            this.path = Objects.requireNonNull(this.getClass().getResource(path)).toExternalForm();
+        }
+
+        public String path() {
+            return path;
+        }
     }
 }

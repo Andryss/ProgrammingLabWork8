@@ -9,13 +9,14 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
 
 <VBox alignment="TOP_CENTER" fillWidth="false" spacing="20.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.UserTabController">
    <children>
@@ -38,7 +39,24 @@
               </rowConstraints>
                <children>
                   <Label fx:id="iconLabel" text="Icon:" />
-                  <Canvas fx:id="iconCanvas" height="150.0" width="150.0" GridPane.columnIndex="1" />
+                  <StackPane GridPane.columnIndex="1">
+                     <children>
+                        <Canvas fx:id="iconCanvas" height="150.0" width="150.0" />
+                        <AnchorPane>
+                           <children>
+                              <Button mnemonicParsing="false" onMouseClicked="#refreshMouseClicked" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../refresh.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </StackPane>
                   <Label fx:id="usernameLabel" text="Username:" GridPane.rowIndex="1" />
                   <TextField fx:id="usernameTextField" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Label fx:id="passwordLabel" text="Password:" GridPane.rowIndex="2" />
@@ -77,10 +95,13 @@
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <Label fx:id="languageLabel" text="Language:" />
                   <ChoiceBox fx:id="languageChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" />
+                  <Label fx:id="themeLabel" text="Theme:" GridPane.rowIndex="1" />
+                  <ChoiceBox fx:id="themeChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
             </GridPane>
             <HBox alignment="CENTER">

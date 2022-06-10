@@ -23,7 +23,7 @@
    <content>
       <BorderPane fx:id="plotTab">
          <center>
-            <BubbleChart fx:id="plotChart" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="550.0" BorderPane.alignment="CENTER">
+            <BubbleChart fx:id="plotChart" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#onCanvasMouseClicked" prefHeight="550.0" prefWidth="550.0" BorderPane.alignment="CENTER">
               <xAxis>
                 <NumberAxis autoRanging="false" lowerBound="-200.0" side="BOTTOM" tickUnit="25.0" upperBound="200.0" />
               </xAxis>

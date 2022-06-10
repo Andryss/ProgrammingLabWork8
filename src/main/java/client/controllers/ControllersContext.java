@@ -2,6 +2,7 @@ package client.controllers;
 
 import client.Application;
 import client.ClientConnector;
+import client.ClientController;
 import client.ClientExecutor;
 import client.localization.LocalizedData;
 import general.Request;
@@ -107,6 +108,10 @@ public class ControllersContext {
         return consoleTextFlow;
     }
 
+    ClientController getClientController() {
+        return ClientController.getInstance();
+    }
+
     private Application application;
     public void setApplication(Application application) {
         this.application = application;
@@ -116,6 +121,9 @@ public class ControllersContext {
     }
     void setScene(Application.AppScene scene) {
         application.setScene(scene);
+    }
+    void setSccStyle(Application.AppStyle style) {
+        application.setCssStyle(style);
     }
 
     Response sendToServer(Request request) throws IOException, ClassNotFoundException {

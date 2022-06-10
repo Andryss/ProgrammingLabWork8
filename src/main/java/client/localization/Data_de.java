@@ -8,6 +8,7 @@ public class Data_de extends ListResourceBundle {
         return contents;
     }
 
+    // TODO: sync with default
     private final Object[][] contents = new Object[][] {
 
             {"Connection with server was successful", "Verbindung mit Server war erfolgreich"},

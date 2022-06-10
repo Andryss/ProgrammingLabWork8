@@ -24,10 +24,10 @@ public class ServerMain {
             }
             properties.load(new FileReader(props));
         } catch (FileNotFoundException e) {
-            ClientController.getInstance().printlnErr("File \"server.properties\" with properties not found");
+            ServerController.getInstance().error("File \"server.properties\" with properties not found");
             return;
         } catch (IOException e) {
-            ClientController.getInstance().printlnErr(e.getMessage());
+            ServerController.getInstance().error(e.getMessage());
             return;
         }
 

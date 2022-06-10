@@ -58,6 +58,7 @@ public class Data extends ListResourceBundle {
             {"Are you sure to sign out? (all unsaved data will be deleted)", "Are you sure to sign out? (all unsaved data will be deleted)"},
             {"Settings", "Settings"},
             {"Language", "Language"},
+            {"Theme", "Theme"},
             {"Are you sure to exit? (all unsaved data will be deleted)", "Are you sure to exit? (all unsaved data will be deleted)"},
             {"Exit", "Exit"},
 
@@ -68,8 +69,10 @@ public class Data extends ListResourceBundle {
             {"Choose command", "Choose command"},
             {"You should choose command to send!", "You should choose command to send!"},
 
+
             // ONE PARAM PANE
             {"Param filling page", "Param filling page"},
+
 
             // MOVIE KEY PARAM PANE
             {"Element filling page", "Element filling page"},

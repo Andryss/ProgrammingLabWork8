@@ -28,10 +28,12 @@ public class ClientConnector {
     }
 
     void initialize() throws IOException, ClassNotFoundException {
-        ClientController.getInstance().println("Connecting to server \"" + serverAddress + "\"");
         setConnection();
         checkConnection();
-        ClientController.getInstance().printlnGood("Connection to server was successful");
+        ClientController.getInstance().addBaseText(
+                "Connecting to server \"" + serverAddress + "\"",
+                "Connection to server was successful"
+        );
     }
 
     void setProperties(Properties properties) throws UnknownHostException, NumberFormatException {

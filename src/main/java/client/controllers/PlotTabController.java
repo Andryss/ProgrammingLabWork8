@@ -1,13 +1,11 @@
 package client.controllers;
 
-import general.commands.Command;
 import general.element.Movie;
 import general.element.Person;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -15,10 +13,8 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.BubbleChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
-import javafx.scene.effect.Effect;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Line;
 import javafx.util.Duration;
 
 import java.util.*;
@@ -127,6 +123,13 @@ public class PlotTabController {
             for (XYChart.Data<Float,Float> data : series.getData()) {
                 data.getNode().setOnMouseClicked(e -> setSelectedMovie(movieData.get(data)));
             }
+        }
+    }
+
+    @FXML
+    private void onCanvasMouseClicked(MouseEvent mouseEvent) {
+        if (!(mouseEvent.getPickResult().getIntersectedNode().getClass().getName().equals("javafx.scene.chart.BubbleChart$1"))) {
+            unsetSelectedMovie();
         }
     }
 

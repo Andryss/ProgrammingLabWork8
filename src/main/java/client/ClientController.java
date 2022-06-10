@@ -3,6 +3,8 @@ package client;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -13,6 +15,7 @@ public class ClientController {
     private static final ClientController instance = new ClientController();
     private final Scanner reader = new Scanner(System.in);
     private TextFlow textFlow;
+    private final ArrayList<String> baseText = new ArrayList<>();
     public void setTextFlow(TextFlow textFlow) {this.textFlow = textFlow;}
 
     private ClientController() {}
@@ -21,11 +24,17 @@ public class ClientController {
         return instance;
     }
 
-    void initialize() {
-        Text text = new Text("Hi! This is a simple client-server program for working with collection.\n" +
-                "I'm waiting for your commands (type \"help\" for list of available commands).\n");
-        text.setStyle("-fx-fill: CYAN");
-        print0(text);
+    public void initialize() {
+        textFlow.getChildren().clear();
+        for (String line : baseText) {
+            println(line);
+        }
+        println("Hi! This is a simple client-server program for working with collection.\n" +
+                "I'm waiting for your commands (type \"help\" for list of available commands).");
+    }
+
+    void addBaseText(String... text) {
+        baseText.addAll(Arrays.asList(text));
     }
 
     public String readLine() {
@@ -54,15 +63,5 @@ public class ClientController {
         Text text = new Text(line + "\n");
         text.setStyle("-fx-fill: RED");
         print0(text);
-    }
-
-    String readLogin() {
-        print("Enter user login: ");
-        return readLine().trim();
-    }
-
-    String readPassword() {
-        print("Enter user password: ");
-        return readPrivateLine().trim();
     }
 }
