@@ -15,28 +15,38 @@ import java.util.concurrent.TimeUnit;
 /**
  * Class, which working with user histories and banning users, which are not working for a long time
  */
-public class ServerHistoryManager {
-    private static final ServerHistoryManager instance = new ServerHistoryManager(); // Follow "Singleton" pattern
+public class ServerHistoryManagerImpl implements ServerHistoryManagerModule {
+    private static final ServerHistoryManagerImpl instance = new ServerHistoryManagerImpl(); // Follow "Singleton" pattern
+
+    private ServerControllerModule controllerModule;
+    private ServerExecutorModule executorModule;
+
     private Hashtable<UserProfile, Long> lastModifiedTime;
     private String historyFilename;
     private Hashtable<String, LinkedList<String>> userHistories;
     private int maxUserHistoryLength;
     private long userBanTime;
-    private final ScheduledExecutorService watchingThread = Executors.newSingleThreadScheduledExecutor();    // Follow "|scheduled| Singleton" pattern
+    private final ScheduledExecutorService watchingThread = Executors.newSingleThreadScheduledExecutor(); // Follow "|scheduled| Singleton" pattern
 
-    private ServerHistoryManager() {}
+    private ServerHistoryManagerImpl() {}
 
-    static ServerHistoryManager getInstance() {
+    static ServerHistoryManagerImpl getInstance() {
         return instance;
     }
 
-    void initialize() throws IOException, IllegalAccessException {
+    @Override
+    public void initialize() throws IOException, IllegalAccessException {
+        ServerModuleHolder moduleHolder = ServerModuleHolder.getInstance();
+        controllerModule = moduleHolder.getControllerModule();
+        executorModule = moduleHolder.getExecutorModule();
+
         loadUserHistories();
         lastModifiedTime = new Hashtable<>();
-        watchingThread.scheduleAtFixedRate(ServerHistoryManager.getInstance()::watchAndDeleteAFKUsers, 10, 10, TimeUnit.SECONDS);
+        watchingThread.scheduleAtFixedRate(instance::watchAndDeleteAFKUsers, 10, 10, TimeUnit.SECONDS);
     }
 
-    void setProperties(Properties properties) {
+    @Override
+    public void setProperties(Properties properties) {
         historyFilename = properties.getProperty("userHistoriesFilename", "UserHistories.xml");
         try {
             maxUserHistoryLength = Integer.parseInt(properties.getProperty("maxUserHistoryLength", "15"));
@@ -56,15 +66,28 @@ public class ServerHistoryManager {
         }
     }
 
-    void updateUser(UserProfile userProfile) {
+    @Override
+    public void close() {
+        try {
+            saveUserHistories();
+            watchingThread.shutdown();
+        } catch (Throwable e) {
+            // ignore
+        }
+    }
+
+    @Override
+    public void updateUser(UserProfile userProfile) {
         lastModifiedTime.put(userProfile, System.currentTimeMillis());
     }
 
-    void deleteUser(UserProfile userProfile) {
+    @Override
+    public void deleteUser(UserProfile userProfile) {
         lastModifiedTime.remove(userProfile);
     }
 
-    void addUserHistory(UserProfile userProfile, String command) {
+    @Override
+    public void addUserHistory(UserProfile userProfile, String command) {
         if (!userHistories.containsKey(userProfile.getName())) {
             userHistories.put(userProfile.getName(), new LinkedList<>());
         }
@@ -73,7 +96,8 @@ public class ServerHistoryManager {
         if (history.size() > maxUserHistoryLength) history.removeFirst();
     }
 
-    void clearUserHistory(String username) {
+    @Override
+    public void clearUserHistory(String username) {
         @SuppressWarnings("unchecked")
         Hashtable<String, LinkedList<String>> hashtable = (Hashtable<String, LinkedList<String>>) userHistories.clone();
         hashtable.keySet().stream()
@@ -81,6 +105,7 @@ public class ServerHistoryManager {
                 .forEach(u -> userHistories.put(u, new LinkedList<>()));
     }
 
+    @Override
     public LinkedList<String> getUserHistory(UserProfile userProfile) {
         @SuppressWarnings("unchecked")
         LinkedList<String> list = (LinkedList<String>) userHistories.get(userProfile.getName()).clone();
@@ -92,10 +117,10 @@ public class ServerHistoryManager {
             File file = new File(historyFilename);
             if (!file.createNewFile()) {
                 if (!file.isFile()) {
-                    ServerController.getInstance().info("Can't save histories, because can't create file with name \"" + historyFilename + "\"");
+                    controllerModule.info("Can't save histories, because can't create file with name \"" + historyFilename + "\"");
                     return;
                 } else if (!file.canWrite()) {
-                    ServerController.getInstance().info("Can't save histories, because permission to write denied");
+                    controllerModule.info("Can't save histories, because permission to write denied");
                     return;
                 }
             }
@@ -104,15 +129,6 @@ public class ServerHistoryManager {
             }
         } catch (IOException e) {
             //ignore
-        }
-    }
-
-    void close() {
-        try {
-            saveUserHistories();
-            watchingThread.shutdown();
-        } catch (Throwable e) {
-            // ignore
         }
     }
 
@@ -156,11 +172,10 @@ public class ServerHistoryManager {
         Hashtable<UserProfile,Long> hashtable = (Hashtable<UserProfile,Long>) lastModifiedTime.clone();
         hashtable.forEach((u,t) -> {
             if (now - t > userBanTime) {
-                ServerExecutor.logoutUser(u.getName());
+                executorModule.logoutUser(u.getName());
                 lastModifiedTime.remove(u);
-                ServerController.getInstance().info("User \"" + u.getName() + "\" logout (reason: AFK)");
+                controllerModule.info("User \"" + u.getName() + "\" logout (reason: AFK)");
             }
         });
     }
-
 }

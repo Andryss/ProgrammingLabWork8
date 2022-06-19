@@ -13,6 +13,10 @@ import java.util.Map;
  * @see ServerContext
  */
 public class ServerContextImpl implements ServerContext {
+    private final ServerModuleHolder moduleHolder = ServerModuleHolder.getInstance();
+    private final ServerCollectionManagerModule collectionManagerModule = moduleHolder.getCollectionManagerModule();
+    private final ServerHistoryManagerModule historyManagerModule = moduleHolder.getHistoryManagerModule();
+    
     protected final UserProfile userProfile;
     private final Response response;
 
@@ -24,37 +28,37 @@ public class ServerContextImpl implements ServerContext {
 
     @Override
     public Movie getMovie(Integer key) {
-        return ServerCollectionManager.getInstance().getMovie(key);
+        return collectionManagerModule.getMovie(key);
     }
 
     @Override
     public Movie putMovie(Integer key, Movie movie) throws IllegalAccessException {
-        return ServerCollectionManager.getInstance().putMovie(key, movie, userProfile);
+        return collectionManagerModule.putMovie(key, movie, userProfile);
     }
 
     @Override
     public Movie updateMovie(Integer key, Movie movie) throws IllegalAccessException {
-        return ServerCollectionManager.getInstance().updateMovie(key, movie, userProfile);
+        return collectionManagerModule.updateMovie(key, movie, userProfile);
     }
 
     @Override
     public Movie removeMovie(Integer key) throws IllegalAccessException {
-        return ServerCollectionManager.getInstance().removeMovie(key, userProfile);
+        return collectionManagerModule.removeMovie(key, userProfile);
     }
 
     @Override
     public void removeAllMovies() throws IllegalAccessException {
-        ServerCollectionManager.getInstance().removeAllMovies(userProfile);
+        collectionManagerModule.removeAllMovies(userProfile);
     }
 
     @Override
     public Hashtable<Integer,Movie> getMovieCollection() {
-        return ServerCollectionManager.getInstance().getMovieCollection();
+        return collectionManagerModule.getMovieCollection();
     }
 
     @Override
     public LinkedList<String> getUserHistory() {
-        return ServerHistoryManager.getInstance().getUserHistory(userProfile);
+        return historyManagerModule.getUserHistory(userProfile);
     }
 
     @Override
@@ -64,14 +68,14 @@ public class ServerContextImpl implements ServerContext {
 
     @Override
     public ServerContext validationClone() {
-        return new ServerINFOClone(userProfile);
+        return new ServerContextClone(userProfile);
     }
 
 
-    private static class ServerINFOClone extends ServerContextImpl {
-        private final Hashtable<Integer, Movie> movieCollection = ServerCollectionManager.getInstance().getMovieCollection();
+    private class ServerContextClone extends ServerContextImpl {
+        private final Hashtable<Integer, Movie> movieCollection = collectionManagerModule.getMovieCollection();
 
-        public ServerINFOClone(UserProfile userProfile) {
+        public ServerContextClone(UserProfile userProfile) {
             super(userProfile, ResponseImpl.getEmptyResponse());
         }
 
@@ -83,12 +87,12 @@ public class ServerContextImpl implements ServerContext {
         public Movie putMovie(Integer key, Movie movie) throws IllegalAccessException {
             if (movieCollection.containsKey(key)) {
                 throw new IllegalAccessException("Movie already exists");
-            } else if (movieCollection.size() >= ServerCollectionManager.getInstance().getCollectionElementsLimit()) {
-                throw new IllegalAccessException("Collection limit (" + ServerCollectionManager.getInstance().getCollectionElementsLimit() + ") exceeded");
+            } else if (movieCollection.size() >= collectionManagerModule.getCollectionElementsLimit()) {
+                throw new IllegalAccessException("Collection limit (" + collectionManagerModule.getCollectionElementsLimit() + ") exceeded");
             } else if (movieCollection.values().stream()
                     .filter(m -> m.getOwner().equals(userProfile.getName()))
-                    .count() >= ServerCollectionManager.getInstance().getUserElementsLimit()) {
-                throw new IllegalAccessException(userProfile.getName() + "'s elements count limit (" + ServerCollectionManager.getInstance().getUserElementsLimit() + ") exceeded");
+                    .count() >= collectionManagerModule.getUserElementsLimit()) {
+                throw new IllegalAccessException(userProfile.getName() + "'s elements count limit (" + collectionManagerModule.getUserElementsLimit() + ") exceeded");
             }
             movie.setOwner(userProfile.getName());
             return movieCollection.put(key, movie);

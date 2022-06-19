@@ -1,15 +1,19 @@
-.button{
-    -fx-background-radius:15
+.root {
+
 }
 
-.text-field{
-    -fx-background-radius:15
+.button {
+    -fx-background-radius: 15;
 }
 
-.choice-box{
-    -fx-background-radius:15
+.text-field {
+    -fx-background-radius: 15;
 }
 
-.combo-box{
-    -fx-background-radius:15
+.choice-box {
+    -fx-background-radius: 15;
+}
+
+.combo-box {
+    -fx-background-radius: 15;
 }

@@ -13,47 +13,28 @@ import java.util.Properties;
  * <p>ClientConnector implements (3) step in ClientManager</p>
  * <p>There are some methods to send and receive datagrams</p>
  */
-public class ClientConnector {
-    private static final ClientConnector instance = new ClientConnector();
+public class ClientConnectorImpl implements ClientConnectorModule {
+    private static final ClientConnectorImpl instance = new ClientConnectorImpl();
     private DatagramSocket socket;
     private InetAddress serverAddress;
     private int serverPort;
     private int socketSoTimeout;
     private final ByteBuffer dataBuffer = ByteBuffer.allocate(15_000);
 
-    private ClientConnector() {}
+    private ClientConnectorImpl() {}
 
-    public static ClientConnector getInstance() {
+    public static ClientConnectorImpl getInstance() {
         return instance;
     }
 
-    void initialize() throws IOException, ClassNotFoundException {
+    @Override
+    public void initialize() throws IOException, ClassNotFoundException {
         setConnection();
         checkConnection();
-        ClientController.getInstance().addBaseText(
+        ClientModuleHolder.getInstance().getClientControllerModule().addBaseText(
                 "Connecting to server \"" + serverAddress + "\"",
                 "Connection to server was successful"
         );
-    }
-
-    void setProperties(Properties properties) throws UnknownHostException, NumberFormatException {
-        serverAddress = InetAddress.getByName(properties.getProperty("serverAddress", "localhost"));
-        try {
-            serverPort = Integer.parseInt(properties.getProperty("serverPort", "52927"));
-            if (serverPort < 0 || serverPort > 65535) {
-                throw new NumberFormatException("property \"serverPort\" must be in range 1-65536");
-            }
-        } catch (NumberFormatException e) {
-            throw new NumberFormatException("Can't parse property \"serverPort\": " + e.getMessage());
-        }
-        try {
-            socketSoTimeout = Integer.parseInt(properties.getProperty("socketSoTimeout", "5000"));
-            if (socketSoTimeout < 1 || socketSoTimeout > 60_000) {
-                throw new NumberFormatException("property \"socketSoTimeout\" must be in range 1-60000");
-            }
-        } catch (NumberFormatException e) {
-            throw new NumberFormatException("Can't parse property \"socketSoTimeout\": " + e.getMessage());
-        }
     }
 
     private void setConnection() throws SocketException {
@@ -78,6 +59,28 @@ public class ClientConnector {
         }
     }
 
+    @Override
+    public void setProperties(Properties properties) throws UnknownHostException, NumberFormatException {
+        serverAddress = InetAddress.getByName(properties.getProperty("serverAddress", "localhost"));
+        try {
+            serverPort = Integer.parseInt(properties.getProperty("serverPort", "52927"));
+            if (serverPort < 0 || serverPort > 65535) {
+                throw new NumberFormatException("property \"serverPort\" must be in range 1-65536");
+            }
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("Can't parse property \"serverPort\": " + e.getMessage());
+        }
+        try {
+            socketSoTimeout = Integer.parseInt(properties.getProperty("socketSoTimeout", "5000"));
+            if (socketSoTimeout < 1 || socketSoTimeout > 60_000) {
+                throw new NumberFormatException("property \"socketSoTimeout\" must be in range 1-60000");
+            }
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("Can't parse property \"socketSoTimeout\": " + e.getMessage());
+        }
+    }
+
+    @Override
     public synchronized Response sendToServer(Request request) throws IOException, ClassNotFoundException {
         try {
             sendRequest(request);
@@ -95,6 +98,7 @@ public class ClientConnector {
         }
     }
 
+    @Override
     public synchronized void sendRequest(Request request) throws IOException {
         sendPacket(ConnectorHelper.objectToBuffer(request));
     }

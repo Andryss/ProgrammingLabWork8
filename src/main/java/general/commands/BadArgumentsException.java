@@ -1,10 +1,6 @@
 package general.commands;
 
-import client.ClientExecutor;
-
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
+import client.ClientModuleHolder;
 
 /**
  * Exception, when command arguments are incorrect
@@ -26,7 +22,7 @@ public class BadArgumentsException extends CommandException {
     }
 
     public static String getExample(String command) {
-        return ClientExecutor.getInstance().getExample(command);
+        return ClientModuleHolder.getInstance().getClientExecutorModule().getExample(command);
     }
 
     @Override

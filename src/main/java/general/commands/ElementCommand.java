@@ -144,7 +144,7 @@ public abstract class ElementCommand extends NameableCommand {
             checkElement(response);
         } catch (SocketTimeoutException e) {
             throw new BadArgumentsException(getCommandName(), "Server is not responding, try later or choose another server");
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (Exception e) {
             throw new BadArgumentsException(getCommandName(), e.getMessage());
         }
     }

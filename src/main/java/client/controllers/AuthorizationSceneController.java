@@ -33,12 +33,12 @@ public class AuthorizationSceneController {
     @FXML private Label successfulLabel;
     @FXML private Label goToRegLabel;
     @FXML private Hyperlink goToRegLink;
-    @FXML private ChoiceBox<Localizer.AvailableLocale> languageChoiceBox;
+    @FXML private ComboBox<Localizer.AvailableLocale> languageComboBox;
 
     @FXML
     private void initialize() {
-        languageChoiceBox.setItems(FXCollections.observableArrayList(Localizer.AvailableLocale.values()));
-        languageChoiceBox.valueProperty().bindBidirectional(context.localizer().availableLocaleProperty());
+        languageComboBox.setItems(FXCollections.observableArrayList(Localizer.AvailableLocale.values()));
+        languageComboBox.valueProperty().bindBidirectional(context.localizer().availableLocaleProperty());
         context.localizer().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
     }
 
@@ -53,6 +53,27 @@ public class AuthorizationSceneController {
         goToRegLink.setText(resourceBundle.getString("Go to the registration page"));
 
         resetErrLabels();
+    }
+
+    @FXML
+    private void passTextFieldKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            signInUser();
+        }
+    }
+
+    @FXML
+    private void loginTextFieldKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            signInUser();
+        }
+    }
+
+    @FXML
+    private void goToRegPageKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            goToRegPage();
+        }
     }
 
     @FXML
@@ -109,7 +130,11 @@ public class AuthorizationSceneController {
                 authProgressBar.setVisible(true);
                 Timeline authProgress = new Timeline(new KeyFrame(Duration.seconds(1), new KeyValue(authProgressBar.progressProperty(), 1, context.getProgressInterpolator())));
                 authProgress.setOnFinished(e -> {
-                    context.getClientController().initialize();
+                    try {
+                        context.getControllerModule().initialize();
+                    } catch (Exception ex) {
+                        // never
+                    }
                     goToMainPage();
                     ableAll();
                 });
@@ -119,7 +144,7 @@ public class AuthorizationSceneController {
                         response.getResponseType() +
                         "\"");
             }
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (Exception e) {
             context.showUserError(e);
         }
     }
@@ -129,7 +154,7 @@ public class AuthorizationSceneController {
         passwordField.setDisable(true);
         signInButton.setDisable(true);
         goToRegLink.setDisable(true);
-        languageChoiceBox.setDisable(true);
+        languageComboBox.setDisable(true);
     }
 
     private void ableAll() {
@@ -137,7 +162,7 @@ public class AuthorizationSceneController {
         passwordField.setDisable(false);
         signInButton.setDisable(false);
         goToRegLink.setDisable(false);
-        languageChoiceBox.setDisable(false);
+        languageComboBox.setDisable(false);
     }
 
     private void checkTextFields() {
@@ -175,7 +200,7 @@ public class AuthorizationSceneController {
                 context.sendRequest(
                         RequestBuilder.createNewRequest().setRequestType(Request.RequestType.LOGOUT_USER).build()
                 );
-            } catch (IOException e) {
+            } catch (Exception e) {
                 //ignore
             }
         }));

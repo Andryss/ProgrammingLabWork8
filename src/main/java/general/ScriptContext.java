@@ -9,7 +9,7 @@ import java.io.IOException;
  */
 public interface ScriptContext {
 
-    Response sendToServer(Request request) throws IOException, ClassNotFoundException;
+    Response sendToServer(Request request) throws Exception;
 
     Request createNewRequest(Request.RequestType requestType, Integer checkingIndex);
 

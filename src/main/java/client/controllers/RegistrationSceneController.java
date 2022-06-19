@@ -12,6 +12,8 @@ import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
@@ -33,12 +35,12 @@ public class RegistrationSceneController {
     @FXML private Label successfulLabel;
     @FXML private Label goToAuthLabel;
     @FXML private Hyperlink goToAuthLink;
-    @FXML private ChoiceBox<Localizer.AvailableLocale> languageChoiceBox;
+    @FXML private ComboBox<Localizer.AvailableLocale> languageComboBox;
 
     @FXML
     private void initialize() {
-        languageChoiceBox.setItems(FXCollections.observableArrayList(Localizer.AvailableLocale.values()));
-        languageChoiceBox.valueProperty().bindBidirectional(context.localizer().availableLocaleProperty());
+        languageComboBox.setItems(FXCollections.observableArrayList(Localizer.AvailableLocale.values()));
+        languageComboBox.valueProperty().bindBidirectional(context.localizer().availableLocaleProperty());
         context.localizer().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
     }
 
@@ -56,6 +58,27 @@ public class RegistrationSceneController {
     }
 
     @FXML
+    private void passTextFieldKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            signUpUser();
+        }
+    }
+
+    @FXML
+    private void loginTextFieldKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            signUpUser();
+        }
+    }
+
+    @FXML
+    private void goToAuthPageKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            goToAuthPage();
+        }
+    }
+
+    @FXML
     private void goToAuthPageMouseClicked(MouseEvent mouseEvent) {
         goToAuthPage();
     }
@@ -63,6 +86,13 @@ public class RegistrationSceneController {
     private void goToAuthPage() {
         context.setScene(Application.AppScene.AUTHORIZATION_SCENE);
         clear();
+    }
+
+    @FXML
+    private void signUpUserKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            signUpUser();
+        }
     }
 
     @FXML
@@ -104,7 +134,7 @@ public class RegistrationSceneController {
                         response.getResponseType() +
                         "\"");
             }
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (Exception e) {
             context.showUserError(e);
         }
     }
@@ -114,7 +144,7 @@ public class RegistrationSceneController {
         passwordField.setDisable(true);
         signUpButton.setDisable(true);
         goToAuthLink.setDisable(true);
-        languageChoiceBox.setDisable(true);
+        languageComboBox.setDisable(true);
     }
 
     private void ableAll() {
@@ -122,7 +152,7 @@ public class RegistrationSceneController {
         passwordField.setDisable(false);
         signUpButton.setDisable(false);
         goToAuthLink.setDisable(false);
-        languageChoiceBox.setDisable(false);
+        languageComboBox.setDisable(false);
     }
 
     private void checkTextFields() {
@@ -130,13 +160,13 @@ public class RegistrationSceneController {
             UserProfile.checkLogin(loginTextField.getText());
             loginErrLabel.setText("");
         } catch (IllegalArgumentException e) {
-            loginErrLabel.setText(e.getMessage());
+            loginErrLabel.setText(context.getString(e.getMessage()));
         }
         try {
             UserProfile.checkPassword(passwordField.getText());
             passwordErrLabel.setText("");
         } catch (IllegalArgumentException e) {
-            passwordErrLabel.setText(e.getMessage());
+            passwordErrLabel.setText(context.getString(e.getMessage()));
         }
     }
 

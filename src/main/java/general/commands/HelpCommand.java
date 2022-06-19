@@ -27,7 +27,7 @@ public class HelpCommand extends NameableCommand {
                 .addMessage("remove_key null : delete your element with the given key")
                 .addMessage("clear : delete your elements from the collection")
                 .addMessage("execute_script file_name : read and execute script from file")
-                .addMessage("exit : end the program")
+                .addMessage("exit (deleted): end the program")
                 .addMessage("history : print the last 13 commands (without arguments)")
                 .addMessage("replace_if_greater null {element} : replace your element by the key if the new value is greater than the old one")
                 .addMessage("remove_lower_key null : remove all your elements whose key is less than given")

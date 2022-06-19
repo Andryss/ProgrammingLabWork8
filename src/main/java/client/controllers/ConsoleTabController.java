@@ -1,7 +1,8 @@
 package client.controllers;
 
-import client.ClientController;
-import client.ClientExecutor;
+import client.ClientControllerModule;
+import client.ClientExecutorImpl;
+import client.ClientExecutorModule;
 import general.ClientContext;
 import general.Response;
 import general.commands.Command;
@@ -11,6 +12,8 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -30,6 +33,8 @@ public class ConsoleTabController {
         this.mainSceneController = mainSceneController;
     }
     private final ControllersContext context = ControllersContext.getInstance();
+    private final ClientControllerModule controllerModule = context.getControllerModule();
+    private final ClientExecutorModule executorModule = context.getExecutorModule();
 
     @FXML private OneParamPaneController oneParamPaneController;
     @FXML private MovieKeyParamPaneController movieKeyParamPaneController;
@@ -56,7 +61,7 @@ public class ConsoleTabController {
         consoleScrollPane.vvalueProperty().bind(consoleTextFlow.heightProperty());
         saveHistoryMenuItem.setOnAction(e -> saveConsoleHistory());
         commandComboBox.setItems(FXCollections.observableList(
-                new ArrayList<>(ClientExecutor.getInstance().getCommandMap().keySet())
+                new ArrayList<>(executorModule.getCommandMap().keySet())
         ));
         context.localizer().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
 
@@ -78,10 +83,24 @@ public class ConsoleTabController {
         File file = context.chooseFile();
         if (file != null) {
             try {
-                context.getClientController().saveHistoryToFile(file);
+                controllerModule.saveHistoryToFile(file);
             } catch (IOException e) {
                 context.showUserError(e);
             }
+        }
+    }
+
+    @FXML
+    private void chooseCommandKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            sendCommand();
+        }
+    }
+
+    @FXML
+    private void sendCommandKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            sendCommand();
         }
     }
 
@@ -92,14 +111,14 @@ public class ConsoleTabController {
 
     private void sendCommand() {
         String commandName = commandComboBox.getValue();
-        if (!ClientExecutor.getInstance().hasCommand(commandName)) {
+        if (!executorModule.hasCommand(commandName)) {
             context.showWarningWindow(
                     context.getString("Choose command"),
                     context.getString("You should choose command to send!")
             );
             return;
         }
-        context.setCurrentCommand(ClientExecutor.getInstance().getCommandContainer(commandName));
+        context.setCurrentCommand(executorModule.getCommandContainer(commandName));
         Command.CommandType currentCommandType = context.getCurrentCommand().getCommandType();
         if (currentCommandType == Command.CommandType.NO_PARAMS) {
             noParamCommand();
@@ -130,7 +149,7 @@ public class ConsoleTabController {
     }
 
     void setToRemove(Map.Entry<Integer, Movie> entry) {
-        ClientExecutor.CommandContainer commandContainer = ClientExecutor.getInstance().getCommandContainer("remove_key");
+        ClientExecutorImpl.CommandContainer commandContainer = executorModule.getCommandContainer("remove_key");
         if (commandContainer == null) {
             context.showUserError(new RuntimeException("Cannot find \"remove_key\" command :("));
         } else {
@@ -150,7 +169,7 @@ public class ConsoleTabController {
     }
 
     void setToUpdate(Map.Entry<Integer, Movie> entry) {
-        ClientExecutor.CommandContainer commandContainer = ClientExecutor.getInstance().getCommandContainer("update");
+        ClientExecutorImpl.CommandContainer commandContainer = executorModule.getCommandContainer("update");
         if (commandContainer == null) {
             context.showUserError(new RuntimeException("Cannot find \"update\" command :("));
         } else {
@@ -167,23 +186,23 @@ public class ConsoleTabController {
 
     void createRequestAndReceiveResponse() {
         try {
-            ClientController.getInstance().printlnCommand(context.getCurrentCommand().getCommandName());
-            ClientExecutor.getInstance().executeCommand(context.getCurrentCommand().getCommandName());
-            Response response = context.sendToServer(ClientExecutor.getInstance().getRequest());
+            controllerModule.printlnCommand(context.getCurrentCommand().getCommandName());
+            executorModule.executeCommand(context.getCurrentCommand().getCommandName());
+            Response response = context.sendToServer(executorModule.getRequest());
             if (response.getResponseType() == Response.ResponseType.EXECUTION_SUCCESSFUL) {
-                ClientController.getInstance().println(response.getMessage());
+                controllerModule.println(response.getMessage());
             } else if (response.getResponseType() == Response.ResponseType.EXECUTION_FAILED) {
-                ClientController.getInstance().printlnErr(response.getMessage());
+                controllerModule.printlnErr(response.getMessage());
             } else {
-                ClientController.getInstance().printlnErr("Server has wrong logic: unexpected \"" +
+                controllerModule.printlnErr("Server has wrong logic: unexpected \"" +
                         response.getResponseType() +
                         "\"");
             }
         } catch (SocketTimeoutException e) {
-            ClientController.getInstance().printlnErr("Server isn't responding (try again later)");
+            controllerModule.printlnErr("Server isn't responding (try again later)");
         } catch (CommandException e) {
-            ClientController.getInstance().printlnErr(e.getMessage());
-        } catch (IOException | ClassNotFoundException e) {
+            controllerModule.printlnErr(e.getMessage());
+        } catch (Exception e) {
             context.showUserError(e);
         }
     }

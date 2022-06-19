@@ -1,11 +1,9 @@
 package client.file;
 
-import client.ClientExecutor;
-import client.ScriptContextImpl;
+import client.ClientModuleHolder;
 import general.ScriptContext;
 import general.Request;
 import general.commands.*;
-import general.ServerContext;
 
 import java.util.HashMap;
 import java.util.NoSuchElementException;
@@ -16,7 +14,7 @@ import java.util.NoSuchElementException;
  */
 public class FileExecutor {
     @SuppressWarnings("unchecked")
-    private final HashMap<String, Command> commandMap = (HashMap<String, Command>) ClientExecutor.getInstance().getCommandMap().clone();
+    private final HashMap<String, Command> commandMap = (HashMap<String, Command>) ClientModuleHolder.getInstance().getClientExecutorModule().getCommandMap().clone();
     private final FileController controller;
     private final ScriptContext clientINFO;
     private final FileExecutor caller;
@@ -26,7 +24,7 @@ public class FileExecutor {
     public FileExecutor(FileController fileController, FileExecutor caller, Request request) {
         this.caller = caller;
         this.controller = fileController;
-        this.clientINFO = new ScriptContextImpl.ClientINFOFromFileImpl(this.controller, caller);
+        this.clientINFO = new ScriptContextImpl(this.controller, caller);
         this.request = request;
     }
 

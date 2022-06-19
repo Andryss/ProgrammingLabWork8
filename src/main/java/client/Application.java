@@ -1,7 +1,6 @@
 package client;
 
 import client.controllers.ControllersContext;
-import general.commands.CommandException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -17,6 +16,8 @@ import java.util.Properties;
 public class Application extends javafx.application.Application {
     private Stage stage;
     private final EnumMap<AppScene,Scene> sceneMap = new EnumMap<>(AppScene.class);
+
+    private final ClientModuleHolder moduleHolder = ClientModuleHolder.getInstance();
 
     public static void main(String[] args) {
         launch();
@@ -52,19 +53,10 @@ public class Application extends javafx.application.Application {
         sceneMap.put(sceneType, scene);
     }
 
-    private void preInitializations() throws IOException, CommandException {
-        Properties properties = readProperties();
+    private void preInitializations() throws Exception {
+        moduleHolder.setPropertiesAll(readProperties());
 
-        ClientConnector.getInstance().setProperties(properties);
-        ClientExecutor.getInstance().initialize();
-    }
-
-    private void postInitializations() throws IOException, ClassNotFoundException {
-        setCssStyle(AppStyle.DEFAULT);
-
-        ClientController.getInstance().setTextFlow(ControllersContext.getInstance().getConsoleTextFlow());
-
-        ClientConnector.getInstance().initialize();
+        moduleHolder.getClientExecutorModule().initialize();
     }
 
     private Properties readProperties() throws IOException {
@@ -81,6 +73,20 @@ public class Application extends javafx.application.Application {
             throw new FileNotFoundException("File \"client.properties\" with properties not found");
         }
         return properties;
+    }
+
+    private void postInitializations() throws Exception {
+        setCssStyle(AppStyle.DEFAULT);
+
+        try {
+            moduleHolder.getClientControllerModule().setWritableObject(
+                    ControllersContext.getInstance().getConsoleTextFlow()
+            );
+        } catch (Exception e) {
+            // never
+        }
+
+        moduleHolder.getClientConnectorModule().initialize();
     }
 
     public Stage getStage() {
@@ -105,7 +111,7 @@ public class Application extends javafx.application.Application {
 
     public enum AppStyle {
         DEFAULT("defaultTheme.css"),
-        // TODO: add dark theme
+        // TODO: complete dark theme
         DARK("darkTheme.css");
 
         private final String path;

@@ -13,19 +13,19 @@ import java.util.*;
  * <p>3) Check if args for this command is valid</p>
  * <p>4) Make command build Request</p>
  */
-public class ClientExecutor {
-    private static final ClientExecutor instance = new ClientExecutor();
+public class ClientExecutorImpl implements ClientExecutorModule {
+    private static final ClientExecutorImpl instance = new ClientExecutorImpl();
     private final HashMap<String, CommandContainer> commandMap = new HashMap<>();
-    private final CommandContainer emptyContainer = new CommandContainer();
     private Request request;
 
-    private ClientExecutor() {}
+    private ClientExecutorImpl() {}
 
-    public static ClientExecutor getInstance() {
+    public static ClientExecutorImpl getInstance() {
         return instance;
     }
 
-    void initialize() throws IOException, CommandException {
+    @Override
+    public void initialize() throws IOException, CommandException {
         fillCommandMap();
     }
 
@@ -35,6 +35,12 @@ public class ClientExecutor {
 
     }
 
+    @Override
+    public void setProperties(Properties properties) throws Exception {
+        // NOTHING HERE
+    }
+
+    @Override
     public void executeCommand(String commandName) throws CommandException {
         Command command = commandMap.get(commandName).getCommand();
         if (command == null) {
@@ -47,36 +53,25 @@ public class ClientExecutor {
         command.buildRequest(request);
     }
 
-    public HashMap<String,CommandContainer> getCommandMap() {
-        return commandMap;
-    }
-    public boolean hasCommand(String commandName) {
-        return commandMap.containsKey(commandName);
-    }
-    public CommandContainer getCommandContainer(String commandName) {
-        return commandMap.getOrDefault(commandName, emptyContainer);
-    }
-    public Command.CommandType getCommandType(String commandName) {
-        return commandMap.getOrDefault(commandName, emptyContainer).getCommandType();
-    }
-    public String getExample(String commandName) {
-        return commandMap.getOrDefault(commandName, emptyContainer).getExample();
-    }
+    @Override
     public Request getRequest() {
         return request;
     }
 
+    @Override
+    public HashMap<String,CommandContainer> getCommandMap() {
+        return commandMap;
+    }
 
-    public static class CommandContainer {
-        private String commandName;
-        private Command command;
-        private Command.CommandType commandType;
-        private String paramName;
-        private String example;
 
-        private CommandContainer() {}
+    public static class CommandContainerImpl implements CommandContainer {
+        private final String commandName;
+        private final Command command;
+        private final Command.CommandType commandType;
+        private final String paramName;
+        private final String example;
 
-        public CommandContainer(String commandName, Command command, Command.CommandType commandType, String paramName, String example) {
+        public CommandContainerImpl(String commandName, Command command, Command.CommandType commandType, String paramName, String example) {
             this.commandName = commandName;
             this.command = command;
             this.commandType = commandType;
@@ -84,18 +79,23 @@ public class ClientExecutor {
             this.example = example;
         }
 
+        @Override
         public String getCommandName() {
             return commandName;
         }
+        @Override
         public Command getCommand() {
             return command;
         }
+        @Override
         public Command.CommandType getCommandType() {
             return commandType;
         }
+        @Override
         public String getParamName() {
             return paramName;
         }
+        @Override
         public String getExample() {
             return example;
         }

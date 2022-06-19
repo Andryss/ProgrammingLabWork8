@@ -40,8 +40,8 @@
                            <children>
                               <HBox alignment="CENTER" fillHeight="false" maxWidth="1.7976931348623157E308" spacing="20.0">
                                  <children>
-                                          <ComboBox fx:id="commandComboBox" prefWidth="560.0" promptText="Choose the command you want to send" />
-                                          <Button fx:id="sendCommandButton" mnemonicParsing="false" onMouseClicked="#sendCommandMouseClicked" text="Send" />
+                                          <ComboBox fx:id="commandComboBox" onKeyReleased="#chooseCommandKeyReleased" prefWidth="560.0" promptText="Choose the command you want to send" />
+                                          <Button fx:id="sendCommandButton" mnemonicParsing="false" onKeyReleased="#sendCommandKeyReleased" onMouseClicked="#sendCommandMouseClicked" text="Send" />
                                  </children>
                               </HBox>
                            </children>

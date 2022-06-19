@@ -1,6 +1,8 @@
 package general.commands;
 
-import client.ClientExecutor;
+import client.ClientExecutorImpl;
+import client.ClientExecutorModule;
+import client.ClientModuleHolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,19 +24,19 @@ import java.util.zip.ZipEntry;
 public abstract class CommandFiller {
 
     public static void fillCommandMap() throws IOException, CommandException {
-        HashMap<String, ClientExecutor.CommandContainer> commandMap = ClientExecutor.getInstance().getCommandMap();
+        HashMap<String, ClientExecutorImpl.CommandContainer> commandMap = ClientModuleHolder.getInstance().getClientExecutorModule().getCommandMap();
         try {
             List<String> classNames;
             try {
                 // Try if we are in JAR file
-                classNames = new JarFile(new File(ClientExecutor.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath())).stream()
+                classNames = new JarFile(new File(ClientExecutorImpl.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath())).stream()
                         .map(ZipEntry::toString)
                         .filter(s -> s.startsWith("general/commands/") && s.endsWith(".class"))
                         .map(s -> s.substring(0, s.length() - 6).replaceAll("/", "."))
                         .collect(Collectors.toList());
             } catch (IOException e) {
                 // But maybe we are in .class file
-                Path path = new File(ClientExecutor.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).toPath();
+                Path path = new File(ClientExecutorImpl.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).toPath();
                 classNames = Files.walk(new File(path + "\\general\\commands\\").toPath())
                         .map(Path::toString)
                         .filter(s -> s.endsWith(".class"))
@@ -55,7 +57,7 @@ public abstract class CommandFiller {
                     if (commandMap.containsKey(command.name())) {
                         throw new CommandException(command.name(), "found at least 2 commands in general/commands/ with the same name, what is forbidden");
                     }
-                    ClientExecutor.CommandContainer container = new ClientExecutor.CommandContainer(
+                    ClientExecutorModule.CommandContainer container = new ClientExecutorImpl.CommandContainerImpl(
                             command.name(),
                             (Command) constructor.newInstance(command.name()),
                             command.type(),

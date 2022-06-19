@@ -1,24 +1,44 @@
 package server;
 
-import general.element.FieldException;
 import general.element.UserProfile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Properties;
 
 /**
  * ServerController logging into file and terminal, implements simple console commands for server
  */
-public class ServerController {
-    private static final ServerController instance = new ServerController();
+public class ServerControllerImpl implements ServerControllerModule {
+    private static final ServerControllerImpl instance = new ServerControllerImpl();
+
+    private ServerCollectionManagerModule collectionManagerModule;
+    private ServerExecutorModule executorModule;
+    private ServerHistoryManagerModule historyManagerModule;
+
     private final Logger logger = LogManager.getLogger();
 
-    private ServerController() {}
+    private ServerControllerImpl() {}
 
-    public static ServerController getInstance() {
+    public static ServerControllerImpl getInstance() {
         return instance;
+    }
+
+    @Override
+    public void initialize() throws Exception {
+        ServerModuleHolder moduleHolder = ServerModuleHolder.getInstance();
+        collectionManagerModule = moduleHolder.getCollectionManagerModule();
+        executorModule = moduleHolder.getExecutorModule();
+        historyManagerModule = moduleHolder.getHistoryManagerModule();
+    }
+    @Override
+    public void setProperties(Properties properties) throws Exception {
+        // nothing
+    }
+    @Override
+    public void close() {
+        // nothing
     }
 
     public void info(String message) {
@@ -57,30 +77,30 @@ public class ServerController {
 
                     case "usl":
                     case "uslogout":
-                        ServerExecutor.logoutUser(args[1]);
+                        executorModule.logoutUser(args[1]);
                         break;
 
                     case "usb":
                     case "usban":
-                        ServerExecutor.logoutUser(args[1]);
-                        ServerCollectionManager.getInstance().removeUser(args[1]);
+                        executorModule.logoutUser(args[1]);
+                        collectionManagerModule.removeUser(args[1]);
                         break;
 
                     case "tbs":
                     case "tbshow":
-                        ServerExecutor.printUsers();
-                        ServerCollectionManager.getInstance().printTables();
+                        executorModule.printUsers();
+                        collectionManagerModule.printTables();
                         break;
 
                     case "usr":
                     case "usreg":
-                        ServerCollectionManager.getInstance().registerUser(new UserProfile(args[1], args[2]));
+                        collectionManagerModule.registerUser(new UserProfile(args[1], args[2]));
                         break;
 
                     case "elr":
                     case "elremove":
                         try {
-                            ServerCollectionManager.getInstance().removeMovie(Integer.parseInt(args[1]));
+                            collectionManagerModule.removeMovie(Integer.parseInt(args[1]));
                         } catch (NumberFormatException e) {
                             error(e.getMessage());
                         }
@@ -88,21 +108,19 @@ public class ServerController {
 
                     case "elc":
                     case "elclear":
-                        ServerCollectionManager.getInstance().removeAllMovies();
+                        collectionManagerModule.removeAllMovies();
                         break;
 
                     case "usclh":
                     case "usclhistory":
-                        ServerHistoryManager.getInstance().clearUserHistory(args[1]);
+                        historyManagerModule.clearUserHistory(args[1]);
                         break;
 
                     case "tbdropcreate":
                         try {
-                            ServerExecutor.getAuthorizedUsers().clear();
-                            ServerCollectionManager.getInstance().dropTables();
-                            ServerCollectionManager.getInstance().createTables();
-                            ServerCollectionManager.getInstance().loadCollectionsFromDB();
-                        } catch (SQLException | FieldException e) {
+                            executorModule.clearAuthorizedUsers();
+                            collectionManagerModule.clearAllData();
+                        } catch (Exception e) {
                             error(e.getMessage());
                         }
                         break;

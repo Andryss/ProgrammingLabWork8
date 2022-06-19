@@ -9,6 +9,8 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
@@ -32,9 +34,9 @@ public class UserTabController {
     @FXML private Button signOutButton;
     @FXML private Label settingsLabel;
     @FXML private Label languageLabel;
-    @FXML private ChoiceBox<Localizer.AvailableLocale> languageChoiceBox;
+    @FXML private ComboBox<Localizer.AvailableLocale> languageComboBox;
     @FXML private Label themeLabel;
-    @FXML private ChoiceBox<Application.AppStyle> themeChoiceBox;
+    @FXML private ComboBox<Application.AppStyle> themeComboBox;
     @FXML private Button exitButton;
 
     @FXML
@@ -45,13 +47,13 @@ public class UserTabController {
             drawFace();
         });
 
-        languageChoiceBox.setItems(FXCollections.observableArrayList(Localizer.AvailableLocale.values()));
-        languageChoiceBox.valueProperty().bindBidirectional(context.localizer().availableLocaleProperty());
+        languageComboBox.setItems(FXCollections.observableArrayList(Localizer.AvailableLocale.values()));
+        languageComboBox.valueProperty().bindBidirectional(context.localizer().availableLocaleProperty());
         context.localizer().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
-        
-        themeChoiceBox.setItems(FXCollections.observableArrayList(Application.AppStyle.values()));
-        themeChoiceBox.setValue(Application.AppStyle.DEFAULT);
-        themeChoiceBox.valueProperty().addListener((obs, o, n) -> context.setSccStyle(n));
+
+        themeComboBox.setItems(FXCollections.observableArrayList(Application.AppStyle.values()));
+        themeComboBox.setValue(Application.AppStyle.DEFAULT);
+        themeComboBox.valueProperty().addListener((obs, o, n) -> context.setSccStyle(n));
     }
 
     private void localize(ResourceBundle resourceBundle) {
@@ -81,6 +83,13 @@ public class UserTabController {
     }
 
     @FXML
+    private void signOutKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            signOut();
+        }
+    }
+
+    @FXML
     private void signOutMouseClicked(MouseEvent mouseEvent) {
         signOut();
     }
@@ -96,9 +105,16 @@ public class UserTabController {
                         RequestBuilder.createNewRequest().setRequestType(Request.RequestType.LOGOUT_USER).build()
                 );
                 context.getApplication().setScene(Application.AppScene.AUTHORIZATION_SCENE);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 context.showUserError(e);
             }
+        }
+    }
+
+    @FXML
+    private void exitKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            signOut();
         }
     }
 
@@ -114,6 +130,13 @@ public class UserTabController {
         );
         if (answer.isPresent() && answer.get() == ButtonType.OK) {
             System.exit(0);
+        }
+    }
+
+    @FXML
+    private void refreshKeyPressed(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            drawFace();
         }
     }
 

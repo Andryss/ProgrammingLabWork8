@@ -1,6 +1,6 @@
 package client.controllers;
 
-import client.ClientExecutor;
+import client.ClientExecutorImpl;
 import client.RequestBuilder;
 import general.Request;
 import general.Response;
@@ -14,9 +14,10 @@ import general.element.Person;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
-import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.Map;
@@ -85,7 +86,7 @@ public class MovieKeyParamPaneController {
 
     private void localize(ResourceBundle resourceBundle) {
         headerLabel.setText(resourceBundle.getString("Element filling page"));
-        ClientExecutor.CommandContainer command = context.getCurrentCommand();
+        ClientExecutorImpl.CommandContainer command = context.getCurrentCommand();
         if (command != null && command.getCommandType() == Command.CommandType.MOVIE_KEY_PARAM) {
             movieKeyLabel.setText(resourceBundle.getString("Movie " + context.getCurrentCommand().getParamName()) + ":");
         }
@@ -100,6 +101,20 @@ public class MovieKeyParamPaneController {
         movieMpaaRatingErrLabel.setText("");
         screenwriterNameErrLabel.setText("");
         screenwriterBirthdayErrLabel.setText("");
+    }
+
+    @FXML
+    private void movieKeyKeyTextFieldKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            checkMovieKey();
+        }
+    }
+
+    @FXML
+    private void checkMovieKeyKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            checkMovieKey();
+        }
     }
 
     @FXML
@@ -121,13 +136,32 @@ public class MovieKeyParamPaneController {
                     movieKeyErrLabel.setText(context.getString("OK"));
                 } catch (BadArgumentsException | SocketTimeoutException e) {
                     movieKeyErrLabel.setText(context.getString(e.getMessage()));
-                } catch (IOException | ClassNotFoundException e) {
-                    context.showErrorWindow("Something wrong", e.getMessage());
+                } catch (Exception e) {
+                    context.showUserError(e);
                 }
             } else {
-                context.showErrorWindow("Something wrong",
-                        context.getCurrentCommand().getCommandName() + " not extends ElementCommand");
+                context.showErrorWindow(
+                        context.getString("Something wrong"),
+                        "\"" + context.getCurrentCommand().getCommandName() + "\" " +
+                                context.getString("not extends ElementCommand")
+                );
             }
+        }
+    }
+
+    @FXML
+    private void movieKeyTextFieldKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            movieKeyConfirm();
+        } else if (keyEvent.getCode() == KeyCode.ESCAPE) {
+            returnToTheMainPane();
+        }
+    }
+
+    @FXML
+    private void returnToTheMainPaneKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            returnToTheMainPane();
         }
     }
 
@@ -141,6 +175,13 @@ public class MovieKeyParamPaneController {
     }
 
     @FXML
+    private void movieKeyConfirmKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            movieKeyConfirm();
+        }
+    }
+
+    @FXML
     private void movieKeyConfirmMouseClicked(MouseEvent mouseEvent) {
         movieKeyConfirm();
     }
@@ -149,7 +190,7 @@ public class MovieKeyParamPaneController {
         if (checkMovie()) {
             getClientContext().setParam(null).setMovie(currentMovie).setMovieKey(currentKey);
             try {
-                ClientExecutor.CommandContainer currentCommand = context.getCurrentCommand();
+                ClientExecutorImpl.CommandContainer currentCommand = context.getCurrentCommand();
                 currentCommand.getCommand().setGUIArgs(getClientContext());
                 Optional<ButtonType> buttonType = context.showConfirmWindow(
                         context.getString("Are you sure?"),

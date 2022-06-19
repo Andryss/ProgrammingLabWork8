@@ -13,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.BubbleChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
@@ -76,7 +77,17 @@ public class PlotTabController {
             });
         }));
         editSelectedMovieButton.setOnAction(e -> mainSceneController.setToUpdate(selectedMovie.getValue()));
+        editSelectedMovieButton.setOnKeyReleased(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                mainSceneController.setToUpdate(selectedMovie.getValue());
+            }
+        });
         removeSelectedMovieButton.setOnAction(e -> mainSceneController.setToRemove(selectedMovie.getValue()));
+        removeSelectedMovieButton.setOnKeyReleased(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                mainSceneController.setToRemove(selectedMovie.getValue());
+            }
+        });
 
         context.localizer().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
     }

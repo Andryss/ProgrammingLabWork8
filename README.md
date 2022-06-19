@@ -1,3 +1,3 @@
 # ProgrammingLabWork8
 
-- *there is no diagram :(*
+- *there is no diagram yet :(*

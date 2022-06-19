@@ -132,7 +132,6 @@ public class Data_ru extends ListResourceBundle {
             {"ERROR: field must have \"DD.MM.YYYY\" format", "ОШИБКА: поле должно иметь формат \"ДД.ММ.ГГГГ\""},
 
 
-
             // TABLE TAB
             {"Filter by", "Фильтровать по"},
             {"with value contains", "со значением, содержащим"},
@@ -153,12 +152,12 @@ public class Data_ru extends ListResourceBundle {
             {"Remove", "Удалять"},
 
 
-
             // ERRORS
             {"Error", "Ошибка"},
             {"Something wrong", "Что-то не так"},
             {"Oops... Seems like evil goblins cut some wires... Try again later", "Ой... Похоже, злые гоблины перерезали какие-то провода... Повторите попытку позже"},
             {"FATAL", "Роковой"},
-            {"FATAL ERROR: don't peek", "ФАТАЛЬНАЯ ОШИБКА: не подглядывайте"}
+            {"FATAL ERROR: don't peek", "ФАТАЛЬНАЯ ОШИБКА: не подглядывайте"},
+            {"not extends ElementCommand", "не расширяет ElementCommand"}
     };
 }

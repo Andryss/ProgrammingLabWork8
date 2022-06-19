@@ -16,30 +16,46 @@ import java.nio.channels.Selector;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * ServerConnector receiving Request and starting Thread which executing this Request
  */
-public class ServerConnector {
-    private static final ServerConnector instance = new ServerConnector(); // Follow "Singleton" pattern
+public class ServerConnectorImpl implements ServerConnectorModule {
+    private static final ServerConnectorImpl instance = new ServerConnectorImpl(); // Follow "Singleton" pattern
+
+    private ServerControllerModule controllerModule;
+    private ServerExecutorModule executorModule;
+
     private DatagramChannel channel;
     private int serverPort;
     private Selector selector;
 
-    private ServerConnector() {}
+    private ServerConnectorImpl() {}
 
-    static ServerConnector getInstance() {
+    static ServerConnectorImpl getInstance() {
         return instance;
     }
 
-    void initialize() throws IOException {
+    @Override
+    public void initialize() throws IOException {
+        ServerModuleHolder moduleHolder = ServerModuleHolder.getInstance();
+        controllerModule = moduleHolder.getControllerModule();
+        executorModule = moduleHolder.getExecutorModule();
+
         bindChannel();
         ServerByteBufferManager.getInstance().initialize();
     }
 
-    void setProperties(Properties properties) {
+    private void bindChannel() throws IOException {
+        channel = DatagramChannel.open();
+        channel.configureBlocking(false);
+        selector = Selector.open();
+        channel.register(selector, SelectionKey.OP_READ);
+        channel.bind(new InetSocketAddress(serverPort));
+    }
+
+    @Override
+    public void setProperties(Properties properties) {
         try {
             serverPort = Integer.parseInt(properties.getProperty("serverPort", "52927"));
             if (serverPort < 0 || serverPort > 65535) {
@@ -51,15 +67,8 @@ public class ServerConnector {
         ServerByteBufferManager.getInstance().setProperties(properties);
     }
 
-    private void bindChannel() throws IOException {
-        channel = DatagramChannel.open();
-        channel.configureBlocking(false);
-        selector = Selector.open();
-        channel.register(selector, SelectionKey.OP_READ);
-        channel.bind(new InetSocketAddress(serverPort));
-    }
-
-    void close() {
+    @Override
+    public void close() {
         try {
             channel.close();
             selector.close();
@@ -68,8 +77,9 @@ public class ServerConnector {
         }
     }
 
+    @Override
     public void run() throws IOException {
-        ServerController.getInstance().info("------------------------------- Ready for receiving -------------------------------");
+        controllerModule.info("------------------------------- Ready for receiving -------------------------------");
             while (true) {
                 try {
                     selector.select();
@@ -80,7 +90,7 @@ public class ServerConnector {
                             ServerConnectorWorker worker = new ServerConnectorWorker();
                             SocketAddress client = channel.receive(worker.dataBuffer);
                             new Thread(() -> worker.receiveRequest(client), "ReceiveThreadJr").start();
-                            ServerController.getInstance().info("------------------------------- Ready for receiving -------------------------------");
+                            controllerModule.info("------------------------------- Ready for receiving -------------------------------");
                         }
                     }
                 } catch (ClosedSelectorException e) {
@@ -89,7 +99,8 @@ public class ServerConnector {
             }
     }
 
-    void sendToClient(SocketAddress client, Response response) {
+    @Override
+    public void sendToClient(SocketAddress client, Response response) {
         new ServerConnectorWorker().sendToClient(client, response);
     }
 
@@ -107,11 +118,11 @@ public class ServerConnector {
             try {
                 Request request = ConnectorHelper.objectFromBuffer(dataBuffer.array());
 
-                ServerController.getInstance().info("Received " + dataBuffer.position() + " bytes buffer with request " + request);
+                controllerModule.info("Received " + dataBuffer.position() + " bytes buffer with request " + request);
 
-                ServerExecutor.getService().submit(() -> new ServerExecutor(client, request).executeRequest());
+                executorModule.executeRequest(client, request);
             } catch (Throwable e) {
-                ServerController.getInstance().error(e.getMessage());
+                controllerModule.error(e.getMessage());
             } finally {
                 ServerByteBufferManager.getInstance().returnBuffer(dataBuffer);
             }
@@ -121,12 +132,12 @@ public class ServerConnector {
             try {
                 dataBuffer.put(ConnectorHelper.objectToBuffer(response));
                 dataBuffer.flip();
-                ServerController.getInstance().info("Sending " + dataBuffer.limit() + " bytes to client " + client.toString() + " starts");
+                controllerModule.info("Sending " + dataBuffer.limit() + " bytes to client " + client.toString() + " starts");
                 channel.send(dataBuffer, client);
 
-                ServerController.getInstance().info("Sending to client completed");
+                controllerModule.info("Sending to client completed");
             } catch (Throwable e) {
-                ServerController.getInstance().error(e.getMessage());
+                controllerModule.error(e.getMessage());
             } finally {
                 ServerByteBufferManager.getInstance().returnBuffer(dataBuffer);
             }

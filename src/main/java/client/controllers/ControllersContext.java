@@ -1,9 +1,6 @@
 package client.controllers;
 
-import client.Application;
-import client.ClientConnector;
-import client.ClientController;
-import client.ClientExecutor;
+import client.*;
 import client.localization.Localizer;
 import general.Request;
 import general.Response;
@@ -109,14 +106,14 @@ public class ControllersContext {
     }
 
 
-    private final SimpleObjectProperty<ClientExecutor.CommandContainer> currentCommand = new SimpleObjectProperty<>(null);
-    void setCurrentCommand(ClientExecutor.CommandContainer currentCommand) {
+    private final SimpleObjectProperty<ClientExecutorImpl.CommandContainer> currentCommand = new SimpleObjectProperty<>(null);
+    void setCurrentCommand(ClientExecutorImpl.CommandContainer currentCommand) {
         this.currentCommand.set(currentCommand);
     }
-    SimpleObjectProperty<ClientExecutor.CommandContainer> getCurrentCommandProperty() {
+    SimpleObjectProperty<ClientExecutorImpl.CommandContainer> getCurrentCommandProperty() {
         return currentCommand;
     }
-    ClientExecutor.CommandContainer getCurrentCommand() {
+    ClientExecutorImpl.CommandContainer getCurrentCommand() {
         return currentCommand.get();
     }
 
@@ -128,8 +125,29 @@ public class ControllersContext {
         return consoleTextFlow;
     }
 
-    ClientController getClientController() {
-        return ClientController.getInstance();
+    private final ClientModuleHolder moduleHolder = ClientModuleHolder.getInstance();
+    private final ClientConnectorModule connectorModule = moduleHolder.getClientConnectorModule();
+    ClientConnectorModule getConnectorModule() {
+        return connectorModule;
+    }
+    private final ClientControllerModule controllerModule = moduleHolder.getClientControllerModule();
+    ClientControllerModule getControllerModule() {
+        return controllerModule;
+    }
+    private final ClientExecutorModule executorModule = moduleHolder.getClientExecutorModule();
+    ClientExecutorModule getExecutorModule() {
+        return executorModule;
+    }
+
+    Response sendToServer(Request request) throws Exception {
+        Response response = connectorModule.sendToServer(request);
+        if (response.getHashtable() != null) {
+            setCollection(response.getHashtable());
+        }
+        return response;
+    }
+    void sendRequest(Request request) throws Exception {
+        connectorModule.sendRequest(request);
     }
 
     private Application application;
@@ -144,17 +162,6 @@ public class ControllersContext {
     }
     void setSccStyle(Application.AppStyle style) {
         application.setCssStyle(style);
-    }
-
-    Response sendToServer(Request request) throws IOException, ClassNotFoundException {
-        Response response = ClientConnector.getInstance().sendToServer(request);
-        if (response.getHashtable() != null) {
-            setCollection(response.getHashtable());
-        }
-        return response;
-    }
-    void sendRequest(Request request) throws IOException {
-        ClientConnector.getInstance().sendRequest(request);
     }
 
     Localizer localizer() {
@@ -180,7 +187,7 @@ public class ControllersContext {
                 getString("Oops... Seems like evil goblins cut some wires... Try again later")
         );
         try {
-            File file = new File("errStackTrace" + (Math.random() * Long.MAX_VALUE));
+            File file = new File("errStackTrace" + localizer().getLongDateFormat().format(System.currentTimeMillis()));
             if (file.createNewFile()) {
                 try (PrintStream stream = new PrintStream(file)) {
                     // And now we can send stackTrace to the server

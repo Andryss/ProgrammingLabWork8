@@ -1,6 +1,7 @@
 package server;
 
 import general.element.FieldException;
+import org.apache.logging.log4j.core.jmx.Server;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -13,55 +14,38 @@ import java.util.Properties;
 public class ServerManager {
     private static final ServerManager instance = new ServerManager(); // Follow "Singleton" pattern
 
+    private final ServerModuleHolder moduleHolder = ServerModuleHolder.getInstance();
+    private final ServerControllerModule controllerModule = moduleHolder.getControllerModule();
+
     private ServerManager() {}
 
     public static ServerManager getInstance() {
         return instance;
     }
 
-    public void run(Properties properties) throws IOException, FieldException, SQLException, ClassNotFoundException, IllegalAccessException {
-        ServerController.getInstance().info("Initializations start");
+    public void run(Properties properties) throws Exception {
+        controllerModule.info("Initializations start");
         initializations(properties);
-        ServerController.getInstance().info("Initializations completed");
-        ServerController.getInstance().info("Server started at: " + InetAddress.getLocalHost());
+        controllerModule.info("Initializations completed");
+        controllerModule.info("Server started at: " + InetAddress.getLocalHost());
 
         new Thread(() -> {
             try {
-                ServerConnector.getInstance().run();
+                moduleHolder.getConnectorModule().run();
             } catch (IOException e) {
-                ServerController.getInstance().error(e.getMessage());
+                controllerModule.error(e.getMessage());
             }
         }, "ReceivingThread").start();
-        new Thread(ServerController.getInstance()::run, "SeConsoleThread").start();
+        new Thread(controllerModule::run, "SeConsoleThread").start();
     }
 
-    private void initializations(Properties properties) throws IOException, FieldException, SQLException, ClassNotFoundException, IllegalAccessException {
-        setAllModulesProperties(properties);
-        initializeAllModules();
+    private void initializations(Properties properties) throws Exception {
+        moduleHolder.setPropertiesAll(properties);
+        moduleHolder.initializeAll();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            closeAllModules();
-            ServerController.getInstance().info("All services closed");
+            moduleHolder.closeAll();
+            controllerModule.info("All services closed");
         }, "SeClosingThread"));
-    }
-
-    private void setAllModulesProperties(Properties properties) {
-        ServerHistoryManager.getInstance().setProperties(properties);
-        ServerCollectionManager.getInstance().setProperties(properties);
-        ServerConnector.getInstance().setProperties(properties);
-    }
-
-    private void initializeAllModules() throws IOException, IllegalAccessException, FieldException, SQLException, ClassNotFoundException {
-        ServerHistoryManager.getInstance().initialize();
-        ServerCollectionManager.getInstance().initialize();
-        ServerConnector.getInstance().initialize();
-        ServerExecutor.initialize();
-    }
-
-    private void closeAllModules() {
-        ServerHistoryManager.getInstance().close();
-        ServerCollectionManager.getInstance().close();
-        ServerConnector.getInstance().close();
-        ServerExecutor.close();
     }
 }

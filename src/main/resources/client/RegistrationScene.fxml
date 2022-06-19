@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
@@ -22,7 +22,7 @@
    <center>
       <VBox alignment="CENTER" spacing="40.0" BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="regLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Registration page" textFill="#b00000">
+            <Label fx:id="regLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="registrationLabel" text="Registration page" textFill="#b00000">
                <font>
                   <Font size="70.0" />
                </font>
@@ -48,7 +48,7 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="loginTextField" promptText="New user login" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <TextField fx:id="loginTextField" onKeyReleased="#loginTextFieldKeyReleased" promptText="New user login" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -59,20 +59,20 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <PasswordField fx:id="passwordField" promptText="New user pass" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <PasswordField fx:id="passwordField" onKeyReleased="#passTextFieldKeyReleased" promptText="New user pass" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="18.0" />
                            </font>
                         </PasswordField>
                         <Label fx:id="passwordErrLabel" textFill="#cd0000" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                        <Button fx:id="signUpButton" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#signUpUserMouseClicked" text="Sign up" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="BOTTOM">
+                        <Button fx:id="signUpButton" alignment="CENTER" mnemonicParsing="false" onKeyReleased="#signUpUserKeyReleased" onMouseClicked="#signUpUserMouseClicked" text="Sign up" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="BOTTOM">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Button>
                      </children>
                   </GridPane>
-                  <Label fx:id="successfulLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" textFill="#00a138">
+                  <Label fx:id="successfulLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="regSuccessfulLabel" textFill="#00a138">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -86,7 +86,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Hyperlink fx:id="goToAuthLink" alignment="CENTER" onMouseClicked="#goToAuthPageMouseClicked" text="Go to the authorization page" />
+                  <Hyperlink fx:id="goToAuthLink" alignment="CENTER" onKeyReleased="#goToAuthPageKeyReleased" onMouseClicked="#goToAuthPageMouseClicked" text="Go to the authorization page" />
                </children>
             </VBox>
          </children>
@@ -95,7 +95,7 @@
    <bottom>
       <AnchorPane>
          <children>
-            <ChoiceBox fx:id="languageChoiceBox" prefWidth="150.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+            <ComboBox fx:id="languageComboBox" layoutX="419.0" layoutY="2.0" prefWidth="150.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0" />
          </children>
       </AnchorPane>
    </bottom>

@@ -16,6 +16,8 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
@@ -33,7 +35,7 @@ public class TableTabController {
     private final ControllersContext context = ControllersContext.getInstance();
 
     @FXML private Label filterLabelFirst;
-    @FXML private ChoiceBox<TableColumn<Map.Entry<Integer,Movie>,?>> filterChoiceBox;
+    @FXML private ComboBox<TableColumn<Map.Entry<Integer,Movie>,?>> filterComboBox;
     @FXML private Label filterLabelSecond;
     @FXML private TextField filterTextField;
 
@@ -162,11 +164,8 @@ public class TableTabController {
         tableMovieTable.setItems(sortedList);
         sortedList.comparatorProperty().bind(tableMovieTable.comparatorProperty());
 
-        // FOR STREAM FILTERING
-        //context.getCollectionList().addListener((ListChangeListener<Map.Entry<Integer, Movie>>) change -> filterCollection());
-
-        filterChoiceBox.setItems(FXCollections.observableArrayList(columns.values()));
-        filterChoiceBox.setConverter(new StringConverter<TableColumn<Map.Entry<Integer,Movie>, ?>>() {
+        filterComboBox.setItems(FXCollections.observableArrayList(columns.values()));
+        filterComboBox.setConverter(new StringConverter<TableColumn<Map.Entry<Integer,Movie>, ?>>() {
             @Override
             public String toString(TableColumn<Map.Entry<Integer,Movie>, ?> movieTableColumn) {
                 //noinspection OptionalGetWithoutIsPresent
@@ -178,8 +177,9 @@ public class TableTabController {
             }
         });
         //noinspection OptionalGetWithoutIsPresent
-        filterChoiceBox.setValue(columns.values().stream().findFirst().get());
+        filterComboBox.setValue(columns.values().stream().findFirst().get());
 
+        filterComboBox.valueProperty().addListener((obs, o, n) -> filterCollection());
         filterTextField.textProperty().addListener((observableValue, oldValue, newValue) -> filterCollection());
     }
 
@@ -188,25 +188,20 @@ public class TableTabController {
             filteredList.setPredicate(m -> true);
         } else {
             filteredList.setPredicate(m -> {
-                if (filterChoiceBox.getValue().getCellData(m) == null) {
+                if (filterComboBox.getValue().getCellData(m) == null) {
                     return false;
                 }
-                return filterChoiceBox.getValue().getCellData(m).toString().toLowerCase().contains(filterTextField.getText());
+                return filterComboBox.getValue().getCellData(m).toString().toLowerCase().contains(filterTextField.getText());
             });
         }
     }
 
-    // FOR STREAM FILTERING
-//    private void filterCollection() {
-//        ObservableList<Map.Entry<Integer,Movie>> collectionList = context.getCollectionList();
-//        if (filterTextField.getText().equals("")) {
-//            tableMovieTable.setItems(collectionList);
-//        } else {
-//            tableMovieTable.setItems(FXCollections.observableList(collectionList.stream()
-//                    .filter(m -> filterChoiceBox.getValue().getCellData(new AbstractMap.SimpleEntry<>(m.getKey(), m.getValue())).toString().toLowerCase().contains(filterTextField.getText()))
-//                    .collect(Collectors.toList())));
-//        }
-//    }
+    @FXML
+    private void updateCollectionKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            updateCollection();
+        }
+    }
 
     @FXML
     private void updateCollectionMouseClicked(MouseEvent mouseEvent) {
@@ -226,7 +221,7 @@ public class TableTabController {
                     context.getString(new BadArgumentsException("Server is not responding, try later or choose another server :(").getMessage())
             );
             autoUpdateCheckBox.setSelected(false);
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (Exception e) {
             context.showUserError(e);
             autoUpdateCheckBox.setSelected(false);
         }

@@ -10,8 +10,11 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * ServerCollectionManager is the main class which working with database and collections
  */
-public class ServerCollectionManager {
-    private static final ServerCollectionManager instance = new ServerCollectionManager(); // Follow "Singleton" pattern
+public class ServerCollectionManagerImpl implements ServerCollectionManagerModule {
+    private static final ServerCollectionManagerImpl instance = new ServerCollectionManagerImpl(); // Follow "Singleton" pattern
+
+    private ServerControllerModule controllerModule;
+
     private Connection connection;
     private Hashtable<Integer, Movie> movieCollection;
     private int collectionElementsLimit;
@@ -19,9 +22,9 @@ public class ServerCollectionManager {
     private Hashtable<String, UserProfile> userCollection;
     private final ReentrantLock readWriteLock = new ReentrantLock();
 
-    private ServerCollectionManager() {}
+    private ServerCollectionManagerImpl() {}
 
-    static ServerCollectionManager getInstance() {
+    static ServerCollectionManagerImpl getInstance() {
         return instance;
     }
 
@@ -33,7 +36,11 @@ public class ServerCollectionManager {
     private final String usersTable = "users";
     private final String movieTable = "movie";
 
-    void initialize() throws ClassNotFoundException, SQLException, FieldException {
+    @Override
+    public void initialize() throws ClassNotFoundException, SQLException, FieldException {
+        ServerModuleHolder moduleHolder = ServerModuleHolder.getInstance();
+        controllerModule = moduleHolder.getControllerModule();
+
         Class.forName("org.postgresql.Driver");
         try {
             connection = DriverManager.getConnection(String.format("jdbc:postgresql://%s/%s", dbHostName, dbName), dbUser, dbPassword);
@@ -46,7 +53,8 @@ public class ServerCollectionManager {
         printTables();
     }
 
-    void setProperties(Properties properties) {
+    @Override
+    public void setProperties(Properties properties) throws IllegalArgumentException {
         dbHostName = properties.getProperty("dbHostName", "pg");
         dbName = properties.getProperty("dbName", "studs");
         dbUser = properties.getProperty("dbUser");
@@ -72,6 +80,15 @@ public class ServerCollectionManager {
             }
         } catch (NumberFormatException e) {
             throw new NumberFormatException("Can't parse property \"userElementsLimit\": " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void close() {
+        try {
+            connection.close();
+        } catch (Throwable e) {
+            // ignore
         }
     }
 
@@ -127,7 +144,7 @@ public class ServerCollectionManager {
         removeAllMoviesStatement = connection.prepareStatement(String.format("DELETE FROM %s WHERE user_id=?", movieTable));
     }
 
-    void createTables() throws SQLException {
+    private void createTables() throws SQLException {
         statement.execute(String.format("CREATE TABLE IF NOT EXISTS %s (\n" +
                 "user_id BIGSERIAL,\n" +
                 "user_login TEXT PRIMARY KEY,\n" +
@@ -151,20 +168,24 @@ public class ServerCollectionManager {
                 ")", movieTable));
     }
 
-    void close() {
-        try {
-            connection.close();
-        } catch (Throwable e) {
-            // ignore
-        }
-    }
-
-    void dropTables() {
+    private void dropTables() {
         try {
             statement.execute(String.format("DROP TABLE %s", usersTable));
             statement.execute(String.format("DROP TABLE %s", movieTable));
         } catch (SQLException e) {
-            ServerController.getInstance().error(e.getMessage());
+            controllerModule.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public void clearAllData() throws SQLException, FieldException {
+        readWriteLock.lock();
+        try {
+            dropTables();
+            createTables();
+            loadCollectionsFromDB();
+        } finally {
+            readWriteLock.unlock();
         }
     }
 
@@ -177,6 +198,7 @@ public class ServerCollectionManager {
         return (userProfile != null && userProfile.getPassword().equals(user.getPassword()) ? userProfile.getId() : -1);
     }
 
+    @Override
     public boolean isUserPresented(UserProfile userProfile) {
         return getUserID(userProfile) != -1;
     }
@@ -186,6 +208,7 @@ public class ServerCollectionManager {
         return user.map(Map.Entry::getKey).orElse(null);
     }
 
+    @Override
     public long registerUser(UserProfile userProfile) {
         readWriteLock.lock();
         try {
@@ -205,13 +228,14 @@ public class ServerCollectionManager {
                 }
             }
         } catch (SQLException e) {
-            ServerController.getInstance().error(e.getMessage());
+            controllerModule.error(e.getMessage());
         } finally {
             readWriteLock.unlock();
         }
         return -1;
     }
 
+    @Override
     public UserProfile removeUser(UserProfile userProfile) {
         readWriteLock.lock();
         try {
@@ -222,32 +246,35 @@ public class ServerCollectionManager {
             removeUserStatement.executeUpdate();
             return userCollection.remove(userProfile.getName());
         } catch (SQLException e) {
-            ServerController.getInstance().error(e.getMessage());
+            controllerModule.error(e.getMessage());
             return null;
         } finally {
             readWriteLock.unlock();
         }
     }
 
-    void removeUser(String userName) {
+    @Override
+    public void removeUser(String userName) {
         readWriteLock.lock();
         try {
             removeUserStatement.setString(1, userName);
             removeUserStatement.executeUpdate();
             userCollection.remove(userName);
         } catch (SQLException e) {
-            ServerController.getInstance().error(e.getMessage());
+            controllerModule.error(e.getMessage());
         } finally {
             readWriteLock.unlock();
         }
     }
 
+    @Override
     public Movie getMovie(Integer key) {
         // return movieCollection.get(key).clone();
         return movieCollection.get(key);
     }
 
-    long countElements(String userName) {
+    @Override
+    public long countElements(String userName) {
         return getMovieCollection()
                 .values().stream()
                 .filter(m -> m.getOwner().equals(userName))
@@ -267,13 +294,14 @@ public class ServerCollectionManager {
                 }
             }
         } catch (SQLException e) {
-            ServerController.getInstance().error(e.getMessage());
+            controllerModule.error(e.getMessage());
             return -1;
         } finally {
             readWriteLock.unlock();
         }
     }
 
+    @Override
     public Movie putMovie(Integer key, Movie movie, UserProfile userProfile) throws IllegalAccessException {
         readWriteLock.lock();
         try {
@@ -311,7 +339,7 @@ public class ServerCollectionManager {
             movie.setId(getMovieId(key));
             return movieCollection.put(key, movie);
         } catch (SQLException e) {
-            ServerController.getInstance().error(e.getMessage());
+            controllerModule.error(e.getMessage());
             return null;
         } finally {
             readWriteLock.unlock();
@@ -331,6 +359,7 @@ public class ServerCollectionManager {
         }
     }
 
+    @Override
     public Movie updateMovie(Integer key, Movie movie, UserProfile userProfile) throws IllegalAccessException {
         readWriteLock.lock();
         try {
@@ -356,13 +385,14 @@ public class ServerCollectionManager {
             movie.setId(movieCollection.get(key).getId());
             return movieCollection.put(key, movie);
         } catch (SQLException e) {
-            ServerController.getInstance().error(e.getMessage());
+            controllerModule.error(e.getMessage());
             return null;
         } finally {
             readWriteLock.unlock();
         }
     }
 
+    @Override
     public Movie removeMovie(Integer key, UserProfile userProfile) throws IllegalAccessException {
         readWriteLock.lock();
         try {
@@ -372,26 +402,28 @@ public class ServerCollectionManager {
             removeMovieStatement.executeUpdate();
             return movieCollection.remove(key);
         } catch (SQLException e) {
-            ServerController.getInstance().error(e.getMessage());
+            controllerModule.error(e.getMessage());
             return null;
         } finally {
             readWriteLock.unlock();
         }
     }
 
-    void removeMovie(Integer key) {
+    @Override
+    public void removeMovie(Integer key) {
         readWriteLock.lock();
         try {
             removeMovieStatement.setInt(1, key);
             removeMovieStatement.executeUpdate();
             movieCollection.remove(key);
         } catch (SQLException e) {
-            ServerController.getInstance().error(e.getMessage());
+            controllerModule.error(e.getMessage());
         } finally {
             readWriteLock.unlock();
         }
     }
 
+    @Override
     public void removeAllMovies(UserProfile userProfile) throws IllegalAccessException {
         readWriteLock.lock();
         try {
@@ -409,18 +441,19 @@ public class ServerCollectionManager {
                     .map(Map.Entry::getKey)
                     .forEach(movieCollection::remove);
         } catch (SQLException e) {
-            ServerController.getInstance().error(e.getMessage());
+            controllerModule.error(e.getMessage());
         } finally {
             readWriteLock.unlock();
         }
     }
 
-    void removeAllMovies() {
+    @Override
+    public void removeAllMovies() {
         readWriteLock.lock();
         try {
             statement.executeQuery(String.format("DELETE FROM %s", movieTable));
         } catch (SQLException e) {
-            ServerController.getInstance().error(e.getMessage());
+            controllerModule.error(e.getMessage());
         } finally {
             readWriteLock.unlock();
         }
@@ -482,21 +515,30 @@ public class ServerCollectionManager {
         return new AbstractMap.SimpleEntry<>(key,movie);
     }
 
+    @Override
     public Hashtable<Integer,Movie> getMovieCollection() {
-        @SuppressWarnings("unchecked")
-        Hashtable<Integer,Movie> hashtable = (Hashtable<Integer,Movie>) movieCollection.clone();
-        return hashtable;
+        //noinspection unchecked
+        return (Hashtable<Integer,Movie>) movieCollection.clone();
     }
 
+    @Override
+    public Hashtable<String, UserProfile> getUserCollection() {
+        //noinspection unchecked
+        return (Hashtable<String, UserProfile>) userCollection.clone();
+    }
+
+    @Override
     public int getCollectionElementsLimit() {
         return collectionElementsLimit;
     }
+    @Override
     public int getUserElementsLimit() {
         return userElementsLimit;
     }
 
-    void printTables() {
-        ServerController.getInstance().info("Users: " + userCollection.toString());
-        ServerController.getInstance().info("Movies: " + movieCollection.toString());
+    @Override
+    public void printTables() {
+        controllerModule.info("Users: " + userCollection.toString());
+        controllerModule.info("Movies: " + movieCollection.toString());
     }
 }

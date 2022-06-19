@@ -1,0 +1,63 @@
+.root {
+    -fx-background-color: #202020;
+}
+
+.label {
+    -fx-text-fill: white;
+}
+
+.button {
+    -fx-background-color: #505050;
+    -fx-text-fill: white;
+}
+
+.text-field {
+    -fx-background-color: #505050;
+    -fx-text-fill: white;
+}
+
+.choice-box {
+    -fx-background-color: #505050;
+    -fx-text-fill: white;
+}
+
+.combo-box {
+    -fx-background-color: #505050;
+}
+
+.list-cell {
+    -fx-background-color: #505050;
+    -fx-text-fill: white;
+}
+
+.menu-item {
+    -fx-background-color: #505050;
+}
+
+.context-menu {
+    -fx-background-color: #404040;
+}
+
+.text {
+    -fx-background-color: #505050;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #505050;
+}
+
+.authorizationLabel {
+    -fx-text-fill: firebrick;
+}
+
+.authSuccessfulLabel {
+    -fx-text-fill: green;
+}
+
+.registrationLabel {
+    -fx-text-fill: firebrick;
+}
+
+.regSuccessfulLabel {
+    -fx-text-fill: green;
+}

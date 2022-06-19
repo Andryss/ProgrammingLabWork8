@@ -1,6 +1,6 @@
 package client.controllers;
 
-import client.ClientExecutor;
+import client.ClientExecutorImpl;
 import general.commands.BadArgumentsException;
 import general.commands.Command;
 import general.element.Movie;
@@ -9,6 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 import java.util.Map;
@@ -43,13 +45,29 @@ public class OneParamPaneController {
 
     private void localize(ResourceBundle resourceBundle) {
         headerLabel.setText(resourceBundle.getString("Param filling page"));
-        ClientExecutor.CommandContainer command = context.getCurrentCommand();
+        ClientExecutorImpl.CommandContainer command = context.getCurrentCommand();
         if (command != null && command.getCommandType() == Command.CommandType.ONE_PARAM) {
             oneParamLabel.setText(context.getString("Enter " + context.getCurrentCommand().getParamName()));
         }
         oneParamErrLabel.setText("");
         returnButton.setText(resourceBundle.getString("Return"));
         confirmButton.setText(resourceBundle.getString("Confirm"));
+    }
+
+    @FXML
+    private void oneParamTextFieldKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            oneParamConfirm();
+        } else if (keyEvent.getCode() == KeyCode.ESCAPE) {
+            returnToTheMainPane();
+        }
+    }
+
+    @FXML
+    private void returnToTheMainPaneKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            returnToTheMainPane();
+        }
     }
 
     @FXML
@@ -62,6 +80,13 @@ public class OneParamPaneController {
     }
 
     @FXML
+    private void oneParamConfirmKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            oneParamConfirm();
+        }
+    }
+
+    @FXML
     private void oneParamConfirmMouseClicked(MouseEvent mouseEvent) {
         oneParamConfirm();
     }
@@ -69,7 +94,7 @@ public class OneParamPaneController {
     private void oneParamConfirm() {
         getClientContext().setParam(oneParamTextField.getText()).setMovie(null).setMovieKey(null);
         try {
-            ClientExecutor.CommandContainer currentCommand = context.getCurrentCommand();
+            ClientExecutorImpl.CommandContainer currentCommand = context.getCurrentCommand();
             currentCommand.getCommand().setGUIArgs(getClientContext());
             Optional<ButtonType> buttonType = context.showConfirmWindow(
                     context.getString("Are you sure?"),

@@ -6,7 +6,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -19,9 +18,9 @@
 <?import javafx.scene.text.Font?>
 
 
-<ScrollPane fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.PlotTabController">
-   <content>
-      <BorderPane fx:id="plotTab">
+<AnchorPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.PlotTabController">
+   <children>
+      <BorderPane fx:id="plotTab" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
          <center>
             <BubbleChart fx:id="plotChart" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#onCanvasMouseClicked" prefHeight="550.0" prefWidth="550.0" BorderPane.alignment="CENTER">
               <xAxis>
@@ -38,7 +37,7 @@
          <right>
             <AnchorPane BorderPane.alignment="CENTER">
                <children>
-                  <VBox alignment="CENTER" layoutX="10.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="0.0">
+                  <VBox alignment="CENTER" layoutX="10.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <Label fx:id="selectedMovieLabel" text="Selected movie" underline="true">
                            <font>
@@ -122,5 +121,5 @@
             </AnchorPane>
          </right>
       </BorderPane>
-   </content>
-</ScrollPane>
+   </children>
+</AnchorPane>

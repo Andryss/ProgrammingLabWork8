@@ -132,7 +132,6 @@ public class Data extends ListResourceBundle {
             {"ERROR: field must have \"DD.MM.YYYY\" format", "ERROR: field must have \"DD.MM.YYYY\" format"},
 
 
-
             // TABLE TAB
             {"Filter by", "Filter by"},
             {"with value contains", "with value contains"},
@@ -153,12 +152,12 @@ public class Data extends ListResourceBundle {
             {"Remove", "Remove"},
 
 
-
             // ERRORS
             {"Error", "Error"},
             {"Something wrong", "Something wrong"},
             {"Oops... Seems like evil goblins cut some wires... Try again later", "Oops... Seems like evil goblins cut some wires... Try again later"},
             {"FATAL", "FATAL"},
-            {"FATAL ERROR: don't peek", "FATAL ERROR: don't peek"}
+            {"FATAL ERROR: don't peek", "FATAL ERROR: don't peek"},
+            {"not extends ElementCommand", "not extends ElementCommand"}
     };
 }

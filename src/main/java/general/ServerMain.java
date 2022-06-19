@@ -1,9 +1,7 @@
 package general;
 
-import client.ClientController;
 import general.element.FieldException;
-import server.ServerController;
-import server.ServerManager;
+import server.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,6 +12,9 @@ import java.util.Properties;
 public class ServerMain {
 
     public static void main(String[] args) {
+        ServerModuleHolder moduleHolder = ServerModuleHolder.getInstance();
+        ServerControllerModule controllerModule = moduleHolder.getControllerModule();
+
         Properties properties = new Properties();
         try {
             File props = new File("server.properties");
@@ -24,10 +25,10 @@ public class ServerMain {
             }
             properties.load(new FileReader(props));
         } catch (FileNotFoundException e) {
-            ServerController.getInstance().error("File \"server.properties\" with properties not found");
+            controllerModule.error("File \"server.properties\" with properties not found");
             return;
         } catch (IOException e) {
-            ServerController.getInstance().error(e.getMessage());
+            controllerModule.error(e.getMessage());
             return;
         }
 
@@ -35,10 +36,10 @@ public class ServerMain {
         try {
             ServerManager.getInstance().run(properties);
         } catch (FieldException e) {
-            ServerController.getInstance().error("Problems with Movie File: " + e.getMessage());
+            controllerModule.error("Problems with Movie File: " + e.getMessage());
             System.exit(0);
         } catch (Throwable e) {
-            ServerController.getInstance().error(e.getMessage());
+            controllerModule.error(e.getMessage());
             System.exit(0);
         }
     }
