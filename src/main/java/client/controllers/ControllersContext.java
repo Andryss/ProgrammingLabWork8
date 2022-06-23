@@ -19,6 +19,8 @@ import javafx.stage.Window;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Optional;
@@ -153,15 +155,14 @@ public class ControllersContext {
     private Application application;
     public void setApplication(Application application) {
         this.application = application;
+        application.styleProperty().addListener((obs, o, n) -> {
+            confirmWindow.getDialogPane().getStylesheets().setAll(n.getPath());
+            warningWindow.getDialogPane().getStylesheets().setAll(n.getPath());
+            errorWindow.getDialogPane().getStylesheets().setAll(n.getPath());
+        });
     }
     Application getApplication() {
         return application;
-    }
-    void setScene(Application.AppScene scene) {
-        application.setScene(scene);
-    }
-    void setSccStyle(Application.AppStyle style) {
-        application.setCssStyle(style);
     }
 
     Localizer localizer() {
@@ -181,13 +182,14 @@ public class ControllersContext {
         return progressInterpolator;
     }
 
+    private final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
     public void showUserError(Throwable throwable) {
         showErrorWindow(
                 getString("Error"),
                 getString("Oops... Seems like evil goblins cut some wires... Try again later")
         );
         try {
-            File file = new File("errStackTrace" + localizer().getLongDateFormat().format(System.currentTimeMillis()));
+            File file = new File("errStackTrace" + formatter.format(System.currentTimeMillis()));
             if (file.createNewFile()) {
                 try (PrintStream stream = new PrintStream(file)) {
                     // And now we can send stackTrace to the server

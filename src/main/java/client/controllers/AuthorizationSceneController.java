@@ -83,12 +83,12 @@ public class AuthorizationSceneController {
 
     private void goToRegPage() {
         clear();
-        context.setScene(Application.AppScene.REGISTRATION_SCENE);
+        context.getApplication().setScene(Application.AppScene.REGISTRATION_SCENE);
     }
 
     private void goToMainPage() {
         clear();
-        context.setScene(Application.AppScene.MAIN_SCENE);
+        context.getApplication().setScene(Application.AppScene.MAIN_SCENE);
     }
 
     @FXML

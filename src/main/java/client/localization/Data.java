@@ -59,6 +59,8 @@ public class Data extends ListResourceBundle {
             {"Settings", "Settings"},
             {"Language", "Language"},
             {"Theme", "Theme"},
+            {"Default", "Default"},
+            {"Dark", "Dark"},
             {"Are you sure to exit? (all unsaved data will be deleted)", "Are you sure to exit? (all unsaved data will be deleted)"},
             {"Exit", "Exit"},
 

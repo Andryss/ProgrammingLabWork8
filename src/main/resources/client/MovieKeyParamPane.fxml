@@ -13,9 +13,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane fx:id="movieKeyParamPane" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.MovieKeyParamPaneController">
+<ScrollPane fx:id="movieKeyParamPane" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="movieKeyParamScrollPane" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.MovieKeyParamPaneController">
     <content>
-      <AnchorPane>
+      <AnchorPane styleClass="movieKeyParamAnchorPane">
          <children>
             <VBox fillWidth="false" spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
                <children>
@@ -54,39 +54,39 @@
                                       <Button fx:id="movieKeyCheckButton" mnemonicParsing="false" onKeyReleased="#checkMovieKeyKeyReleased" onMouseClicked="#checkMovieKeyMouseClicked" text="Check" />
                                   </children>
                               </HBox>
-                              <Label fx:id="movieKeyErrLabel" textFill="#b00000" GridPane.columnIndex="2" />
+                              <Label fx:id="movieKeyErrLabel" styleClass="errorLabel" textFill="#b00000" GridPane.columnIndex="2" />
                               <Label text="Movie owner:" GridPane.rowIndex="1" />
                               <TextField fx:id="movieOwnerTextField" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <Label text="Movie id:" GridPane.rowIndex="2" />
                               <TextField editable="false" text="&lt;no one knows&gt;..." GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <Label text="Movie name:" GridPane.rowIndex="3" />
                               <TextField fx:id="movieNameTextField" onKeyReleased="#movieKeyTextFieldKeyReleased" promptText="e.g. Terminator" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <Label fx:id="movieNameErrLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                              <Label fx:id="movieNameErrLabel" styleClass="errorLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                               <Label text="Coordinates X:" GridPane.rowIndex="4" />
                               <TextField fx:id="coordinatesXTextField" onKeyReleased="#movieKeyTextFieldKeyReleased" promptText="e.g. 3.1415926" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <Label fx:id="coordinatesXErrLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                              <Label fx:id="coordinatesXErrLabel" styleClass="errorLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="4" />
                               <Label text="Coordinates Y:" GridPane.rowIndex="5" />
                               <TextField fx:id="coordinatesYTextField" onKeyReleased="#movieKeyTextFieldKeyReleased" promptText="e.g. 1 or -14.9" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                              <Label fx:id="coordinatesYErrLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                              <Label fx:id="coordinatesYErrLabel" styleClass="errorLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="5" />
                               <Label text="Movie creation date:" GridPane.rowIndex="6" />
                               <TextField fx:id="movieCreationDateTextField" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                               <Label text="Movie oscars count:" GridPane.rowIndex="7" />
                               <TextField fx:id="movieOscarsCountTextField" onKeyReleased="#movieKeyTextFieldKeyReleased" promptText="e.g. 9223372036854775807" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                              <Label fx:id="movieOscarsCountErrLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+                              <Label fx:id="movieOscarsCountErrLabel" styleClass="errorLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="7" />
                               <Label text="Movie length:" GridPane.rowIndex="8" />
                               <TextField fx:id="movieLengthTextField" onKeyReleased="#movieKeyTextFieldKeyReleased" promptText="e.g. 6420" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                              <Label fx:id="movieLengthErrLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="8" />
+                              <Label fx:id="movieLengthErrLabel" styleClass="errorLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="8" />
                               <Label text="Movie genre:" GridPane.rowIndex="9" />
                               <ChoiceBox fx:id="movieGenreChoiceBox" maxWidth="1.7976931348623157E308" onKeyReleased="#movieKeyTextFieldKeyReleased" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                               <Label text="Movie mpaa rating:" GridPane.rowIndex="10" />
                               <ChoiceBox fx:id="movieMpaaRatingChoiceBox" maxWidth="1.7976931348623157E308" onKeyReleased="#movieKeyTextFieldKeyReleased" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                              <Label fx:id="movieMpaaRatingErrLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="10" />
+                              <Label fx:id="movieMpaaRatingErrLabel" styleClass="errorLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="10" />
                               <Label text="Screenwriter name:" GridPane.rowIndex="11" />
                               <TextField fx:id="screenwriterNameTextField" onKeyReleased="#movieKeyTextFieldKeyReleased" promptText="e.g. James Francis Cameron" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                              <Label fx:id="screenwriterNameErrLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="11" />
+                              <Label fx:id="screenwriterNameErrLabel" styleClass="errorLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="11" />
                               <Label text="Screenwriter birthday:" GridPane.rowIndex="12" />
                               <TextField fx:id="screenwriterBirthdayTextField" onKeyReleased="#movieKeyTextFieldKeyReleased" promptText="e.g. 16.08.1954" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-                              <Label fx:id="screenwriterBirthdayErrLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="12" />
+                              <Label fx:id="screenwriterBirthdayErrLabel" styleClass="errorLabel" textFill="#b00000" GridPane.columnIndex="2" GridPane.rowIndex="12" />
                               <Label text="Screenwriter hair color:" GridPane.rowIndex="13" />
                               <ChoiceBox fx:id="screenwriterHairColorChoiceBox" maxWidth="1.7976931348623157E308" onKeyReleased="#movieKeyTextFieldKeyReleased" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
                           </children>

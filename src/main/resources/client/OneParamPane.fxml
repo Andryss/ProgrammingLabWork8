@@ -12,9 +12,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane fx:id="oneParamPane" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.OneParamPaneController">
+<ScrollPane fx:id="oneParamPane" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="oneParamScrollPane" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.OneParamPaneController">
     <content>
-      <AnchorPane>
+      <AnchorPane styleClass="oneParamAnchorPane">
          <children>
             <VBox fillWidth="false" layoutX="20.0" layoutY="20.0" spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
                <children>
@@ -35,7 +35,7 @@
                           <children>
                               <Label fx:id="oneParamLabel" text="Key to smth:" />
                               <TextField fx:id="oneParamTextField" onKeyReleased="#oneParamTextFieldKeyReleased" GridPane.columnIndex="1" />
-                              <Label fx:id="oneParamErrLabel" textFill="#b00000" GridPane.columnIndex="2" />
+                              <Label fx:id="oneParamErrLabel" styleClass="errorLabel" textFill="#b00000" GridPane.columnIndex="2" />
                           </children>
                       </GridPane>
                       <HBox spacing="20.0">

@@ -213,7 +213,7 @@ public class MovieKeyParamPaneController {
             currentKey = Integer.parseInt(movieKeyTextField.getText());
             return true;
         } catch (NumberFormatException e) {
-            movieKeyErrLabel.setText(new BadArgumentsException("value must be integer").getMessage());
+            movieKeyErrLabel.setText(context.getString(new BadArgumentsException("value must be integer").getMessage()));
             return false;
         }
     }

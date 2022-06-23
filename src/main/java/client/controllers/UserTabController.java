@@ -12,10 +12,11 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.util.StringConverter;
 
-import java.io.IOException;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class UserTabController {
     private MainSceneController mainSceneController;
@@ -39,11 +40,18 @@ public class UserTabController {
     @FXML private ComboBox<Application.AppStyle> themeComboBox;
     @FXML private Button exitButton;
 
+    private final EnumMap<Application.AppStyle, Paint> drawingMap = new EnumMap<>(Application.AppStyle.class);
+
     @FXML
     private void initialize() {
         context.getUserNameProperty().addListener((obs, o, n) -> {
             mainSceneController.getUserTab().textProperty().setValue(n);
             usernameTextField.setText(n);
+            switch (n.hashCode() % 3 + 6) {
+                case 6: passwordTextField.setText("******");break;
+                case 7: passwordTextField.setText("*******");break;
+                case 8: passwordTextField.setText("********");break;
+            }
             drawFace();
         });
 
@@ -53,7 +61,39 @@ public class UserTabController {
 
         themeComboBox.setItems(FXCollections.observableArrayList(Application.AppStyle.values()));
         themeComboBox.setValue(Application.AppStyle.DEFAULT);
-        themeComboBox.valueProperty().addListener((obs, o, n) -> context.setSccStyle(n));
+        themeComboBox.setConverter(new StringConverter<Application.AppStyle>() {
+            @Override
+            public String toString(Application.AppStyle appStyle) {
+                return context.getString(appStyle.getName());
+            }
+
+            @Override
+            public Application.AppStyle fromString(String s) {
+                return Arrays.stream(Application.AppStyle.values())
+                        .filter(e -> e.getName().equals(s))
+                        .findAny()
+                        .orElse(null);
+            }
+        });
+        themeComboBox.valueProperty().addListener((obs, o, n) -> context.getApplication().setStyle(n));
+
+        for (Application.AppStyle style : Application.AppStyle.values()) {
+            if (style == Application.AppStyle.DEFAULT) {
+                drawingMap.put(style, new Color(0d, 0d, 0d, 1d));
+            } else if (style == Application.AppStyle.DARK) {
+                drawingMap.put(style, new Color(1d, 1d, 1d, 1d));
+            } else {
+                // funny :)
+                drawingMap.put(style, new Color(Math.random(), Math.random(), Math.random(), Math.random()));
+            }
+        }
+        context.getApplication().styleProperty().addListener((obs, o, n) -> {
+            GraphicsContext context = iconCanvas.getGraphicsContext2D();
+            Paint paint = drawingMap.get(n);
+            context.setStroke(paint);
+            context.setFill(paint);
+            redrawFace();
+        });
     }
 
     private void localize(ResourceBundle resourceBundle) {
@@ -145,16 +185,28 @@ public class UserTabController {
         drawFace();
     }
 
+
+    private final Random random = new Random();
+    private long lastSeed;
+    private void drawFace() {
+        drawFace((long) (Math.random() * Long.MAX_VALUE));
+    }
+    private void redrawFace() {
+        drawFace(lastSeed);
+    }
     /**
      * tg: @ray_1024
      * @author Ray_1024
      */
-    private void drawFace() {
+    private void drawFace(long seed) {
         GraphicsContext context = iconCanvas.getGraphicsContext2D();
         context.clearRect(0, 0, iconCanvas.getWidth(), iconCanvas.getHeight());
 
+        random.setSeed(seed);
+        lastSeed = seed;
+
         // DRAW FACE
-        switch ((int) (Math.random() * 5.0d)) {
+        switch ((int) (random.nextDouble() * 5.0d)) {
             case 0:
                 context.strokeOval(20, 20, 110, 110);
                 break;
@@ -168,8 +220,8 @@ public class UserTabController {
                 context.strokePolygon(new double[]{47, 103, 130, 20}, new double[]{130, 130, 20, 20}, 4);
                 break;
             case 4:
-                int n = (int) (Math.random() * 10.0d) + 5;
-                double angle = Math.random() * Math.PI * 2.0d, da = Math.PI * 2.0d / ((double) n);
+                int n = (int) (random.nextDouble() * 10.0d) + 5;
+                double angle = random.nextDouble() * Math.PI * 2.0d, da = Math.PI * 2.0d / ((double) n);
                 double[] x = new double[n], y = new double[n];
                 for (int i = 0; i < n; ++i, angle += da) {
                     x[i] = Math.cos(angle) * 55.0d + 75.0d;
@@ -181,7 +233,7 @@ public class UserTabController {
 
         // LEFT EYE
         context.strokeOval(40, 50, 20, 20);
-        switch ((int) (Math.random() * 5.0d)) {
+        switch ((int) (random.nextDouble() * 5.0d)) {
             case 0:
                 context.fillOval(40, 55, 10, 10);
                 break;
@@ -201,7 +253,7 @@ public class UserTabController {
 
         // RIGHT EYE
         context.strokeOval(90, 50, 20, 20);
-        switch ((int) (Math.random() * 5.0d)) {
+        switch ((int) (random.nextDouble() * 5.0d)) {
             case 0:
                 context.fillOval(90, 55, 10, 10);
                 break;
@@ -220,11 +272,11 @@ public class UserTabController {
         }
 
         // MOUTH
-        int w = (int) (Math.random() * 40.0d) + 10, h = (int) (Math.random() * 10.0d) + 10;
+        int w = (int) (random.nextDouble() * 40.0d) + 10, h = (int) (random.nextDouble() * 10.0d) + 10;
         context.strokeOval(75 - w / 2d, 108 - w / 2d, w, h);
 
         // NOSE
-        switch ((int) (Math.random() * 4.0d)) {
+        switch ((int) (random.nextDouble() * 4.0d)) {
             case 0:
                 context.fillRect(70, 70, 10, 10);
                 break;

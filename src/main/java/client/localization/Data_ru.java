@@ -59,6 +59,8 @@ public class Data_ru extends ListResourceBundle {
             {"Settings", "Настройки"},
             {"Language", "Язык"},
             {"Theme", "Тема"},
+            {"Default", "По умолчанию"},
+            {"Dark", "Темный"},
             {"Are you sure to exit? (all unsaved data will be deleted)", "Вы уверены, что хотите выйти? (все несохраненные данные будут удалены)"},
             {"Exit", "Выход"},
 

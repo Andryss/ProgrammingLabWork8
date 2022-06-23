@@ -53,7 +53,7 @@
                               <Font size="18.0" />
                            </font>
                         </TextField>
-                        <Label fx:id="loginErrLabel" textFill="#cd0000" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <Label fx:id="loginErrLabel" styleClass="errorLabel" textFill="#cd0000" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                         <Label fx:id="passwordLabel" text="Password:" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="18.0" />
@@ -64,7 +64,7 @@
                               <Font size="18.0" />
                            </font>
                         </PasswordField>
-                        <Label fx:id="passwordErrLabel" textFill="#cd0000" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <Label fx:id="passwordErrLabel" styleClass="errorLabel" textFill="#cd0000" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                         <Button fx:id="signUpButton" alignment="CENTER" mnemonicParsing="false" onKeyReleased="#signUpUserKeyReleased" onMouseClicked="#signUpUserMouseClicked" text="Sign up" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="BOTTOM">
                            <font>
                               <Font size="14.0" />
@@ -72,7 +72,7 @@
                         </Button>
                      </children>
                   </GridPane>
-                  <Label fx:id="successfulLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="regSuccessfulLabel" textFill="#00a138">
+                  <Label fx:id="successfulLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="greenLabel" textFill="#00a138">
                      <font>
                         <Font size="18.0" />
                      </font>

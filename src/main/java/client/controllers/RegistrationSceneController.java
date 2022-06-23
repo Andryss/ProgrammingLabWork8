@@ -84,7 +84,7 @@ public class RegistrationSceneController {
     }
 
     private void goToAuthPage() {
-        context.setScene(Application.AppScene.AUTHORIZATION_SCENE);
+        context.getApplication().setScene(Application.AppScene.AUTHORIZATION_SCENE);
         clear();
     }
 

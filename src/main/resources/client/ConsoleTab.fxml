@@ -20,9 +20,9 @@
          <children>
               <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                   <center>
-                      <ScrollPane fx:id="consoleScrollPane" pannable="true">
+                      <ScrollPane fx:id="consoleScrollPane" pannable="true" styleClass="consoleScrollPane">
                           <content>
-                              <TextFlow fx:id="consoleTextFlow" />
+                              <TextFlow fx:id="consoleTextFlow" styleClass="consoleTextFlow" />
                           </content>
                      <contextMenu>
                         <ContextMenu>

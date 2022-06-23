@@ -281,7 +281,6 @@ public class ServerCollectionManagerImpl implements ServerCollectionManagerModul
                 .count();
     }
 
-    // TODO: check method working
     private long getMovieId(Integer key) {
         readWriteLock.lock();
         try {

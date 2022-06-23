@@ -7,57 +7,257 @@
 }
 
 .button {
+    -fx-background-radius: 15;
     -fx-background-color: #505050;
     -fx-text-fill: white;
+    -fx-border-radius: 15;
+    -fx-border-color: #909090;
+}
+
+.button:focused {
+    -fx-border-color: gold;
+}
+
+.button:hover {
+    -fx-background-color: #606060;
 }
 
 .text-field {
+    -fx-background-radius: 15;
     -fx-background-color: #505050;
     -fx-text-fill: white;
+    -fx-border-radius: 15;
+    -fx-border-color: #909090;
+}
+
+.text-field:focused {
+    -fx-border-color: gold;
+}
+
+.check-box .text {
+    -fx-fill: white;
 }
 
 .choice-box {
+    -fx-background-radius: 15;
     -fx-background-color: #505050;
     -fx-text-fill: white;
+    -fx-border-radius: 15;
+    -fx-border-color: #909090;
+}
+
+.choice-box:focused {
+    -fx-border-color: gold;
+}
+
+.choice-box:hover {
+    -fx-background-color: #606060;
 }
 
 .combo-box {
+    -fx-background-radius: 15;
+    -fx-background-color: #505050;
+    -fx-border-radius: 15;
+    -fx-border-color: #909090;
+}
+
+.combo-box:focused {
+    -fx-border-color: gold;
+}
+
+.combo-box:hover {
+    -fx-background-color: #606060;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: white;
+}
+
+.combo-box .combo-box-popup .list-view .list-cell {
+    -fx-background-color: #505050;
+    -fx-text-fill: white;
+}
+
+.combo-box .combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: #606060;
+}
+
+
+
+.hyperlink:visited {
+    -fx-text-fill: #606088;
+}
+
+
+
+.progress-bar .track {
     -fx-background-color: #505050;
 }
 
-.list-cell {
-    -fx-background-color: #505050;
-    -fx-text-fill: white;
+.scroll-pane .viewport {
+    -fx-background-color: #303030;
 }
 
 .menu-item {
     -fx-background-color: #505050;
 }
 
+.menu-item:hover {
+    -fx-background-color: #606060;
+}
+
 .context-menu {
     -fx-background-color: #404040;
 }
 
-.text {
+
+
+.consoleTextFlow Text {
+    -fx-fill: white;
+}
+
+.consoleScrollPane .viewport:hover {
+    -fx-background-color: #383838;
+}
+
+.scroll-bar .track {
     -fx-background-color: #505050;
 }
+
+.scroll-bar .thumb {
+    -fx-background-color: #303030;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #383838;
+}
+
+.scroll-bar .decrement-button {
+    -fx-background-color: #303030;
+    -fx-border-color: #202020;
+    -fx-border-width: 3;
+}
+
+.scroll-bar .decrement-button:hover {
+    -fx-background-color: #404040;
+}
+
+.scroll-bar .increment-button {
+    -fx-background-color: #303030;
+    -fx-border-color: #202020;
+    -fx-border-width: 3;
+}
+
+.scroll-bar .increment-button:hover {
+    -fx-background-color: #404040;
+}
+
+.scroll-pane .corner {
+    -fx-background-color: #303030;
+}
+
+
 
 .tab-pane .tab-header-area .tab-header-background {
     -fx-background-color: #505050;
 }
 
-.authorizationLabel {
-    -fx-text-fill: firebrick;
+.tab-pane .tab-header-area .tab {
+    -fx-background-color: #303030;
 }
 
-.authSuccessfulLabel {
-    -fx-text-fill: green;
+.tab-pane .tab-header-area .tab:hover {
+    -fx-background-color: #404040;
+}
+
+.tab-pane .tab-header-area .tab .tab-label {
+    -fx-text-fill: white;
+}
+
+
+
+.table-view .table-column {
+    -fx-border-color: #909090;
+    -fx-text-fill: white;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #505050;
+}
+
+.table-row-cell:even {
+    -fx-background-color: #606060;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #707070;
+}
+
+.table-view .column-header-background .nested-column-header .column-header {
+    -fx-background-color: #303030;
+    -fx-border-color: white;
+}
+
+
+
+.chart-plot-background {
+    -fx-background-color: #505050;
+}
+
+.chart-legend {
+    -fx-background-color: #505050;
+}
+
+.chart-vertical-zero-line {
+    -fx-stroke: white;
+    -fx-stroke-width: 2;
+}
+
+.chart-horizontal-zero-line {
+    -fx-stroke: white;
+    -fx-stroke-width: 2;
+}
+
+.axis Text {
+    -fx-fill: white;
+}
+
+
+
+.dialog-pane {
+    -fx-background-color: #303030;
+}
+
+
+
+.authorizationLabel {
+    -fx-text-fill: firebrick;
 }
 
 .registrationLabel {
     -fx-text-fill: firebrick;
 }
 
-.regSuccessfulLabel {
+.errorLabel {
+    -fx-text-fill: firebrick;
+}
+
+.greenLabel {
     -fx-text-fill: green;
+}
+
+.oneParamScrollPane > * {
+    -fx-background-color: #202020;
+}
+
+.oneParamAnchorPane {
+    -fx-background-color: #202020;
+}
+
+.movieKeyParamScrollPane > * {
+    -fx-background-color: #202020;
+}
+
+.movieKeyParamAnchorPane {
+    -fx-background-color: #202020;
 }
