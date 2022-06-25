@@ -8,11 +8,7 @@ public class Data_de extends ListResourceBundle {
         return contents;
     }
 
-    // TODO: sync with default
     private final Object[][] contents = new Object[][] {
-
-            {"Connection with server was successful", "Verbindung mit Server war erfolgreich"},
-
 
             // AUTH SCENE
             {"Authorization page", "Autorisierungsseite"},
@@ -56,20 +52,40 @@ public class Data_de extends ListResourceBundle {
 
             // USER TAB
             {"User", "Benutzer"},
+            {"Icon", "Symbol"},
             {"Username", "Benutzernamen"},
             {"Sign out", "Abmelden"},
             {"Are you sure to sign out? (all unsaved data will be deleted)", "Sind Sie sicher, dass Sie sich abmelden? (alle nicht gespeicherten Daten werden gelöscht)"},
+            {"Delete user", "Benutzer löschen"},
+            {"Are you sure to delete user? (all your elements will be deleted)", "Sind Sie sicher, dass Sie den Benutzer löschen möchten? (alle Ihre Elemente werden gelöscht)"},
+            {"Are you really sure?", "Bist du dir wirklich sicher?"},
+            {"Are you REALLY sure to DELETE USER? (ALL your elements WILL BE DELETED)", "Sind Sie WIRKLICH sicher, BENUTZER zu LÖSCHEN? (ALLE Ihre Elemente WERDEN GELÖSCHT)"},
+            {"Are you really really really sure?", "Bist du dir wirklich wirklich wirklich sicher?"},
+            {"ARE YOU REALLY REALLY REALLY SURE TO DELETE USER? (ALL YOUR ELEMENTS WILL BE DELETED)", "SIND SIE WIRKLICH, WIRKLICH, WIRKLICH SICHER, BENUTZER ZU LÖSCHEN? (ALLE IHRE ELEMENTE WERDEN GELÖSCHT)"},
             {"Settings", "Einstellung"},
             {"Language", "Sprachlich"},
+            {"Theme", "Thema"},
+            {"Default", "Standard"},
+            {"Dark", "Dunkel"},
             {"Are you sure to exit? (all unsaved data will be deleted)", "Bist du sicher, dass du gehst? (alle nicht gespeicherten Daten werden gelöscht)"},
             {"Exit", "Ausfahrt"},
 
 
             // CONSOLE TAB
+            {"Save history to file", "Verlauf in Datei speichern"},
+            {"Saved console history", "Gespeicherter Konsolenverlauf"},
             {"Choose the command you want to send", "Wählen Sie den Befehl aus, den Sie senden möchten"},
             {"Send", "Senden"},
             {"Choose command", "Befehl auswählen"},
             {"You should choose command to send!", "Sie sollten Befehl zum Senden wählen!"},
+
+
+            // ONE PARAM PANE
+            {"Param filling page", "Parameterfüllseite"},
+
+
+            // MOVIE KEY PARAM PANE
+            {"Element filling page", "Element Füllseite"},
 
 
             // COMMAND
@@ -124,7 +140,6 @@ public class Data_de extends ListResourceBundle {
             {"ERROR: field must have \"DD.MM.YYYY\" format", "FEHLER: Feld muss das Format \"TT.MM.JJJJ\" haben"},
 
 
-
             // TABLE TAB
             {"Filter by", "Filtern nach"},
             {"with value contains", "mit Wert enthält"},
@@ -145,14 +160,12 @@ public class Data_de extends ListResourceBundle {
             {"Remove", "Entfernen"},
 
 
-
             // ERRORS
             {"Error", "Fehlermeldung"},
             {"Something wrong", "Irgendwas stimmt nicht"},
             {"Oops... Seems like evil goblins cut some wires... Try again later", "Ups... Es scheint, als hätten böse Kobolde einige Drähte durchtrennt... Versuchen Sie es später erneut"},
-            {"Wrong request format", "Falsches Anforderungsformat"},
-            {"Server has wrong logic: unexpected", "Server hat falsche Logik: unerwartet"},
             {"FATAL", "TÖDLICH"},
-            {"FATAL ERROR: don't peek", "SCHWERWIEGENDER FEHLER: nicht spähen"}
+            {"FATAL ERROR: don't peek", "SCHWERWIEGENDER FEHLER: nicht spähen"},
+            {"not extends ElementCommand", "nicht erweitert ElementCommand"}
     };
 }

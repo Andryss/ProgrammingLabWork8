@@ -1,6 +1,6 @@
 package client.controllers;
 
-import client.Application;
+import client.ClientApp;
 import client.RequestBuilder;
 import client.localization.Localizer;
 import general.Request;
@@ -83,12 +83,12 @@ public class AuthorizationSceneController {
 
     private void goToRegPage() {
         clear();
-        context.getApplication().setScene(Application.AppScene.REGISTRATION_SCENE);
+        context.getApplication().setScene(ClientApp.AppScene.REGISTRATION_SCENE);
     }
 
     private void goToMainPage() {
         clear();
-        context.getApplication().setScene(Application.AppScene.MAIN_SCENE);
+        context.getApplication().setScene(ClientApp.AppScene.MAIN_SCENE);
     }
 
     @FXML

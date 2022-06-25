@@ -111,6 +111,8 @@ public class ServerExecutorImpl implements ServerExecutorModule {
                     logoutUserRequest();
                 } else if (request.getRequestType() == Request.RequestType.REGISTER_USER) {
                     registerUserRequest();
+                } else if (request.getRequestType() == Request.RequestType.DELETE_USER) {
+                    deleteUserRequest();
                 } else if (request.getRequestType() == Request.RequestType.CHECK_ELEMENT) {
                     checkElementRequest();
                 } else if (request.getRequestType() == Request.RequestType.EXECUTE_COMMAND) {
@@ -240,6 +242,25 @@ public class ServerExecutorImpl implements ServerExecutorModule {
                         .build();
             }
             new Thread(() -> connectorModule.sendToClient(client, response), "SendingRUThread").start();
+        }
+
+        private void deleteUserRequest() {
+            Response response;
+            UserProfile deletedProfile = collectionManagerModule.removeUser(request.getUserProfile());
+            if (deletedProfile != null) {
+                authorizedUsers.remove(request.getUserProfile());
+                historyManagerModule.clearUserHistory(request.getUserProfile().getName());
+                response = ResponseBuilder.createNewResponse()
+                        .setResponseType(Response.ResponseType.DELETE_SUCCESSFUL)
+                        .addMessage("User successfully deleted")
+                        .build();
+            } else {
+                response = ResponseBuilder.createNewResponse()
+                        .setResponseType(Response.ResponseType.DELETE_FAILED)
+                        .addMessage("Can't delete current user")
+                        .build();
+            }
+            new Thread(() -> connectorModule.sendToClient(client, response), "SendingDUThread").start();
         }
 
         private void executeCommandRequest() {

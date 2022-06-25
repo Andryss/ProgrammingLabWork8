@@ -98,7 +98,8 @@ public class Localizer {
         RUSSIAN("Русский", new Locale("ru")),
         GERMAN("Deutsch", Locale.GERMAN),
         CATALAN("Català", new Locale("ca")),
-        SPANISH_PANAMA("Español (panamá)", new Locale("es"));
+        SPANISH_PANAMA("Español (panamá)", new Locale("es")),
+        EMOJI("\uD83D\uDC22", new Locale("emoji"));
 
         private final String name;
         private final Locale locale;

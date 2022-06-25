@@ -1,9 +1,13 @@
 package general;
 
+import client.ClientApp;
+
 public class ClientMain {
 
     public static void main(String[] args) {
-        // TODO: maybe add main class ???
+
+        ClientApp.main(args);
+
     }
 
 }

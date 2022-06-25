@@ -244,6 +244,11 @@ public class ServerCollectionManagerImpl implements ServerCollectionManagerModul
             }
             removeUserStatement.setString(1, userProfile.getName());
             removeUserStatement.executeUpdate();
+            try {
+                removeAllMovies(userProfile);
+            } catch (IllegalAccessException e) {
+                // never
+            }
             return userCollection.remove(userProfile.getName());
         } catch (SQLException e) {
             controllerModule.error(e.getMessage());
@@ -259,6 +264,11 @@ public class ServerCollectionManagerImpl implements ServerCollectionManagerModul
         try {
             removeUserStatement.setString(1, userName);
             removeUserStatement.executeUpdate();
+            try {
+                removeAllMovies(userName);
+            } catch (IllegalAccessException e) {
+                // never
+            }
             userCollection.remove(userName);
         } catch (SQLException e) {
             controllerModule.error(e.getMessage());
@@ -437,6 +447,29 @@ public class ServerCollectionManagerImpl implements ServerCollectionManagerModul
             //noinspection unchecked
             ((Hashtable<Integer,Movie>) movieCollection.clone()).entrySet().stream()
                     .filter(e -> e.getValue().getOwner().equals(userProfile.getName()))
+                    .map(Map.Entry::getKey)
+                    .forEach(movieCollection::remove);
+        } catch (SQLException e) {
+            controllerModule.error(e.getMessage());
+        } finally {
+            readWriteLock.unlock();
+        }
+    }
+
+    private void removeAllMovies(String userName) throws IllegalAccessException {
+        readWriteLock.lock();
+        try {
+            long id = getUserID(userName);
+            if (id == -1) {
+                throw new IllegalAccessException("Current user doesn't exist");
+            }
+
+            removeAllMoviesStatement.setLong(1, id);
+            removeAllMoviesStatement.executeUpdate();
+
+            //noinspection unchecked
+            ((Hashtable<Integer,Movie>) movieCollection.clone()).entrySet().stream()
+                    .filter(e -> e.getValue().getOwner().equals(userName))
                     .map(Map.Entry::getKey)
                     .forEach(movieCollection::remove);
         } catch (SQLException e) {

@@ -152,8 +152,8 @@ public class ControllersContext {
         connectorModule.sendRequest(request);
     }
 
-    private Application application;
-    public void setApplication(Application application) {
+    private ClientApp application;
+    public void setApplication(ClientApp application) {
         this.application = application;
         application.styleProperty().addListener((obs, o, n) -> {
             confirmWindow.getDialogPane().getStylesheets().setAll(n.getPath());
@@ -161,7 +161,7 @@ public class ControllersContext {
             errorWindow.getDialogPane().getStylesheets().setAll(n.getPath());
         });
     }
-    Application getApplication() {
+    ClientApp getApplication() {
         return application;
     }
 

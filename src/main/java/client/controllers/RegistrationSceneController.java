@@ -1,6 +1,6 @@
 package client.controllers;
 
-import client.Application;
+import client.ClientApp;
 import client.RequestBuilder;
 import client.localization.Localizer;
 import general.Request;
@@ -84,7 +84,7 @@ public class RegistrationSceneController {
     }
 
     private void goToAuthPage() {
-        context.getApplication().setScene(Application.AppScene.AUTHORIZATION_SCENE);
+        context.getApplication().setScene(ClientApp.AppScene.AUTHORIZATION_SCENE);
         clear();
     }
 

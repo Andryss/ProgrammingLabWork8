@@ -8,11 +8,7 @@ public class Data_ca extends ListResourceBundle {
         return contents;
     }
 
-    // TODO: sync with default
     private final Object[][] contents = new Object[][] {
-
-            {"Connection with server was successful", "La connexió amb el servidor ha tingut èxit"},
-
 
             // AUTH SCENE
             {"Authorization page", "Pàgina d'autorització"},
@@ -56,20 +52,40 @@ public class Data_ca extends ListResourceBundle {
 
             // USER TAB
             {"User", "Usuari"},
+            {"Icon", "Icona"},
             {"Username", "Nom d ' usuari"},
             {"Sign out", "Tancar sessió"},
             {"Are you sure to sign out? (all unsaved data will be deleted)", "Estàs segur de signar? (totes les dades no desades seran eliminades)"},
+            {"Delete user", "Esborra l ' usuari"},
+            {"Are you sure to delete user? (all your elements will be deleted)", "Esteu segur d'esborrar l'usuari? (tots els elements seran eliminats)"},
+            {"Are you really sure?", "N'estàs segur?"},
+            {"Are you REALLY sure to DELETE USER? (ALL your elements WILL BE DELETED)", "ESTEU segur D'ESBORRAR L'USUARI? (TOTS ELS elements SERAN ELIMINATS)"},
+            {"Are you really really really sure?", "Realment n'estàs segur?"},
+            {"ARE YOU REALLY REALLY REALLY SURE TO DELETE USER? (ALL YOUR ELEMENTS WILL BE DELETED)", "REALMENT ESTEU SEGUR D'ESBORRAR L'USUARI? (TOTS ELS ELEMENTS SERAN ELIMINATS)"},
             {"Settings", "Arranjament"},
             {"Language", "Idioma"},
+            {"Theme", "Tema"},
+            {"Default", "Omissió"},
+            {"Dark", "Fosc"},
             {"Are you sure to exit? (all unsaved data will be deleted)", "Estàs segur de sortir? (totes les dades no desades seran eliminades)"},
             {"Exit", "Sortida"},
 
 
             // CONSOLE TAB
+            {"Save history to file", "Desa l ' historial al fitxer"},
+            {"Saved console history", "Història de la consola desada"},
             {"Choose the command you want to send", "Trieu l'ordre que voleu enviar"},
             {"Send", "Enviar"},
             {"Choose command", "Escolliu ordre"},
             {"You should choose command to send!", "Heu de triar l'ordre a enviar!"},
+
+
+            // ONE PARAM PANE
+            {"Param filling page", "Pàgina d'ompliment de Param"},
+
+
+            // MOVIE KEY PARAM PANE
+            {"Element filling page", "Pàgina d'ompliment d'elements"},
 
 
             // COMMAND
@@ -124,7 +140,6 @@ public class Data_ca extends ListResourceBundle {
             {"ERROR: field must have \"DD.MM.YYYY\" format", "ERROR: el camp ha de tenir format\" dd.MM. AYYY\""},
 
 
-
             // TABLE TAB
             {"Filter by", "Filtrar per"},
             {"with value contains", "el valor conté"},
@@ -145,14 +160,12 @@ public class Data_ca extends ListResourceBundle {
             {"Remove", "Elimina"},
 
 
-
             // ERRORS
             {"Error", "Error"},
             {"Something wrong", "Alguna cosa no va bé"},
-            {"Oops... Seems like evil goblins cut some wires... Try again later", "Oops... Sembla que els malvats goblins tallen alguns cables... Torna a intentar-ho més tard"},
-            {"Wrong request format", "Format de petició incorrecte"},
             {"Server has wrong logic: unexpected", "El servidor té una lògica incorrecta: inesperada"},
             {"FATAL", "FATAL"},
-            {"FATAL ERROR: don't peek", "ERROR FATAL: no mireu"}
+            {"FATAL ERROR: don't peek", "ERROR FATAL: no mireu"},
+            {"not extends ElementCommand", "no s'estén ElementCommand"}
     };
 }

@@ -1,9 +1,11 @@
 package client.controllers;
 
-import client.Application;
+import client.ClientApp;
 import client.RequestBuilder;
 import client.localization.Localizer;
 import general.Request;
+import general.Response;
+import general.commands.BadArgumentsException;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -16,6 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.StringConverter;
 
+import java.net.SocketTimeoutException;
 import java.util.*;
 
 public class UserTabController {
@@ -33,14 +36,15 @@ public class UserTabController {
     @FXML private Label passwordLabel;
     @FXML private TextField passwordTextField;
     @FXML private Button signOutButton;
+    @FXML private Button deleteUserButton;
     @FXML private Label settingsLabel;
     @FXML private Label languageLabel;
     @FXML private ComboBox<Localizer.AvailableLocale> languageComboBox;
     @FXML private Label themeLabel;
-    @FXML private ComboBox<Application.AppStyle> themeComboBox;
+    @FXML private ComboBox<ClientApp.AppStyle> themeComboBox;
     @FXML private Button exitButton;
 
-    private final EnumMap<Application.AppStyle, Paint> drawingMap = new EnumMap<>(Application.AppStyle.class);
+    private final EnumMap<ClientApp.AppStyle, Paint> drawingMap = new EnumMap<>(ClientApp.AppStyle.class);
 
     @FXML
     private void initialize() {
@@ -59,17 +63,17 @@ public class UserTabController {
         languageComboBox.valueProperty().bindBidirectional(context.localizer().availableLocaleProperty());
         context.localizer().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
 
-        themeComboBox.setItems(FXCollections.observableArrayList(Application.AppStyle.values()));
-        themeComboBox.setValue(Application.AppStyle.DEFAULT);
-        themeComboBox.setConverter(new StringConverter<Application.AppStyle>() {
+        themeComboBox.setItems(FXCollections.observableArrayList(ClientApp.AppStyle.values()));
+        themeComboBox.setValue(ClientApp.AppStyle.DEFAULT);
+        themeComboBox.setConverter(new StringConverter<ClientApp.AppStyle>() {
             @Override
-            public String toString(Application.AppStyle appStyle) {
+            public String toString(ClientApp.AppStyle appStyle) {
                 return context.getString(appStyle.getName());
             }
 
             @Override
-            public Application.AppStyle fromString(String s) {
-                return Arrays.stream(Application.AppStyle.values())
+            public ClientApp.AppStyle fromString(String s) {
+                return Arrays.stream(ClientApp.AppStyle.values())
                         .filter(e -> e.getName().equals(s))
                         .findAny()
                         .orElse(null);
@@ -77,10 +81,10 @@ public class UserTabController {
         });
         themeComboBox.valueProperty().addListener((obs, o, n) -> context.getApplication().setStyle(n));
 
-        for (Application.AppStyle style : Application.AppStyle.values()) {
-            if (style == Application.AppStyle.DEFAULT) {
+        for (ClientApp.AppStyle style : ClientApp.AppStyle.values()) {
+            if (style == ClientApp.AppStyle.DEFAULT) {
                 drawingMap.put(style, new Color(0d, 0d, 0d, 1d));
-            } else if (style == Application.AppStyle.DARK) {
+            } else if (style == ClientApp.AppStyle.DARK) {
                 drawingMap.put(style, new Color(1d, 1d, 1d, 1d));
             } else {
                 // funny :)
@@ -102,10 +106,18 @@ public class UserTabController {
         usernameLabel.setText(resourceBundle.getString("Username") + ":");
         passwordLabel.setText(resourceBundle.getString("Password") + ":");
         signOutButton.setText(resourceBundle.getString("Sign out"));
+        deleteUserButton.setText(resourceBundle.getString("Delete user"));
         settingsLabel.setText(resourceBundle.getString("Settings"));
         languageLabel.setText(resourceBundle.getString("Language") + ":");
         themeLabel.setText(resourceBundle.getString("Theme") + ":");
         exitButton.setText(resourceBundle.getString("Exit"));
+
+        // I don't know how to do it better
+        ClientApp.AppStyle style = themeComboBox.getValue();
+        SingleSelectionModel<ClientApp.AppStyle> selectionModel = themeComboBox.getSelectionModel();
+        selectionModel.selectNext();selectionModel.selectPrevious();
+        themeComboBox.setValue(style);
+        // Seems like this is not the best variant
     }
 
     @FXML
@@ -144,7 +156,7 @@ public class UserTabController {
                 context.sendRequest(
                         RequestBuilder.createNewRequest().setRequestType(Request.RequestType.LOGOUT_USER).build()
                 );
-                context.getApplication().setScene(Application.AppScene.AUTHORIZATION_SCENE);
+                context.getApplication().setScene(ClientApp.AppScene.AUTHORIZATION_SCENE);
             } catch (Exception e) {
                 context.showUserError(e);
             }
@@ -152,9 +164,61 @@ public class UserTabController {
     }
 
     @FXML
+    private void deleteUserKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            deleteUser();
+        }
+    }
+
+    @FXML
+    private void deleteUserMouseClicked(MouseEvent mouseEvent) {
+        deleteUser();
+    }
+
+    private void deleteUser() {
+        Optional<ButtonType> answer = context.showConfirmWindow(
+                context.getString("Are you sure?"),
+                context.getString("Are you sure to delete user? (all your elements will be deleted)")
+        );
+        if (!(answer.isPresent() && answer.get() == ButtonType.OK)) return;
+
+        answer = context.showConfirmWindow(
+                context.getString("Are you really sure?"),
+                context.getString("Are you REALLY sure to DELETE USER? (ALL your elements WILL BE DELETED)")
+        );
+        if (!(answer.isPresent() && answer.get() == ButtonType.OK)) return;
+
+        answer = context.showConfirmWindow(
+                context.getString("Are you really really really sure?"),
+                context.getString("ARE YOU REALLY REALLY REALLY SURE TO DELETE USER? (ALL YOUR ELEMENTS WILL BE DELETED)")
+        );
+        if (!(answer.isPresent() && answer.get() == ButtonType.OK)) return;
+
+        try {
+            Response response = context.sendToServer(
+                    RequestBuilder.createNewRequest().setRequestType(Request.RequestType.DELETE_USER).build()
+            );
+            if (response.getResponseType() == Response.ResponseType.DELETE_SUCCESSFUL) {
+                context.getApplication().setScene(ClientApp.AppScene.AUTHORIZATION_SCENE);
+            } else if (response.getResponseType() == Response.ResponseType.DELETE_FAILED) {
+                context.showUserError(new RuntimeException("Unexpected server answer: delete failed, but nothing wrong (" + response.getMessage() + ")"));
+            } else {
+                context.showUserError(new RuntimeException("Server has wrong logic: unexpected " + response.getResponseType()));
+            }
+        } catch (SocketTimeoutException e) {
+            context.showErrorWindow(
+                    context.getString("Something wrong"),
+                    context.getString(new BadArgumentsException("Server is not responding, try later or choose another server :(").getMessage())
+            );
+        } catch (Exception e) {
+            context.showUserError(e);
+        }
+    }
+
+    @FXML
     private void exitKeyReleased(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.ENTER) {
-            signOut();
+            exit();
         }
     }
 

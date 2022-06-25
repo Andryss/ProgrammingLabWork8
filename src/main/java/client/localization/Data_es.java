@@ -8,11 +8,7 @@ public class Data_es extends ListResourceBundle {
         return contents;
     }
 
-    // TODO: sync with default
     private final Object[][] contents = new Object[][] {
-
-            {"Connection with server was successful", "La conexión con el servidor se realizó correctamente"},
-
 
             // AUTH SCENE
             {"Authorization page", "Página de autorización"},
@@ -56,20 +52,40 @@ public class Data_es extends ListResourceBundle {
 
             // USER TAB
             {"User", "Usuario"},
+            {"Icon", "Icono"},
             {"Username", "Nombre de usuario"},
             {"Sign out", "Sesión"},
             {"Are you sure to sign out? (all unsaved data will be deleted)", "¿Estás seguro de cerrar sesión? (se eliminarán todos los datos no guardados)"},
+            {"Delete user", "Eliminar usuario"},
+            {"Are you sure to delete user? (all your elements will be deleted)", "¿Está seguro de eliminar el usuario? (se eliminarán todos los elementos)"},
+            {"Are you really sure?", "¿De verdad estás seguro?"},
+            {"Are you REALLY sure to DELETE USER? (ALL your elements WILL BE DELETED)", "¿Está realmente seguro de ELIMINAR el USUARIO? (SE ELIMINARÁN TODOS los elementos)"},
+            {"Are you really really really sure?", "¿Estás realmente seguro?"},
+            {"ARE YOU REALLY REALLY REALLY SURE TO DELETE USER? (ALL YOUR ELEMENTS WILL BE DELETED)", "¿ESTÁS REALMENTE SEGURO DE ELIMINAR AL USUARIO? (SE ELIMINARÁN TODOS LOS ELEMENTOS)"},
             {"Settings", "Configuración"},
             {"Language", "Idioma"},
+            {"Theme", "Temático"},
+            {"Default", "Predeterminado"},
+            {"Dark", "Oscuro"},
             {"Are you sure to exit? (all unsaved data will be deleted)", "¿Estás seguro de salir? (se eliminarán todos los datos no guardados)"},
             {"Exit", "Salida"},
 
 
             // CONSOLE TAB
+            {"Save history to file", "Guardar el historial en un archivo"},
+            {"Saved console history", "Historial de consola guardado"},
             {"Choose the command you want to send", "Elija el comando que desea enviar"},
             {"Send", "Enviar"},
             {"Choose command", "Elegir comando"},
             {"You should choose command to send!", "Usted debe elegir comando para enviar!"},
+
+
+            // ONE PARAM PANE
+            {"Param filling page", "Página de relleno de parámetros"},
+
+
+            // MOVIE KEY PARAM PANE
+            {"Element filling page", "Página de relleno de elementos"},
 
 
             // COMMAND
@@ -124,7 +140,6 @@ public class Data_es extends ListResourceBundle {
             {"ERROR: field must have \"DD.MM.YYYY\" format", "ERROR: el campo debe tener el formato \"DD. MM. AAAA\""},
 
 
-
             // TABLE TAB
             {"Filter by", "Filtrar por"},
             {"with value contains", "con valor contiene"},
@@ -145,14 +160,12 @@ public class Data_es extends ListResourceBundle {
             {"Remove", "Quitar"},
 
 
-
             // ERRORS
             {"Error", "Error"},
             {"Something wrong", "Algo anda mal"},
             {"Oops... Seems like evil goblins cut some wires... Try again later", "Ups... Parece que duendes malvados cortaron algunos cables... Inténtalo de nuevo más tarde"},
-            {"Wrong request format", "Formato de solicitud incorrecto"},
-            {"Server has wrong logic: unexpected", "El servidor tiene una lógica incorrecta: inesperado"},
             {"FATAL", "FATAL"},
-            {"FATAL ERROR: don't peek", "ERROR FATAL: no mirar"}
+            {"FATAL ERROR: don't peek", "ERROR FATAL: no mirar"},
+            {"not extends ElementCommand", "no se extiende ElementCommand"}
     };
 }

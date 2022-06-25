@@ -112,6 +112,16 @@
 
 
 
+.deleteUserButton {
+    -fx-background-color: firebrick;
+}
+
+.deleteUserButton:hover {
+    -fx-background-color: #c23232;
+}
+
+
+
 .consoleTextFlow Text {
     -fx-fill: white;
 }

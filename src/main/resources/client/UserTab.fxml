@@ -80,9 +80,10 @@
                   </ImageView>
                </children>
             </GridPane>
-            <HBox alignment="CENTER">
+            <HBox alignment="CENTER" spacing="20.0">
                <children>
                   <Button fx:id="signOutButton" mnemonicParsing="false" onKeyReleased="#signOutKeyReleased" onMouseClicked="#signOutMouseClicked" text="Sign out" />
+                  <Button fx:id="deleteUserButton" mnemonicParsing="false" onKeyReleased="#deleteUserKeyReleased" onMouseClicked="#deleteUserMouseClicked" styleClass="deleteUserButton" text="Delete user" />
                </children>
             </HBox>
          </children>

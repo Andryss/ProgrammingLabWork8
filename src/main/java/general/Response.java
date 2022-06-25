@@ -36,6 +36,9 @@ public interface Response extends Serializable {
         REGISTER_SUCCESSFUL,
         REGISTER_FAILED,
 
+        DELETE_SUCCESSFUL,
+        DELETE_FAILED,
+
         ELEMENT_NOT_PRESENTED,
         USER_LIMIT_EXCEEDED,
         PERMISSION_DENIED,

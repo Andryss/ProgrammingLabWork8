@@ -22,7 +22,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 
-import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.time.Instant;
 import java.util.*;

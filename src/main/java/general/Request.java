@@ -38,6 +38,8 @@ public interface Request extends Serializable {
 
         REGISTER_USER,
 
+        DELETE_USER,
+
         CHECK_ELEMENT,
 
         EXECUTE_COMMAND

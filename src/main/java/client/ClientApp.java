@@ -14,7 +14,7 @@ import java.util.EnumMap;
 import java.util.Objects;
 import java.util.Properties;
 
-public class Application extends javafx.application.Application {
+public class ClientApp extends javafx.application.Application {
     private Stage stage;
     private final EnumMap<AppScene,Scene> sceneMap = new EnumMap<>(AppScene.class);
 
@@ -55,7 +55,7 @@ public class Application extends javafx.application.Application {
     }
 
     private void loadScene(String name, AppScene sceneType) throws IOException {
-        FXMLLoader loader = new FXMLLoader(Application.class.getResource(name));
+        FXMLLoader loader = new FXMLLoader(ClientApp.class.getResource(name));
         Scene scene = new Scene(loader.load());
         sceneMap.put(sceneType, scene);
     }
