@@ -1,6 +1,7 @@
 package client;
 
 import client.controllers.ControllersContext;
+import client.localization.Localizer;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -13,6 +14,7 @@ import java.io.*;
 import java.util.EnumMap;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 public class ClientApp extends javafx.application.Application {
     private Stage stage;
@@ -29,7 +31,8 @@ public class ClientApp extends javafx.application.Application {
         try {
 
             this.stage = stage;
-            stage.setTitle("Free trial version for 3 minutes (then 1 BARS point for minute)");
+            Localizer.getInstance().resourceBundleProperty().addListener((obs, o, n) -> localize(n));
+            localize(Localizer.getInstance().getResourceBundle());
             try (InputStream stream = getClass().getResourceAsStream("movie.png")){
                 if (stream != null) {
                     stage.getIcons().add(new Image(stream));
@@ -49,9 +52,12 @@ public class ClientApp extends javafx.application.Application {
             setScene(AppScene.AUTHORIZATION_SCENE);
             stage.show();
         } catch (Throwable e) {
-            e.printStackTrace();
             ControllersContext.getInstance().showUserError(e);
         }
+    }
+
+    private void localize(ResourceBundle resourceBundle) {
+        stage.setTitle(resourceBundle.getString("Free trial version for 3 minutes (then 1 BARS point for minute)"));
     }
 
     private void loadScene(String name, AppScene sceneType) throws IOException {

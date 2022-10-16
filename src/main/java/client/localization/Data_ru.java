@@ -10,6 +10,9 @@ public class Data_ru extends ListResourceBundle {
 
     private final Object[][] contents = new Object[][] {
 
+            // STAGE
+            {"Free trial version for 3 minutes (then 1 BARS point for minute)", "Бесплатная пробная версия на 3 минуты (затем 1 балл БАРС за минуту)"},
+
             // AUTH SCENE
             {"Authorization page", "Страница авторизации"},
             {"Type here your login", "Введите здесь свой логин"},
@@ -27,7 +30,11 @@ public class Data_ru extends ListResourceBundle {
             {"Registration page", "Страница регистрации"},
             {"New user login", "Новый логин пользователя"},
             {"New user pass", "Новый пропуск пользователя"},
+            {"Repeat password", "Повторите пароль"},
+            {"Repeat user pass", "Повторный проход пользователя"},
             {"Sign up", "Зарегистрироваться"},
+            {"Registration failed", "Регистрация не удалась"},
+            {"Passwords don't match", "Пароли не совпадают"},
             {"User is already registered", "Пользователь уже зарегистрирован"},
             {"New user successfully registered", "Новый пользователь успешно зарегистрирован"},
             {"Already have an account?", "У вас уже есть учетная запись?"},
@@ -38,7 +45,7 @@ public class Data_ru extends ListResourceBundle {
             {"Login", "Логин"},
             {"Login must have at least 3 characters", "Логин должен содержать не менее 3 символов"},
             {"Login must have less than 20 characters", "Логин должен содержать менее 20 символов"},
-            {"Login must contains of only alphabetic characters", "Логин должен состоять только из буквенных символов"},
+            {"Login must contain at least one alphabetic character", "Логин должен содержать хотя бы одну букву"},
             {"Password", "Пароль"},
             {"Password must have at least 3 characters", "Пароль должен содержать не менее 3 символов"},
             {"Password must have less than 20 characters", "Пароль должен содержать менее 20 символов"},

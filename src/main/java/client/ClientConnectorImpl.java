@@ -3,6 +3,9 @@ package client;
 import general.Request;
 import general.ConnectorHelper;
 import general.Response;
+import general.commands.ExecuteScriptCommand;
+import general.commands.InsertCommand;
+import general.element.UserProfile;
 
 import java.io.*;
 import java.net.*;
@@ -44,9 +47,11 @@ public class ClientConnectorImpl implements ClientConnectorModule {
 
     private void checkConnection() throws IOException, ClassNotFoundException {
         try {
+            socket.setSoTimeout(socket.getSoTimeout() - 2_000);
             Response response = sendToServer(
                     RequestBuilder.createNewRequest().setRequestType(Request.RequestType.CHECK_CONNECTION).build()
             );
+            socket.setSoTimeout(socket.getSoTimeout() + 2_000);
             if (response.getResponseType() != Response.ResponseType.CONNECTION_SUCCESSFUL) {
                 throw new IOException("Server has wrong logic: expected \"" +
                         Response.ResponseType.CONNECTION_SUCCESSFUL +
@@ -72,8 +77,8 @@ public class ClientConnectorImpl implements ClientConnectorModule {
         }
         try {
             socketSoTimeout = Integer.parseInt(properties.getProperty("socketSoTimeout", "5000"));
-            if (socketSoTimeout < 1 || socketSoTimeout > 60_000) {
-                throw new NumberFormatException("property \"socketSoTimeout\" must be in range 1-60000");
+            if (socketSoTimeout < 3_000 || socketSoTimeout > 60_000) {
+                throw new NumberFormatException("property \"socketSoTimeout\" must be in range 3k-60k");
             }
         } catch (NumberFormatException e) {
             throw new NumberFormatException("Can't parse property \"socketSoTimeout\": " + e.getMessage());

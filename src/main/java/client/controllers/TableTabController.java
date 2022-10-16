@@ -190,7 +190,9 @@ public class TableTabController {
                 if (filterComboBox.getValue().getCellData(m) == null) {
                     return false;
                 }
-                return filterComboBox.getValue().getCellData(m).toString().toLowerCase().contains(filterTextField.getText());
+                return filterComboBox.getValue().getCellData(m).toString().contains(
+                        filterTextField.getText()
+                );
             });
         }
     }

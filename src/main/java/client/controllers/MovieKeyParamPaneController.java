@@ -36,6 +36,7 @@ public class MovieKeyParamPaneController {
     @FXML private Label movieKeyLabel;
     @FXML private TextField movieKeyTextField;
     @FXML private Label movieKeyErrLabel;
+    @FXML private Label movieKeySucLabel;
     @FXML private TextField movieOwnerTextField;
     @FXML private TextField movieNameTextField;
     @FXML private Label movieNameErrLabel;
@@ -92,15 +93,8 @@ public class MovieKeyParamPaneController {
         }
         returnButton.setText(resourceBundle.getString("Return"));
         confirmButton.setText(resourceBundle.getString("Confirm"));
-        movieKeyErrLabel.setText("");
-        movieNameErrLabel.setText("");
-        coordinatesXErrLabel.setText("");
-        coordinatesYErrLabel.setText("");
-        movieOscarsCountErrLabel.setText("");
-        movieLengthErrLabel.setText("");
-        movieMpaaRatingErrLabel.setText("");
-        screenwriterNameErrLabel.setText("");
-        screenwriterBirthdayErrLabel.setText("");
+
+        clearErrLabels();
     }
 
     @FXML
@@ -133,9 +127,15 @@ public class MovieKeyParamPaneController {
                     );
                     ElementCommand elementCommand = (ElementCommand) context.getCurrentCommand().getCommand();
                     elementCommand.checkElement(response);
-                    movieKeyErrLabel.setText(context.getString("OK"));
+                    setMovieKeySucErrLabels(
+                            context.getString("OK"),
+                            ""
+                    );
                 } catch (BadArgumentsException | SocketTimeoutException e) {
-                    movieKeyErrLabel.setText(context.getString(e.getMessage()));
+                    setMovieKeySucErrLabels(
+                            "",
+                            context.getString(e.getMessage())
+                    );
                 } catch (Exception e) {
                     context.showUserError(e);
                 }
@@ -213,7 +213,10 @@ public class MovieKeyParamPaneController {
             currentKey = Integer.parseInt(movieKeyTextField.getText());
             return true;
         } catch (NumberFormatException e) {
-            movieKeyErrLabel.setText(context.getString(new BadArgumentsException("value must be integer").getMessage()));
+            setMovieKeySucErrLabels(
+                    "",
+                    context.getString(new BadArgumentsException("value must be integer").getMessage())
+            );
             return false;
         }
     }
@@ -301,25 +304,35 @@ public class MovieKeyParamPaneController {
 
     void clearPane() {
         movieKeyTextField.clear();
-        movieKeyErrLabel.setText("");
         movieNameTextField.clear();
-        movieNameErrLabel.setText("");
         coordinatesXTextField.clear();
-        coordinatesXErrLabel.setText("");
         coordinatesYTextField.clear();
-        coordinatesYErrLabel.setText("");
         movieOscarsCountTextField.clear();
-        movieOscarsCountErrLabel.setText("");
         movieLengthTextField.clear();
-        movieLengthErrLabel.setText("");
         movieGenreChoiceBox.setValue(null);
         movieMpaaRatingChoiceBox.setValue(null);
-        movieMpaaRatingErrLabel.setText("");
         screenwriterNameTextField.clear();
-        screenwriterNameErrLabel.setText("");
         screenwriterBirthdayTextField.clear();
-        screenwriterBirthdayErrLabel.setText("");
         screenwriterHairColorChoiceBox.setValue(null);
+
+        clearErrLabels();
+    }
+
+    private void setMovieKeySucErrLabels(String sucText, String errText) {
+        movieKeySucLabel.setText(sucText);
+        movieKeyErrLabel.setText(errText);
+    }
+
+    private void clearErrLabels() {
+        setMovieKeySucErrLabels("","");
+        movieNameErrLabel.setText("");
+        coordinatesXErrLabel.setText("");
+        coordinatesYErrLabel.setText("");
+        movieOscarsCountErrLabel.setText("");
+        movieLengthErrLabel.setText("");
+        movieMpaaRatingErrLabel.setText("");
+        screenwriterNameErrLabel.setText("");
+        screenwriterBirthdayErrLabel.setText("");
     }
 
     private ConsoleTabController.ClientContextImpl getClientContext() {

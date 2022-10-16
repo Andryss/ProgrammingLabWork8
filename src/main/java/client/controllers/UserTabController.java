@@ -56,7 +56,7 @@ public class UserTabController {
                 case 7: passwordTextField.setText("*******");break;
                 case 8: passwordTextField.setText("********");break;
             }
-            drawFace();
+            drawFace(n.hashCode());
         });
 
         languageComboBox.setItems(FXCollections.observableArrayList(Localizer.AvailableLocale.values()));

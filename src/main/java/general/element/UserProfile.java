@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Class UserProfile contains of main info about user (login + password)
@@ -31,8 +33,8 @@ public class UserProfile implements Serializable {
         if (login.length() > 20) {
             throw new IllegalArgumentException("Login must have less than 20 characters");
         }
-        if (!login.chars().allMatch(Character::isAlphabetic)) {
-            throw new IllegalArgumentException("Login must contains of only alphabetic characters");
+        if (login.chars().noneMatch(Character::isAlphabetic)) {
+            throw new IllegalArgumentException("Login must contain at least one alphabetic character");
         }
         return login;
     }

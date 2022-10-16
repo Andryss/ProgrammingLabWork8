@@ -38,6 +38,7 @@ public class ControllersContext {
     public Optional<ButtonType> showConfirmWindow(String title, String contextText) {
         confirmWindow.setTitle(title);
         confirmWindow.setContentText(contextText);
+        confirmWindow.resultProperty().set(null);
         return confirmWindow.showAndWait();
     }
 
@@ -182,7 +183,7 @@ public class ControllersContext {
         return progressInterpolator;
     }
 
-    private final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+    private final DateFormat formatter = new SimpleDateFormat("-yyyy-MM-dd-HH-mm-ss-SSS");
     public void showUserError(Throwable throwable) {
         showErrorWindow(
                 getString("Error"),

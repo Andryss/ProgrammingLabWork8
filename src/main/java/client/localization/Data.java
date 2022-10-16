@@ -10,6 +10,9 @@ public class Data extends ListResourceBundle {
 
     private final Object[][] contents = new Object[][] {
 
+            // STAGE
+            {"Free trial version for 3 minutes (then 1 BARS point for minute)", "Free trial version for 3 minutes (then 1 BARS point for minute)"},
+
             // AUTH SCENE
             {"Authorization page", "Authorization page"},
             {"Type here your login", "Type here your login"},
@@ -27,7 +30,11 @@ public class Data extends ListResourceBundle {
             {"Registration page", "Registration page"},
             {"New user login", "New user login"},
             {"New user pass", "New user pass"},
+            {"Repeat password", "Repeat password"},
+            {"Repeat user pass", "Repeat user pass"},
             {"Sign up", "Sign up"},
+            {"Registration failed", "Registration failed"},
+            {"Passwords don't match", "Passwords don't match"},
             {"User is already registered", "User is already registered"},
             {"New user successfully registered", "New user successfully registered"},
             {"Already have an account?", "Already have an account?"},
@@ -38,7 +45,7 @@ public class Data extends ListResourceBundle {
             {"Login", "Login"},
             {"Login must have at least 3 characters", "Login must have at least 3 characters"},
             {"Login must have less than 20 characters", "Login must have less than 20 characters"},
-            {"Login must contains of only alphabetic characters", "Login must contains of only alphabetic characters"},
+            {"Login must contain at least one alphabetic character", "Login must contain at least one alphabetic character"},
             {"Password", "Password"},
             {"Password must have at least 3 characters", "Password must have at least 3 characters"},
             {"Password must have less than 20 characters", "Password must have less than 20 characters"},

@@ -1,4 +1,5 @@
 # Project exclude paths
+.idea
 /target/
 /2022-06/
 ServerWorkingLogs.log

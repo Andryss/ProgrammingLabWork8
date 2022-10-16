@@ -120,7 +120,9 @@ public class ServerConnectorImpl implements ServerConnectorModule {
 
                 controllerModule.info("Received " + dataBuffer.position() + " bytes buffer with request " + request);
 
-                executorModule.executeRequest(client, request);
+                if (request != null)
+                    executorModule.executeRequest(client, request);
+
             } catch (Throwable e) {
                 controllerModule.error(e.getMessage());
             } finally {

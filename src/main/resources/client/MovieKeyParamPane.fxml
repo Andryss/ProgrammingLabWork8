@@ -55,6 +55,7 @@
                                   </children>
                               </HBox>
                               <Label fx:id="movieKeyErrLabel" styleClass="errorLabel" textFill="#b00000" GridPane.columnIndex="2" />
+                        <Label fx:id="movieKeySucLabel" textFill="#00a138" GridPane.columnIndex="2" />
                               <Label text="Movie owner:" GridPane.rowIndex="1" />
                               <TextField fx:id="movieOwnerTextField" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <Label text="Movie id:" GridPane.rowIndex="2" />

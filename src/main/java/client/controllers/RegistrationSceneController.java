@@ -31,6 +31,9 @@ public class RegistrationSceneController {
     @FXML private Label passwordLabel;
     @FXML private PasswordField passwordField;
     @FXML private Label passwordErrLabel;
+    @FXML private Label repeatPasswordLabel;
+    @FXML private PasswordField repeatPasswordField;
+    @FXML private Label repeatPasswordErrLabel;
     @FXML private Button signUpButton;
     @FXML private Label successfulLabel;
     @FXML private Label goToAuthLabel;
@@ -50,11 +53,20 @@ public class RegistrationSceneController {
         loginTextField.setPromptText(resourceBundle.getString("New user login"));
         passwordLabel.setText(resourceBundle.getString("Password") + ":");
         passwordField.setPromptText(resourceBundle.getString("New user pass"));
+        repeatPasswordLabel.setText(resourceBundle.getString("Repeat password") + ":");
+        repeatPasswordField.setPromptText(resourceBundle.getString("Repeat user pass"));
         signUpButton.setText(resourceBundle.getString("Sign up"));
         goToAuthLabel.setText(resourceBundle.getString("Already have an account?"));
         goToAuthLink.setText(resourceBundle.getString("Go to the authorization page"));
 
         resetErrLabels();
+    }
+
+    @FXML
+    private void repPassTextFieldTextField(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            signUpUser();
+        }
     }
 
     @FXML
@@ -103,6 +115,10 @@ public class RegistrationSceneController {
     private void signUpUser() {
         checkTextFields();
 
+        if (!passwordField.getText().equals(repeatPasswordField.getText())) {
+            return;
+        }
+
         UserProfile userProfile;
         try {
             userProfile = new UserProfile(loginTextField.getText(),passwordField.getText());
@@ -120,7 +136,7 @@ public class RegistrationSceneController {
                         context.getString(response.getMessage())
                 );
             } else if (response.getResponseType() == Response.ResponseType.REGISTER_SUCCESSFUL) {
-                successfulLabel.setText(response.getMessage());
+                successfulLabel.setText(context.getString(response.getMessage()));
                 disableAll();
                 regProgressBar.setVisible(true);
                 Timeline authProgress = new Timeline(new KeyFrame(Duration.seconds(10), new KeyValue(regProgressBar.progressProperty(), 1, context.getProgressInterpolator())));
@@ -142,6 +158,7 @@ public class RegistrationSceneController {
     private void disableAll() {
         loginTextField.setDisable(true);
         passwordField.setDisable(true);
+        repeatPasswordField.setDisable(true);
         signUpButton.setDisable(true);
         goToAuthLink.setDisable(true);
         languageComboBox.setDisable(true);
@@ -150,6 +167,7 @@ public class RegistrationSceneController {
     private void ableAll() {
         loginTextField.setDisable(false);
         passwordField.setDisable(false);
+        repeatPasswordField.setDisable(false);
         signUpButton.setDisable(false);
         goToAuthLink.setDisable(false);
         languageComboBox.setDisable(false);
@@ -168,6 +186,9 @@ public class RegistrationSceneController {
         } catch (IllegalArgumentException e) {
             passwordErrLabel.setText(context.getString(e.getMessage()));
         }
+        if (!passwordField.getText().equals(repeatPasswordField.getText())) {
+            repeatPasswordErrLabel.setText(context.getString("Passwords don't match"));
+        }
     }
 
     private void clear() {
@@ -182,6 +203,7 @@ public class RegistrationSceneController {
     private void resetErrLabels() {
         loginErrLabel.setText("");
         passwordErrLabel.setText("");
+        repeatPasswordErrLabel.setText("");
         successfulLabel.setText("");
     }
 }

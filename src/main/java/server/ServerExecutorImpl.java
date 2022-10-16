@@ -13,7 +13,6 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 /**
  * ServerExecutor executing Request depending on RequestType and starting Thread which sending server Response
@@ -100,6 +99,18 @@ public class ServerExecutorImpl implements ServerExecutorModule {
         void executeRequest() {
             controllerModule.info("Request starts executing");
 
+            if (request.getRequestType() == null) {
+                controllerModule.info("Found null request type");
+
+                Response response = ResponseBuilder.createNewResponse()
+                        .setResponseType(Response.ResponseType.WRONG_REQUEST_FORMAT)
+                        .addMessage("Request type is null")
+                        .build();
+                new Thread(() -> connectorModule.sendToClient(client, response), "SendingWFThread").start();
+
+                return;
+            }
+
             try {
                 if (request.getRequestType() == Request.RequestType.CHECK_CONNECTION) {
                     checkConnectionRequest();
@@ -120,12 +131,16 @@ public class ServerExecutorImpl implements ServerExecutorModule {
                 } else {
                     controllerModule.info("Unexpected request type: " + request.getRequestType());
                 }
-            } catch (NullPointerException e) {
+            } catch (AssertionError e) {
+                controllerModule.info("Found \"" + e.getMessage() + "\"");
+
                 Response response = ResponseBuilder.createNewResponse()
                         .setResponseType(Response.ResponseType.WRONG_REQUEST_FORMAT)
                         .addMessage("Wrong request format")
                         .build();
                 new Thread(() -> connectorModule.sendToClient(client, response), "SendingWFThread").start();
+            } catch (NullPointerException e) {
+                controllerModule.info("Found NullPointerException somewhere");
             }
 
             controllerModule.info("Request executed");
@@ -135,16 +150,14 @@ public class ServerExecutorImpl implements ServerExecutorModule {
         }
 
         private void checkConnectionRequest() {
-            try {
-                TimeUnit.SECONDS.sleep(2); // Emulate work
-                Response response = ResponseBuilder.createNewResponse()
-                        .setResponseType(Response.ResponseType.CONNECTION_SUCCESSFUL)
-                        .addMessage("Connection with server was successful")
-                        .build();
-                new Thread(() -> connectorModule.sendToClient(client, response), "SendingCCThread").start();
-            } catch (InterruptedException e) {
-                // ignore
-            }
+            // BAD-CODE ALERT
+            // TimeUnit.SECONDS.sleep(2); // Emulate work
+            new Thread(() -> connectorModule.sendToClient(client,
+                    ResponseBuilder.createNewResponse()
+                            .setResponseType(Response.ResponseType.CONNECTION_SUCCESSFUL)
+                            .addMessage("Connection with server was successful")
+                            .build()),
+                    "SendingCCThread").start();
         }
 
         private void updateCollectionRequest() {
@@ -157,6 +170,10 @@ public class ServerExecutorImpl implements ServerExecutorModule {
         }
 
         private void loginUserRequest() {
+            assert request.getUserProfile() != null : "User profile is null";
+            assert request.getUserProfile().getName() != null : "Username is null";
+            assert request.getUserProfile().getPassword() != null : "User password is null";
+
             Response response;
             if (collectionManagerModule.isUserPresented(request.getUserProfile())) {
                 if (authorizedUsers.contains(request.getUserProfile())) {
@@ -183,11 +200,20 @@ public class ServerExecutorImpl implements ServerExecutorModule {
         }
 
         private void logoutUserRequest() {
+            assert request.getUserProfile() != null : "User profile is null";
+            assert request.getUserProfile().getName() != null : "Username is null";
+            assert request.getUserProfile().getPassword() != null : "User password is null";
+
             authorizedUsers.remove(request.getUserProfile());
             historyManagerModule.deleteUser(request.getUserProfile());
         }
 
         private void checkElementRequest() {
+            assert request.getUserProfile() != null : "User profile is null";
+            assert request.getUserProfile().getName() != null : "Username is null";
+            assert request.getUserProfile().getPassword() != null : "User password is null";
+            assert request.getCheckingIndex() != null : "Checking index is null";
+
             Response response;
             if (authorizedUsers.stream().noneMatch((u) -> u.equals(request.getUserProfile()))) {
                 response = ResponseBuilder.createNewResponse()
@@ -228,6 +254,10 @@ public class ServerExecutorImpl implements ServerExecutorModule {
         }
 
         private void registerUserRequest() {
+            assert request.getUserProfile() != null : "User profile is null";
+            assert request.getUserProfile().getName() != null : "Username is null";
+            assert request.getUserProfile().getPassword() != null : "User password is null";
+
             Response response;
             long newUserID = collectionManagerModule.registerUser(request.getUserProfile());
             if (newUserID == -1) {
@@ -245,6 +275,10 @@ public class ServerExecutorImpl implements ServerExecutorModule {
         }
 
         private void deleteUserRequest() {
+            assert request.getUserProfile() != null : "User profile is null";
+            assert request.getUserProfile().getName() != null : "Username is null";
+            assert request.getUserProfile().getPassword() != null : "User password is null";
+
             Response response;
             UserProfile deletedProfile = collectionManagerModule.removeUser(request.getUserProfile());
             if (deletedProfile != null) {
@@ -264,6 +298,12 @@ public class ServerExecutorImpl implements ServerExecutorModule {
         }
 
         private void executeCommandRequest() {
+            assert request.getUserProfile() != null : "User profile is null";
+            assert request.getUserProfile().getName() != null : "Username is null";
+            assert request.getUserProfile().getPassword() != null : "User password is null";
+            assert request.getCommandName() != null : "Command name is null";
+            assert request.getCommandQueue() != null : "Command queue is null";
+
             Response response;
             if (authorizedUsers.stream().noneMatch((u) -> u.equals(request.getUserProfile()))) {
                 response = ResponseBuilder.createNewResponse()
